@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Flow Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="tag">Interactive Learning Game</p>
+        <h1>HR Flow Lab</h1>
+        <p class="subtitle">Run the HR department for one semester. Every decision changes people, policy, and process.</p>
+      </div>
+      <div class="hero-actions">
+        <p id="session-banner" class="session-banner">Not logged in</p>
+        <button id="logout-btn" class="ghost" disabled>Logout</button>
+      </div>
+    </header>
+
+    <section class="top-grid">
+      <article class="panel auth-panel">
+        <h2>Backend & Authentication</h2>
+        <div class="stack">
+          <h3>Supabase Connection</h3>
+          <input id="supabase-url" type="text" placeholder="Supabase URL (https://xxxx.supabase.co)" />
+          <input id="supabase-anon-key" type="text" placeholder="Supabase anon key" />
+          <div class="inline-row">
+            <button id="connect-btn" class="ghost" type="button">Connect Backend</button>
+            <button id="clear-connection-btn" class="ghost" type="button">Clear</button>
+          </div>
+          <p id="connection-message" class="message"></p>
+        </div>
+        <hr />
+        <div class="form-grid two-col">
+          <form id="register-form" class="stack">
+            <h3>Register</h3>
+            <input id="register-name" type="text" placeholder="Display name" required />
+            <input id="register-email" type="email" placeholder="Email" required />
+            <input id="register-password" type="password" placeholder="Password" required />
+            <div id="register-role-wrap">
+              <select id="register-role">
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <button class="primary" type="submit">Create Account</button>
+          </form>
+          <form id="login-form" class="stack">
+            <h3>Login</h3>
+            <input id="login-name" type="email" placeholder="Email" required />
+            <input id="login-password" type="password" placeholder="Password" required />
+            <button class="primary" type="submit">Login</button>
+          </form>
+        </div>
+        <p id="auth-message" class="message"></p>
+      </article>
+
+      <article class="panel team-panel">
+        <h2>Team & Session</h2>
+        <div class="stack">
+          <select id="team-select"></select>
+          <div id="team-create-wrap" class="inline-row">
+            <input id="team-name" type="text" placeholder="New team name" />
+            <button id="create-team-btn" class="ghost" type="button">Create Team</button>
+          </div>
+          <div id="team-member-wrap" class="inline-row">
+            <input id="member-name" type="text" placeholder="Add student name to team" />
+            <button id="add-member-btn" class="ghost" type="button">Add Member</button>
+          </div>
+          <p id="team-members" class="small muted">No team selected.</p>
+          <div class="inline-row">
+            <button id="start-btn" class="primary" type="button">Start Simulation</button>
+            <button id="reset-run-btn" class="ghost" type="button">Reset Run</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="admin-panel" class="panel admin-panel hidden">
+      <h2>Faculty Admin: Scenario Builder</h2>
+      <p class="small muted">Create custom scenarios. They are added after default modules and shared in this browser.</p>
+      <div class="form-grid">
+        <input id="admin-module" type="text" placeholder="Module (e.g., Recruitment)" />
+        <input id="admin-title" type="text" placeholder="Scenario title" />
+        <textarea id="admin-description" rows="3" placeholder="Scenario description"></textarea>
+      </div>
+      <div class="admin-options-header">
+        <h3>Options</h3>
+        <button id="add-option-btn" class="ghost" type="button">Add Option</button>
+      </div>
+      <div id="admin-options" class="options-editor"></div>
+      <div class="inline-row">
+        <button id="save-scenario-btn" class="primary" type="button">Save Scenario</button>
+        <button id="seed-options-btn" class="ghost" type="button">Seed 3 Empty Options</button>
+      </div>
+      <p id="admin-message" class="message"></p>
+      <hr />
+      <div class="danger-zone">
+        <h3>Danger Zone</h3>
+        <p class="small muted">These actions remove historical records from Supabase.</p>
+        <div class="inline-row">
+          <button id="wipe-results-btn" class="danger" type="button">Wipe Results</button>
+          <button id="reset-sessions-btn" class="danger" type="button">Reset All Team Sessions</button>
+          <button id="wipe-all-btn" class="danger" type="button">Wipe All DB Values</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel stats-panel">
+        <h2>Department Health</h2>
+        <div id="stats" class="stats"></div>
+        <p id="round-label" class="round">Round 0 / 0</p>
+      </article>
+
+      <article class="panel module-panel">
+        <h2>HR Information Flow</h2>
+        <div id="module-map" class="module-map"></div>
+      </article>
+
+      <article class="panel scenario-panel">
+        <h2>Scenario</h2>
+        <div id="scenario-box" class="scenario-box">
+          <p class="hint">Login, choose a team, and press <strong>Start Simulation</strong>.</p>
+        </div>
+        <div id="options" class="options"></div>
+      </article>
+
+      <article class="panel timeline-panel">
+        <h2>Decision Timeline</h2>
+        <ul id="timeline" class="timeline"></ul>
+      </article>
+
+      <article id="leaderboard-panel" class="panel leaderboard-panel">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard" class="timeline"></ul>
+      </article>
+
+      <article id="analytics-panel" class="panel analytics-panel">
+        <h2>Progress Analytics</h2>
+        <div id="analytics" class="stack"></div>
+      </article>
+    </section>
+
+    <section id="summary" class="summary hidden"></section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
