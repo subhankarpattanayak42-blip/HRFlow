@@ -6,11 +6,6 @@ const BASELINE_METRICS = {
   budgetHealth: 55,
 };
 
-const LOCAL_KEYS = {
-  supabaseUrl: "hrflow_supabase_url_v1",
-  supabaseAnonKey: "hrflow_supabase_anon_key_v1",
-};
-
 const modules = [
   { id: "workforce", title: "Workforce Planning", sendsTo: "Recruitment" },
   { id: "recruitment", title: "Recruitment", sendsTo: "Onboarding" },
@@ -221,11 +216,6 @@ const state = {
 };
 
 const refs = {
-  supabaseUrl: document.getElementById("supabase-url"),
-  supabaseAnonKey: document.getElementById("supabase-anon-key"),
-  connectBtn: document.getElementById("connect-btn"),
-  clearConnectionBtn: document.getElementById("clear-connection-btn"),
-  connectionMessage: document.getElementById("connection-message"),
   registerForm: document.getElementById("register-form"),
   loginForm: document.getElementById("login-form"),
   registerName: document.getElementById("register-name"),
@@ -348,20 +338,19 @@ function overallGrade(metrics) {
 }
 
 async function connectSupabase(url, anonKey) {
-  if (!window.supabase || !window.supabase.createClient) {
-    showMessage(refs.connectionMessage, "Supabase SDK failed to load.", true);
-    return;
-  }
+  try {
+    if (!window.supabase || !window.supabase.createClient) {
+      showMessage(refs.authMessage, "Supabase SDK failed to load.", true);
+      return;
+    }
 
-  if (!url || !anonKey) {
-    showMessage(refs.connectionMessage, "Provide Supabase URL and anon key.", true);
-    return;
-  }
+    if (!url || !anonKey) {
+      showMessage(refs.authMessage, "Supabase config is missing in index file.", true);
+      return;
+    }
 
-  state.supabase = window.supabase.createClient(url, anonKey);
-  state.connected = true;
-  localStorage.setItem(LOCAL_KEYS.supabaseUrl, url);
-  localStorage.setItem(LOCAL_KEYS.supabaseAnonKey, anonKey);
+    state.supabase = window.supabase.createClient(url, anonKey);
+    state.connected = true;
 
   if (!state.authListenerSet) {
     state.supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -382,21 +371,27 @@ async function connectSupabase(url, anonKey) {
     state.authListenerSet = true;
   }
 
-  const { data, error } = await state.supabase.auth.getSession();
-  if (error) {
-    showMessage(refs.connectionMessage, error.message, true);
-    return;
-  }
-
-  showMessage(refs.connectionMessage, "Connected to Supabase.");
-  if (data.session && data.session.user) {
-    const ok = await hydrateCurrentUser(data.session.user);
-    if (ok && state.currentUser) {
-      await loadRemoteData();
-      showMessage(refs.authMessage, `Session restored for ${state.currentUser.displayName}.`);
-    } else {
-      showMessage(refs.authMessage, "Connected, but profile restoration failed.", true);
+    const { data, error } = await state.supabase.auth.getSession();
+    if (error) {
+      showMessage(refs.authMessage, `Connection failed: ${error.message}`, true);
+      state.connected = false;
+      return;
     }
+
+    if (data.session && data.session.user) {
+      const ok = await hydrateCurrentUser(data.session.user);
+      if (ok && state.currentUser) {
+        await loadRemoteData();
+        showMessage(refs.authMessage, `Session restored for ${state.currentUser.displayName}.`);
+      } else {
+        showMessage(refs.authMessage, "Connected, but profile restoration failed.", true);
+      }
+    } else {
+      showMessage(refs.authMessage, "Connected to database. Please login.");
+    }
+  } catch (error) {
+    state.connected = false;
+    showMessage(refs.authMessage, `Connection exception: ${error.message}`, true);
   }
 
   refreshUI();
@@ -868,28 +863,6 @@ function parseImpact(input) {
   return impact;
 }
 
-function setupConnectionHandlers() {
-  refs.connectBtn.addEventListener("click", () => {
-    void connectSupabase(refs.supabaseUrl.value.trim(), refs.supabaseAnonKey.value.trim());
-  });
-
-  refs.clearConnectionBtn.addEventListener("click", () => {
-    localStorage.removeItem(LOCAL_KEYS.supabaseUrl);
-    localStorage.removeItem(LOCAL_KEYS.supabaseAnonKey);
-    refs.supabaseUrl.value = "";
-    refs.supabaseAnonKey.value = "";
-    state.connected = false;
-    state.supabase = null;
-    state.currentUser = null;
-    state.teams = [];
-    state.results = [];
-    state.customScenarios = [];
-    state.selectedTeamId = "";
-    showMessage(refs.connectionMessage, "Connection cleared.");
-    refreshUI();
-  });
-}
-
 function setupAuthHandlers() {
   refs.registerForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -946,32 +919,36 @@ function setupAuthHandlers() {
   refs.loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
     void (async () => {
-      if (!state.supabase) {
-        showMessage(refs.authMessage, "Connect backend first.", true);
-        return;
-      }
+      try {
+        if (!state.supabase || !state.connected) {
+          showMessage(refs.authMessage, "Database not connected. Refresh and try again.", true);
+          return;
+        }
 
-      const email = refs.loginName.value.trim();
-      const password = refs.loginPassword.value.trim();
+        const email = refs.loginName.value.trim();
+        const password = refs.loginPassword.value.trim();
 
-      const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        showMessage(refs.authMessage, error.message, true);
-        return;
-      }
+        const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          showMessage(refs.authMessage, `Login failed: ${error.message}`, true);
+          return;
+        }
 
-      const ok = await hydrateCurrentUser(data.user);
-      if (!ok || !state.currentUser) {
-        showMessage(
-          refs.authMessage,
-          "Login succeeded, but profile load failed. Check profiles table/policies.",
-          true
-        );
-        return;
+        const ok = await hydrateCurrentUser(data.user);
+        if (!ok || !state.currentUser) {
+          showMessage(
+            refs.authMessage,
+            "Login succeeded, but profile load failed. Check profiles table/policies.",
+            true
+          );
+          return;
+        }
+        await loadRemoteData();
+        showMessage(refs.authMessage, `Welcome, ${state.currentUser.displayName}.`);
+        refreshUI();
+      } catch (error) {
+        showMessage(refs.authMessage, `Login exception: ${error.message}`, true);
       }
-      await loadRemoteData();
-      showMessage(refs.authMessage, `Welcome, ${state.currentUser.displayName}.`);
-      refreshUI();
     })();
   });
 
@@ -1272,21 +1249,19 @@ async function bootstrap() {
     addOptionEditor();
   }
 
-  setupConnectionHandlers();
   setupAuthHandlers();
   setupTeamHandlers();
   setupAdminHandlers();
   renderModules("");
 
-  const savedUrl = localStorage.getItem(LOCAL_KEYS.supabaseUrl) || "";
-  const savedAnon = localStorage.getItem(LOCAL_KEYS.supabaseAnonKey) || "";
-  refs.supabaseUrl.value = savedUrl;
-  refs.supabaseAnonKey.value = savedAnon;
+  const hardcoded = window.HRFLOW_SUPABASE || {};
+  const savedUrl = hardcoded.url || "";
+  const savedAnon = hardcoded.anonKey || "";
 
   if (savedUrl && savedAnon) {
     await connectSupabase(savedUrl, savedAnon);
   } else {
-    showMessage(refs.connectionMessage, "Add Supabase URL + anon key to begin.");
+    showMessage(refs.authMessage, "Supabase config missing in index.html.");
     refreshUI();
   }
 }

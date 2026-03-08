@@ -1,0 +1,1702 @@
+[
+  {
+    "module": "Recruitment",
+    "title": "Offer Drop-Off Spike",
+    "description": "Offer acceptance has fallen for engineering and analyst roles in the last month.",
+    "options": [
+      {
+        "text": "Benchmark compensation and reduce offer turnaround to 48 hours.",
+        "flow": "Recruitment -> Compensation -> Hiring Manager",
+        "impact": {
+          "talentQuality": 8,
+          "hrEfficiency": 5,
+          "budgetHealth": -4
+        }
+      },
+      {
+        "text": "Keep current offer process and push recruiters for volume.",
+        "flow": "Recruitment -> Pipeline",
+        "impact": {
+          "hrEfficiency": 3,
+          "talentQuality": -6,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Outsource final offer negotiations to vendor.",
+        "flow": "Recruitment -> Vendor",
+        "impact": {
+          "hrEfficiency": 4,
+          "budgetHealth": -5,
+          "employeeTrust": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Recruitment",
+    "title": "Campus Hiring Bias Complaint",
+    "description": "Students report inconsistent interview scoring and possible bias in campus drives.",
+    "options": [
+      {
+        "text": "Mandate structured rubrics and mixed interview panels.",
+        "flow": "Recruitment -> Compliance -> DEI",
+        "impact": {
+          "legalSafety": 8,
+          "employeeTrust": 6,
+          "hrEfficiency": -2
+        }
+      },
+      {
+        "text": "Issue a verbal warning to interviewers and continue.",
+        "flow": "Recruitment",
+        "impact": {
+          "hrEfficiency": 2,
+          "legalSafety": -4,
+          "employeeTrust": -5
+        }
+      },
+      {
+        "text": "Pause campus intake until full investigation completes.",
+        "flow": "Recruitment -> Compliance",
+        "impact": {
+          "legalSafety": 6,
+          "talentQuality": -3,
+          "budgetHealth": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Recruitment",
+    "title": "Candidate Ghosting After Round 1",
+    "description": "A high share of candidates stop responding after initial screening.",
+    "options": [
+      {
+        "text": "Set 24-hour candidate communication SLA with automated updates.",
+        "flow": "Recruitment -> Employer Brand",
+        "impact": {
+          "talentQuality": 5,
+          "hrEfficiency": 6,
+          "employeeTrust": 3
+        }
+      },
+      {
+        "text": "Increase ad spend and ignore drop-off quality signals.",
+        "flow": "Recruitment -> Marketing",
+        "impact": {
+          "hrEfficiency": 2,
+          "budgetHealth": -5,
+          "talentQuality": -4
+        }
+      },
+      {
+        "text": "Shorten process by removing manager interview round.",
+        "flow": "Recruitment -> Onboarding",
+        "impact": {
+          "hrEfficiency": 7,
+          "talentQuality": -7,
+          "employeeTrust": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Recruitment",
+    "title": "Referral Program Abuse",
+    "description": "Duplicate and suspicious referrals are triggering payout disputes.",
+    "options": [
+      {
+        "text": "Add duplicate detection and staged payout policy.",
+        "flow": "Recruitment -> Payroll -> Compliance",
+        "impact": {
+          "legalSafety": 6,
+          "hrEfficiency": 4,
+          "employeeTrust": 2
+        }
+      },
+      {
+        "text": "Suspend referral payouts for one quarter.",
+        "flow": "Recruitment -> Relations",
+        "impact": {
+          "budgetHealth": 5,
+          "employeeTrust": -6,
+          "talentQuality": -2
+        }
+      },
+      {
+        "text": "Ignore anomalies and continue payouts.",
+        "flow": "Recruitment -> Payroll",
+        "impact": {
+          "hrEfficiency": 1,
+          "legalSafety": -7,
+          "budgetHealth": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Workforce Planning",
+    "title": "Unfilled Critical Roles",
+    "description": "Key roles remain open for 90+ days and delivery deadlines are slipping.",
+    "options": [
+      {
+        "text": "Reprioritize headcount and launch skill-based hiring sprint.",
+        "flow": "Workforce Planning -> Recruitment -> Budget",
+        "impact": {
+          "talentQuality": 7,
+          "hrEfficiency": 5,
+          "budgetHealth": -3
+        }
+      },
+      {
+        "text": "Freeze hiring and redistribute current staff workload.",
+        "flow": "Workforce Planning -> Employee Relations",
+        "impact": {
+          "budgetHealth": 4,
+          "employeeTrust": -7,
+          "talentQuality": -4
+        }
+      },
+      {
+        "text": "Hire only contractors for all critical gaps.",
+        "flow": "Workforce Planning -> Vendor",
+        "impact": {
+          "hrEfficiency": 4,
+          "budgetHealth": -4,
+          "legalSafety": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Workforce Planning",
+    "title": "Wrong Skill Hired at Scale",
+    "description": "Recent hires are not matching role requirements, creating rework.",
+    "options": [
+      {
+        "text": "Redefine role taxonomy and respec job descriptions.",
+        "flow": "Workforce Planning -> Recruitment -> Onboarding",
+        "impact": {
+          "talentQuality": 8,
+          "hrEfficiency": 3,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Keep role profiles unchanged and train after joining.",
+        "flow": "Workforce Planning -> L&D",
+        "impact": {
+          "talentQuality": -3,
+          "budgetHealth": -5,
+          "employeeTrust": 1
+        }
+      },
+      {
+        "text": "Reduce skill bar to fill seats quickly.",
+        "flow": "Workforce Planning -> Recruitment",
+        "impact": {
+          "hrEfficiency": 5,
+          "talentQuality": -8,
+          "employeeTrust": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Onboarding",
+    "title": "30-Day New Hire Attrition",
+    "description": "Early exits increase within the first month of joining.",
+    "options": [
+      {
+        "text": "Introduce week-1 manager check-ins and buddy program.",
+        "flow": "Onboarding -> Employee Relations -> Retention",
+        "impact": {
+          "employeeTrust": 8,
+          "talentQuality": 4,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Send one onboarding PDF and close tickets quickly.",
+        "flow": "Onboarding",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -6,
+          "talentQuality": -3
+        }
+      },
+      {
+        "text": "Delay onboarding content to probation month 2.",
+        "flow": "Onboarding -> Performance",
+        "impact": {
+          "budgetHealth": 2,
+          "employeeTrust": -5,
+          "legalSafety": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Onboarding",
+    "title": "No System Access on Day 1",
+    "description": "New joiners cannot access HRIS and core tools during first week.",
+    "options": [
+      {
+        "text": "Launch preboarding access checklist with IT-SLA.",
+        "flow": "Onboarding -> HRIS -> IT",
+        "impact": {
+          "hrEfficiency": 7,
+          "employeeTrust": 5,
+          "budgetHealth": -1
+        }
+      },
+      {
+        "text": "Allow managers to manually escalate each case.",
+        "flow": "Onboarding -> Manager",
+        "impact": {
+          "hrEfficiency": -3,
+          "employeeTrust": -2,
+          "budgetHealth": 0
+        }
+      },
+      {
+        "text": "Delay joining date until full access is ready.",
+        "flow": "Onboarding -> Workforce Planning",
+        "impact": {
+          "legalSafety": 2,
+          "talentQuality": -3,
+          "budgetHealth": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Onboarding",
+    "title": "Missing Policy Acknowledgements",
+    "description": "Audit finds incomplete policy signoff records for new hires.",
+    "options": [
+      {
+        "text": "Digitize mandatory policy signoff in onboarding workflow.",
+        "flow": "Onboarding -> Compliance",
+        "impact": {
+          "legalSafety": 9,
+          "hrEfficiency": 4,
+          "employeeTrust": 2
+        }
+      },
+      {
+        "text": "Collect paper signatures during induction only.",
+        "flow": "Onboarding -> Admin",
+        "impact": {
+          "legalSafety": 2,
+          "hrEfficiency": -4,
+          "budgetHealth": -1
+        }
+      },
+      {
+        "text": "Ignore until external audit cycle.",
+        "flow": "Onboarding -> Compliance Risk",
+        "impact": {
+          "legalSafety": -8,
+          "employeeTrust": -3,
+          "budgetHealth": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Onboarding",
+    "title": "Probation Review Delays",
+    "description": "Managers are not completing probation evaluations on time.",
+    "options": [
+      {
+        "text": "Auto-reminders with escalation to department heads.",
+        "flow": "Onboarding -> Performance -> Leadership",
+        "impact": {
+          "hrEfficiency": 6,
+          "talentQuality": 4,
+          "legalSafety": 2
+        }
+      },
+      {
+        "text": "Extend probation by default for all delayed cases.",
+        "flow": "Onboarding -> Employee Relations",
+        "impact": {
+          "legalSafety": -2,
+          "employeeTrust": -5,
+          "budgetHealth": 1
+        }
+      },
+      {
+        "text": "Let managers decide without deadlines.",
+        "flow": "Onboarding -> Performance",
+        "impact": {
+          "hrEfficiency": -4,
+          "employeeTrust": -4,
+          "talentQuality": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Worker Tax Misclassification",
+    "description": "Contractors and full-time workers are misclassified in payroll tax setup.",
+    "options": [
+      {
+        "text": "Run urgent classification audit and correction batch.",
+        "flow": "Payroll -> Compliance -> Legal",
+        "impact": {
+          "legalSafety": 10,
+          "hrEfficiency": 2,
+          "budgetHealth": -3
+        }
+      },
+      {
+        "text": "Fix only high-salary cases this cycle.",
+        "flow": "Payroll",
+        "impact": {
+          "budgetHealth": 1,
+          "legalSafety": -5,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Defer all corrections to year-end.",
+        "flow": "Payroll -> Risk",
+        "impact": {
+          "legalSafety": -9,
+          "employeeTrust": -3,
+          "budgetHealth": 2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Late Salary Credit Incident",
+    "description": "Salary payment failed for one business unit due to file mismatch.",
+    "options": [
+      {
+        "text": "Issue emergency payout and publish incident RCA.",
+        "flow": "Payroll -> Employee Relations -> Leadership",
+        "impact": {
+          "employeeTrust": 7,
+          "legalSafety": 4,
+          "budgetHealth": -4
+        }
+      },
+      {
+        "text": "Wait for next payroll cycle to reconcile.",
+        "flow": "Payroll",
+        "impact": {
+          "budgetHealth": 2,
+          "employeeTrust": -9,
+          "legalSafety": -3
+        }
+      },
+      {
+        "text": "Outsource payroll immediately without transition.",
+        "flow": "Payroll -> Vendor",
+        "impact": {
+          "hrEfficiency": 3,
+          "budgetHealth": -5,
+          "employeeTrust": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Overtime Dispute",
+    "description": "Employees challenge overtime calculations and approvals.",
+    "options": [
+      {
+        "text": "Align attendance logs with payroll and approvals.",
+        "flow": "Time Data -> Payroll -> Compliance",
+        "impact": {
+          "legalSafety": 8,
+          "employeeTrust": 5,
+          "hrEfficiency": 3
+        }
+      },
+      {
+        "text": "Cap overtime payout while investigation runs.",
+        "flow": "Payroll -> Relations",
+        "impact": {
+          "budgetHealth": 3,
+          "employeeTrust": -6,
+          "legalSafety": -2
+        }
+      },
+      {
+        "text": "Reject complaints unless union files case.",
+        "flow": "Payroll -> Legal",
+        "impact": {
+          "legalSafety": -7,
+          "employeeTrust": -7,
+          "budgetHealth": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Duplicate Salary Payment",
+    "description": "A script issue caused duplicate salary credit for multiple employees.",
+    "options": [
+      {
+        "text": "Freeze duplicate amount and communicate recovery plan.",
+        "flow": "Payroll -> Finance -> Employee Relations",
+        "impact": {
+          "legalSafety": 6,
+          "hrEfficiency": 4,
+          "employeeTrust": 2
+        }
+      },
+      {
+        "text": "Deduct full duplicate amount in next cycle automatically.",
+        "flow": "Payroll",
+        "impact": {
+          "budgetHealth": 4,
+          "employeeTrust": -6,
+          "legalSafety": -2
+        }
+      },
+      {
+        "text": "Ignore duplicates if total amount is small.",
+        "flow": "Payroll -> Risk",
+        "impact": {
+          "budgetHealth": -4,
+          "legalSafety": -8,
+          "hrEfficiency": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Bonus Eligibility Confusion",
+    "description": "Employees report unclear bonus eligibility and payout criteria.",
+    "options": [
+      {
+        "text": "Publish transparent bonus matrix tied to calibrated ratings.",
+        "flow": "Performance -> Compensation -> Payroll",
+        "impact": {
+          "employeeTrust": 7,
+          "legalSafety": 4,
+          "hrEfficiency": 3
+        }
+      },
+      {
+        "text": "Allow each manager to define bonus locally.",
+        "flow": "Performance -> Payroll",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -7,
+          "legalSafety": -4
+        }
+      },
+      {
+        "text": "Delay bonus announcement until quarter close.",
+        "flow": "Payroll -> Leadership",
+        "impact": {
+          "budgetHealth": 2,
+          "employeeTrust": -4,
+          "talentQuality": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Performance",
+    "title": "Rating Inflation in One Department",
+    "description": "One business unit has unusually high ratings compared to others.",
+    "options": [
+      {
+        "text": "Run cross-functional calibration with evidence review.",
+        "flow": "Performance -> Leadership -> Compensation",
+        "impact": {
+          "talentQuality": 6,
+          "employeeTrust": 5,
+          "hrEfficiency": -1
+        }
+      },
+      {
+        "text": "Accept department ratings to avoid conflict.",
+        "flow": "Performance",
+        "impact": {
+          "hrEfficiency": 3,
+          "employeeTrust": -5,
+          "legalSafety": -2
+        }
+      },
+      {
+        "text": "Force-blend all scores to meet distribution curve.",
+        "flow": "Performance -> Relations",
+        "impact": {
+          "budgetHealth": 1,
+          "employeeTrust": -6,
+          "talentQuality": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Performance",
+    "title": "Promotion Fairness Challenge",
+    "description": "Employees allege opaque promotion decisions and favoritism.",
+    "options": [
+      {
+        "text": "Introduce criteria transparency and appeal workflow.",
+        "flow": "Performance -> Employee Relations",
+        "impact": {
+          "employeeTrust": 8,
+          "legalSafety": 5,
+          "hrEfficiency": -1
+        }
+      },
+      {
+        "text": "Allow silent manager nominations only.",
+        "flow": "Performance",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -7,
+          "legalSafety": -3
+        }
+      },
+      {
+        "text": "Freeze promotions organization-wide for one cycle.",
+        "flow": "Performance -> Retention",
+        "impact": {
+          "budgetHealth": 3,
+          "talentQuality": -4,
+          "employeeTrust": -5
+        }
+      }
+    ]
+  },
+  {
+    "module": "Performance",
+    "title": "Goals Not Linked to Business KPIs",
+    "description": "Individual goals are disconnected from business priorities.",
+    "options": [
+      {
+        "text": "Rebuild goal cascade from leadership OKRs.",
+        "flow": "Leadership -> Performance -> L&D",
+        "impact": {
+          "hrEfficiency": 6,
+          "talentQuality": 5,
+          "budgetHealth": -1
+        }
+      },
+      {
+        "text": "Keep current goals and add extra reporting only.",
+        "flow": "Performance -> Reporting",
+        "impact": {
+          "hrEfficiency": -2,
+          "employeeTrust": -2,
+          "budgetHealth": -1
+        }
+      },
+      {
+        "text": "Leave goal definition entirely to teams.",
+        "flow": "Performance",
+        "impact": {
+          "hrEfficiency": 1,
+          "talentQuality": -5,
+          "employeeTrust": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Performance",
+    "title": "Manager Avoids Tough Feedback",
+    "description": "Performance conversations are superficial and avoid difficult topics.",
+    "options": [
+      {
+        "text": "Run manager coaching and feedback quality audits.",
+        "flow": "Performance -> L&D",
+        "impact": {
+          "talentQuality": 6,
+          "employeeTrust": 4,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Use generic canned feedback templates.",
+        "flow": "Performance",
+        "impact": {
+          "hrEfficiency": 2,
+          "talentQuality": -4,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Skip feedback quality checks this year.",
+        "flow": "Performance",
+        "impact": {
+          "budgetHealth": 1,
+          "employeeTrust": -5,
+          "talentQuality": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Performance",
+    "title": "PIP Process Failure",
+    "description": "Employees on performance plans are not getting structured support.",
+    "options": [
+      {
+        "text": "Standardize PIP milestones and coaching checkpoints.",
+        "flow": "Performance -> Employee Relations -> Compliance",
+        "impact": {
+          "legalSafety": 7,
+          "talentQuality": 4,
+          "hrEfficiency": 2
+        }
+      },
+      {
+        "text": "Close PIPs quickly to reduce admin load.",
+        "flow": "Performance",
+        "impact": {
+          "hrEfficiency": 3,
+          "legalSafety": -5,
+          "employeeTrust": -4
+        }
+      },
+      {
+        "text": "Let each manager define custom PIP format.",
+        "flow": "Performance -> Relations",
+        "impact": {
+          "hrEfficiency": 1,
+          "legalSafety": -4,
+          "talentQuality": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Training Completion High, Impact Low",
+    "description": "Courses are completed but business skill outcomes remain weak.",
+    "options": [
+      {
+        "text": "Tie learning outcomes to role KPIs and assessments.",
+        "flow": "L&D -> Performance",
+        "impact": {
+          "talentQuality": 7,
+          "hrEfficiency": 4,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Increase mandatory course hours for everyone.",
+        "flow": "L&D",
+        "impact": {
+          "employeeTrust": -2,
+          "budgetHealth": -4,
+          "talentQuality": 2
+        }
+      },
+      {
+        "text": "Cut learning budget and focus only on compliance modules.",
+        "flow": "L&D -> Compliance",
+        "impact": {
+          "budgetHealth": 4,
+          "talentQuality": -6,
+          "employeeTrust": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Low Learning Adoption in Ops Teams",
+    "description": "Operations teams are not participating in capability programs.",
+    "options": [
+      {
+        "text": "Link manager scorecards to team learning adoption.",
+        "flow": "L&D -> Performance -> Leadership",
+        "impact": {
+          "hrEfficiency": 5,
+          "talentQuality": 5,
+          "employeeTrust": 2
+        }
+      },
+      {
+        "text": "Keep learning optional with no follow-up.",
+        "flow": "L&D",
+        "impact": {
+          "hrEfficiency": 1,
+          "talentQuality": -4,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Mandate weekend sessions for missed learners.",
+        "flow": "L&D -> Employee Relations",
+        "impact": {
+          "talentQuality": 2,
+          "employeeTrust": -6,
+          "budgetHealth": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Weak Leadership Pipeline",
+    "description": "Few internal candidates are ready for people-lead roles.",
+    "options": [
+      {
+        "text": "Create high-potential tracks with mentorship and stretch roles.",
+        "flow": "Performance -> L&D -> Succession",
+        "impact": {
+          "talentQuality": 8,
+          "employeeTrust": 4,
+          "budgetHealth": -3
+        }
+      },
+      {
+        "text": "Prioritize only external hiring for future leaders.",
+        "flow": "Recruitment -> Leadership",
+        "impact": {
+          "hrEfficiency": 2,
+          "talentQuality": -2,
+          "budgetHealth": -4
+        }
+      },
+      {
+        "text": "Delay pipeline plan to next financial year.",
+        "flow": "L&D",
+        "impact": {
+          "budgetHealth": 2,
+          "talentQuality": -5,
+          "employeeTrust": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Certification Expiry Risk",
+    "description": "Regulated-role certifications are expiring without renewal tracking.",
+    "options": [
+      {
+        "text": "Set renewal alerts and block role assignment on expiry.",
+        "flow": "L&D -> Compliance -> Workforce Planning",
+        "impact": {
+          "legalSafety": 9,
+          "hrEfficiency": 4,
+          "employeeTrust": 1
+        }
+      },
+      {
+        "text": "Ask managers to track certifications manually.",
+        "flow": "L&D -> Manager",
+        "impact": {
+          "hrEfficiency": -2,
+          "legalSafety": -4,
+          "budgetHealth": 0
+        }
+      },
+      {
+        "text": "Ignore low-risk functions and renew only top roles.",
+        "flow": "L&D",
+        "impact": {
+          "budgetHealth": 2,
+          "legalSafety": -6,
+          "employeeTrust": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Training Budget Cut",
+    "description": "Finance asks HR to reduce learning spend by 25% this quarter.",
+    "options": [
+      {
+        "text": "Prioritize role-critical learning and stop low-ROI tracks.",
+        "flow": "Budget -> L&D -> Performance",
+        "impact": {
+          "budgetHealth": 4,
+          "talentQuality": 3,
+          "employeeTrust": -1
+        }
+      },
+      {
+        "text": "Cut all instructor-led programs equally.",
+        "flow": "L&D",
+        "impact": {
+          "budgetHealth": 5,
+          "talentQuality": -5,
+          "employeeTrust": -3
+        }
+      },
+      {
+        "text": "Retain all programs and exceed budget targets.",
+        "flow": "L&D -> Finance",
+        "impact": {
+          "talentQuality": 4,
+          "budgetHealth": -6,
+          "hrEfficiency": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Harassment Complaint Escalation",
+    "description": "A complaint escalates publicly due to delayed response.",
+    "options": [
+      {
+        "text": "Initiate formal investigation with strict SLA and confidentiality.",
+        "flow": "Employee Relations -> Compliance -> Leadership",
+        "impact": {
+          "legalSafety": 10,
+          "employeeTrust": 5,
+          "hrEfficiency": -2
+        }
+      },
+      {
+        "text": "Try informal closure without documentation.",
+        "flow": "Employee Relations",
+        "impact": {
+          "hrEfficiency": 2,
+          "legalSafety": -8,
+          "employeeTrust": -7
+        }
+      },
+      {
+        "text": "Delay action until both parties submit written statements.",
+        "flow": "Employee Relations -> Legal",
+        "impact": {
+          "legalSafety": -3,
+          "employeeTrust": -5,
+          "budgetHealth": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Product Squad Conflict",
+    "description": "Cross-functional conflict is slowing flagship project outcomes.",
+    "options": [
+      {
+        "text": "Run mediated conflict resolution and role clarity reset.",
+        "flow": "Employee Relations -> Manager Coaching",
+        "impact": {
+          "employeeTrust": 7,
+          "hrEfficiency": 4,
+          "talentQuality": 2
+        }
+      },
+      {
+        "text": "Reassign one team lead without discussion.",
+        "flow": "Employee Relations -> Workforce Planning",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -6,
+          "talentQuality": -2
+        }
+      },
+      {
+        "text": "Ignore until deadlines fail.",
+        "flow": "Employee Relations -> Risk",
+        "impact": {
+          "employeeTrust": -8,
+          "talentQuality": -3,
+          "budgetHealth": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Unionization Signals",
+    "description": "Rising grievances indicate possible unionization activity.",
+    "options": [
+      {
+        "text": "Address grievance themes with transparent townhalls.",
+        "flow": "Employee Relations -> Legal -> Leadership",
+        "impact": {
+          "employeeTrust": 6,
+          "legalSafety": 5,
+          "hrEfficiency": 2
+        }
+      },
+      {
+        "text": "Discourage organizing through manager pressure.",
+        "flow": "Employee Relations -> Legal Risk",
+        "impact": {
+          "legalSafety": -9,
+          "employeeTrust": -8,
+          "budgetHealth": 0
+        }
+      },
+      {
+        "text": "Ignore signals and continue normal operations.",
+        "flow": "Employee Relations",
+        "impact": {
+          "hrEfficiency": 1,
+          "employeeTrust": -5,
+          "legalSafety": -4
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Exit Interviews Flag Toxic Manager",
+    "description": "Multiple exits cite one manager as primary reason for leaving.",
+    "options": [
+      {
+        "text": "Launch 360 review and manager intervention plan.",
+        "flow": "Offboarding -> Employee Relations -> Performance",
+        "impact": {
+          "employeeTrust": 6,
+          "talentQuality": 4,
+          "hrEfficiency": 2
+        }
+      },
+      {
+        "text": "Offer retention bonus to affected team only.",
+        "flow": "Employee Relations -> Compensation",
+        "impact": {
+          "employeeTrust": 2,
+          "budgetHealth": -4,
+          "talentQuality": 1
+        }
+      },
+      {
+        "text": "Treat exits as market trend and take no action.",
+        "flow": "Offboarding",
+        "impact": {
+          "talentQuality": -6,
+          "employeeTrust": -7,
+          "budgetHealth": 0
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Whistleblower Retaliation Risk",
+    "description": "An employee reports retaliation after filing a compliance complaint.",
+    "options": [
+      {
+        "text": "Activate non-retaliation protocol and independent review.",
+        "flow": "Employee Relations -> Compliance",
+        "impact": {
+          "legalSafety": 9,
+          "employeeTrust": 6,
+          "hrEfficiency": -1
+        }
+      },
+      {
+        "text": "Handle within reporting manager chain.",
+        "flow": "Employee Relations",
+        "impact": {
+          "hrEfficiency": 1,
+          "legalSafety": -7,
+          "employeeTrust": -6
+        }
+      },
+      {
+        "text": "Delay review until quarterly grievance cycle.",
+        "flow": "Employee Relations -> Risk",
+        "impact": {
+          "legalSafety": -5,
+          "employeeTrust": -4,
+          "budgetHealth": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Compliance",
+    "title": "Leave Policy Abuse vs Burnout",
+    "description": "Leave spikes may be misuse or signs of burnout in high-pressure teams.",
+    "options": [
+      {
+        "text": "Combine leave analytics with wellbeing and manager reviews.",
+        "flow": "Policy -> Employee Relations -> L&D",
+        "impact": {
+          "employeeTrust": 5,
+          "legalSafety": 4,
+          "hrEfficiency": 3
+        }
+      },
+      {
+        "text": "Tighten leave approvals across all teams.",
+        "flow": "Policy -> Relations",
+        "impact": {
+          "budgetHealth": 2,
+          "employeeTrust": -6,
+          "legalSafety": -2
+        }
+      },
+      {
+        "text": "Ignore anomaly and let teams self-manage.",
+        "flow": "Policy",
+        "impact": {
+          "hrEfficiency": 1,
+          "employeeTrust": -3,
+          "talentQuality": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Compliance",
+    "title": "Cross-Border Hiring Gap",
+    "description": "Hiring in new geographies lacks local labor law controls.",
+    "options": [
+      {
+        "text": "Deploy region-specific contract and policy templates.",
+        "flow": "Recruitment -> Compliance -> Legal",
+        "impact": {
+          "legalSafety": 9,
+          "hrEfficiency": 3,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Use home-country contracts for all geographies.",
+        "flow": "Recruitment",
+        "impact": {
+          "hrEfficiency": 2,
+          "legalSafety": -8,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Pause cross-border hiring until legal team scales.",
+        "flow": "Compliance -> Workforce Planning",
+        "impact": {
+          "legalSafety": 5,
+          "talentQuality": -3,
+          "budgetHealth": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Compliance",
+    "title": "Missing Employment Contracts",
+    "description": "Audit finds incomplete contract records in HR systems.",
+    "options": [
+      {
+        "text": "Digitize all contracts with mandatory upload checks.",
+        "flow": "HRIS -> Compliance",
+        "impact": {
+          "legalSafety": 10,
+          "hrEfficiency": 4,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Collect missing contracts manually by department.",
+        "flow": "Compliance -> Operations",
+        "impact": {
+          "legalSafety": 3,
+          "hrEfficiency": -4,
+          "employeeTrust": 0
+        }
+      },
+      {
+        "text": "Close audit issue with management note only.",
+        "flow": "Compliance Risk",
+        "impact": {
+          "legalSafety": -9,
+          "budgetHealth": 1,
+          "employeeTrust": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Compliance",
+    "title": "HR Data Privacy Incident",
+    "description": "Sensitive employee records were shared with unauthorized staff.",
+    "options": [
+      {
+        "text": "Restrict access, run incident response, notify impacted users.",
+        "flow": "HRIS -> Compliance -> Legal",
+        "impact": {
+          "legalSafety": 10,
+          "employeeTrust": 4,
+          "hrEfficiency": -2
+        }
+      },
+      {
+        "text": "Patch permissions quietly without disclosure.",
+        "flow": "HRIS",
+        "impact": {
+          "hrEfficiency": 2,
+          "legalSafety": -7,
+          "employeeTrust": -6
+        }
+      },
+      {
+        "text": "Delay response until full forensic report.",
+        "flow": "HRIS -> Legal",
+        "impact": {
+          "legalSafety": -4,
+          "employeeTrust": -4,
+          "budgetHealth": 0
+        }
+      }
+    ]
+  },
+  {
+    "module": "Compliance",
+    "title": "Unapproved Contractor Access",
+    "description": "Contractors have production-system access without approval workflow.",
+    "options": [
+      {
+        "text": "Enforce access governance and periodic certification.",
+        "flow": "Workforce Planning -> IT -> Compliance",
+        "impact": {
+          "legalSafety": 8,
+          "hrEfficiency": 4,
+          "budgetHealth": -1
+        }
+      },
+      {
+        "text": "Allow temporary access until next audit.",
+        "flow": "IT -> Compliance Risk",
+        "impact": {
+          "hrEfficiency": 2,
+          "legalSafety": -6,
+          "employeeTrust": -1
+        }
+      },
+      {
+        "text": "Disable all contractor access immediately.",
+        "flow": "IT -> Workforce Planning",
+        "impact": {
+          "legalSafety": 4,
+          "hrEfficiency": -5,
+          "talentQuality": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Recruitment",
+    "title": "DEI Hiring Target Missed",
+    "description": "Quarterly diversity hiring goals were missed across key departments.",
+    "options": [
+      {
+        "text": "Expand sourcing channels and enforce diverse interview panels.",
+        "flow": "Recruitment -> Leadership -> DEI",
+        "impact": {
+          "talentQuality": 4,
+          "employeeTrust": 6,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Set numeric target only, no process changes.",
+        "flow": "Recruitment",
+        "impact": {
+          "hrEfficiency": 1,
+          "employeeTrust": -4,
+          "talentQuality": -2
+        }
+      },
+      {
+        "text": "Drop target to match current funnel reality.",
+        "flow": "Leadership -> Recruitment",
+        "impact": {
+          "budgetHealth": 1,
+          "employeeTrust": -5,
+          "legalSafety": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Gender Pay Gap Flagged",
+    "description": "Compensation analytics reveal a role-level gender pay gap.",
+    "options": [
+      {
+        "text": "Run pay equity correction plan with phased adjustments.",
+        "flow": "Compensation -> Payroll -> Compliance",
+        "impact": {
+          "employeeTrust": 8,
+          "legalSafety": 7,
+          "budgetHealth": -5
+        }
+      },
+      {
+        "text": "Adjust only newly hired employee compensation.",
+        "flow": "Compensation -> Recruitment",
+        "impact": {
+          "budgetHealth": -2,
+          "employeeTrust": -4,
+          "legalSafety": -3
+        }
+      },
+      {
+        "text": "Ignore until mandatory disclosure year.",
+        "flow": "Compensation -> Risk",
+        "impact": {
+          "legalSafety": -8,
+          "employeeTrust": -6,
+          "budgetHealth": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Low Internal Mobility",
+    "description": "Employees are not applying for internal roles despite openings.",
+    "options": [
+      {
+        "text": "Launch skill-based internal mobility marketplace.",
+        "flow": "L&D -> Talent Mobility -> Recruitment",
+        "impact": {
+          "talentQuality": 6,
+          "employeeTrust": 5,
+          "hrEfficiency": 3
+        }
+      },
+      {
+        "text": "Prioritize external hiring for speed.",
+        "flow": "Recruitment",
+        "impact": {
+          "hrEfficiency": 4,
+          "employeeTrust": -4,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Allow only manager-nominated internal movement.",
+        "flow": "Performance -> Mobility",
+        "impact": {
+          "talentQuality": 2,
+          "employeeTrust": -5,
+          "legalSafety": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "No Successors for Key Roles",
+    "description": "Critical business roles have no ready internal successor.",
+    "options": [
+      {
+        "text": "Build readiness matrix and targeted succession plans.",
+        "flow": "Performance -> Succession -> Leadership",
+        "impact": {
+          "talentQuality": 8,
+          "hrEfficiency": 3,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Keep succession informal through manager notes.",
+        "flow": "Leadership",
+        "impact": {
+          "hrEfficiency": 1,
+          "talentQuality": -5,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Rely on external hiring for all critical replacements.",
+        "flow": "Recruitment -> Workforce Planning",
+        "impact": {
+          "hrEfficiency": 2,
+          "budgetHealth": -4,
+          "talentQuality": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Maternity Return Drop-Off",
+    "description": "Return-to-work attrition is high among employees after maternity leave.",
+    "options": [
+      {
+        "text": "Implement phased return and flexible work support.",
+        "flow": "Policy -> Employee Relations -> Retention",
+        "impact": {
+          "employeeTrust": 9,
+          "talentQuality": 4,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Offer one-time retention bonus only.",
+        "flow": "Compensation -> Retention",
+        "impact": {
+          "employeeTrust": 2,
+          "budgetHealth": -4,
+          "talentQuality": 1
+        }
+      },
+      {
+        "text": "Keep existing return policy unchanged.",
+        "flow": "Policy",
+        "impact": {
+          "employeeTrust": -6,
+          "talentQuality": -3,
+          "legalSafety": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Hybrid Work Policy Confusion",
+    "description": "Teams interpret hybrid rules inconsistently, causing fairness concerns.",
+    "options": [
+      {
+        "text": "Define role-based hybrid matrix and publish exceptions process.",
+        "flow": "Leadership -> Policy -> Employee Relations",
+        "impact": {
+          "employeeTrust": 7,
+          "hrEfficiency": 4,
+          "legalSafety": 2
+        }
+      },
+      {
+        "text": "Let each manager set hybrid rules independently.",
+        "flow": "Policy -> Managers",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -6,
+          "legalSafety": -2
+        }
+      },
+      {
+        "text": "Mandate full return-to-office for all.",
+        "flow": "Policy -> Retention",
+        "impact": {
+          "hrEfficiency": 1,
+          "employeeTrust": -7,
+          "talentQuality": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Time Tracking Non-Compliance",
+    "description": "Attendance records are incomplete and payroll is delayed.",
+    "options": [
+      {
+        "text": "Automate attendance integrations and approval reminders.",
+        "flow": "Attendance -> Payroll -> Compliance",
+        "impact": {
+          "hrEfficiency": 7,
+          "legalSafety": 5,
+          "employeeTrust": 2
+        }
+      },
+      {
+        "text": "Accept estimated timesheets for payroll closure.",
+        "flow": "Payroll",
+        "impact": {
+          "hrEfficiency": 3,
+          "legalSafety": -5,
+          "employeeTrust": -2
+        }
+      },
+      {
+        "text": "Delay payroll until all entries are complete.",
+        "flow": "Payroll -> Employee Relations",
+        "impact": {
+          "legalSafety": 2,
+          "employeeTrust": -7,
+          "budgetHealth": 1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Workforce Planning",
+    "title": "Merger Duplicate Roles",
+    "description": "Post-merger org has overlapping roles and unclear redeployment criteria.",
+    "options": [
+      {
+        "text": "Use objective redeployment matrix with transparent communication.",
+        "flow": "Workforce Planning -> Employee Relations",
+        "impact": {
+          "employeeTrust": 6,
+          "hrEfficiency": 5,
+          "legalSafety": 3
+        }
+      },
+      {
+        "text": "Let business heads choose redundancies independently.",
+        "flow": "Workforce Planning -> Leadership",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -6,
+          "legalSafety": -4
+        }
+      },
+      {
+        "text": "Freeze all role changes for two quarters.",
+        "flow": "Workforce Planning",
+        "impact": {
+          "budgetHealth": -2,
+          "hrEfficiency": -4,
+          "talentQuality": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Culture Clash After Acquisition",
+    "description": "Two merged teams show contrasting norms and high friction.",
+    "options": [
+      {
+        "text": "Run integration workshops and define shared behavior standards.",
+        "flow": "Employee Relations -> L&D -> Leadership",
+        "impact": {
+          "employeeTrust": 7,
+          "talentQuality": 3,
+          "budgetHealth": -2
+        }
+      },
+      {
+        "text": "Separate teams and minimize collaboration.",
+        "flow": "Workforce Planning",
+        "impact": {
+          "hrEfficiency": 1,
+          "employeeTrust": -4,
+          "talentQuality": -2
+        }
+      },
+      {
+        "text": "Ignore cultural issues and focus only on delivery KPIs.",
+        "flow": "Employee Relations -> Risk",
+        "impact": {
+          "budgetHealth": 1,
+          "employeeTrust": -7,
+          "talentQuality": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Employee Relations",
+    "title": "Critical Talent Poaching",
+    "description": "Competitor is poaching top engineers and analysts.",
+    "options": [
+      {
+        "text": "Deploy retention risk model with targeted stay plans.",
+        "flow": "Performance -> Compensation -> Retention",
+        "impact": {
+          "talentQuality": 7,
+          "employeeTrust": 4,
+          "budgetHealth": -4
+        }
+      },
+      {
+        "text": "Give blanket retention bonus to all staff.",
+        "flow": "Compensation",
+        "impact": {
+          "employeeTrust": 3,
+          "budgetHealth": -7,
+          "hrEfficiency": 1
+        }
+      },
+      {
+        "text": "Backfill through fast-track hiring only.",
+        "flow": "Recruitment",
+        "impact": {
+          "hrEfficiency": 3,
+          "talentQuality": -4,
+          "employeeTrust": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Recruitment",
+    "title": "Low Intern-to-FTE Conversion",
+    "description": "Internship program has high completion but low full-time conversion.",
+    "options": [
+      {
+        "text": "Add project-based evaluation and manager sponsorship.",
+        "flow": "Campus Recruitment -> L&D -> Hiring",
+        "impact": {
+          "talentQuality": 6,
+          "hrEfficiency": 4,
+          "budgetHealth": -1
+        }
+      },
+      {
+        "text": "Increase intern stipend without changing program design.",
+        "flow": "Recruitment -> Compensation",
+        "impact": {
+          "budgetHealth": -3,
+          "talentQuality": 1,
+          "employeeTrust": 1
+        }
+      },
+      {
+        "text": "Cut internship intake next cycle.",
+        "flow": "Recruitment -> Workforce Planning",
+        "impact": {
+          "budgetHealth": 2,
+          "talentQuality": -4,
+          "hrEfficiency": -1
+        }
+      }
+    ]
+  },
+  {
+    "module": "Workforce Planning",
+    "title": "Manager Span Too Wide",
+    "description": "Large manager spans reduce coaching quality and review depth.",
+    "options": [
+      {
+        "text": "Redesign org spans and invest in manager enablement.",
+        "flow": "Workforce Planning -> Performance",
+        "impact": {
+          "talentQuality": 5,
+          "employeeTrust": 5,
+          "budgetHealth": -3
+        }
+      },
+      {
+        "text": "Keep current spans and add reporting dashboards.",
+        "flow": "Workforce Planning",
+        "impact": {
+          "hrEfficiency": 2,
+          "employeeTrust": -3,
+          "talentQuality": -2
+        }
+      },
+      {
+        "text": "Reduce one-on-one frequency to manage load.",
+        "flow": "Performance -> Relations",
+        "impact": {
+          "hrEfficiency": 1,
+          "employeeTrust": -6,
+          "talentQuality": -3
+        }
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "title": "Benefits Enrollment Errors",
+    "description": "Incorrect benefits enrollment data is affecting payroll deductions.",
+    "options": [
+      {
+        "text": "Add enrollment validation and payroll pre-run checks.",
+        "flow": "Benefits -> Payroll",
+        "impact": {
+          "hrEfficiency": 6,
+          "legalSafety": 4,
+          "employeeTrust": 3
+        }
+      },
+      {
+        "text": "Fix only severe deduction mismatches this month.",
+        "flow": "Benefits -> Payroll",
+        "impact": {
+          "budgetHealth": 2,
+          "employeeTrust": -3,
+          "legalSafety": -2
+        }
+      },
+      {
+        "text": "Postpone corrections to annual reconciliation.",
+        "flow": "Payroll -> Compliance Risk",
+        "impact": {
+          "budgetHealth": 3,
+          "legalSafety": -6,
+          "employeeTrust": -4
+        }
+      }
+    ]
+  },
+  {
+    "module": "L&D",
+    "title": "Automation Reskilling Wave",
+    "description": "Automation rollout requires rapid reskilling across operations teams.",
+    "options": [
+      {
+        "text": "Build phased transition academy with role-maps.",
+        "flow": "Workforce Planning -> L&D -> Deployment",
+        "impact": {
+          "talentQuality": 8,
+          "employeeTrust": 5,
+          "budgetHealth": -4
+        }
+      },
+      {
+        "text": "Reskill only top performers first.",
+        "flow": "L&D -> Succession",
+        "impact": {
+          "talentQuality": 3,
+          "employeeTrust": -5,
+          "budgetHealth": 1
+        }
+      },
+      {
+        "text": "Hire external automation talent instead of reskilling.",
+        "flow": "Recruitment -> Workforce Planning",
+        "impact": {
+          "hrEfficiency": 3,
+          "budgetHealth": -5,
+          "employeeTrust": -2
+        }
+      }
+    ]
+  },
+  {
+    "module": "Capstone",
+    "title": "Board Requests Integrated HR Dashboard",
+    "description": "Leadership requests module-level decisions, outcomes, and next-quarter risk map.",
+    "options": [
+      {
+        "text": "Present integrated module flow with metrics and corrective actions.",
+        "flow": "All Modules -> Strategy",
+        "impact": {
+          "hrEfficiency": 7,
+          "legalSafety": 4,
+          "employeeTrust": 4
+        }
+      },
+      {
+        "text": "Present only hiring and cost metrics.",
+        "flow": "Recruitment + Budget",
+        "impact": {
+          "budgetHealth": 3,
+          "talentQuality": -2,
+          "employeeTrust": -3
+        }
+      },
+      {
+        "text": "Present narrative without traceable data flow.",
+        "flow": "No flow visibility",
+        "impact": {
+          "hrEfficiency": -6,
+          "legalSafety": -2,
+          "employeeTrust": -2
+        }
+      }
+    ]
+  }
+]
