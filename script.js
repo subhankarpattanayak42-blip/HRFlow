@@ -19,6 +19,28 @@ const modules = [
 
 const defaultScenarios = [
   {
+    module: "Workforce Planning",
+    title: "Headcount crisis before peak season",
+    description: "GlobalTech's vendors just doubled hiring targets for Q3. You have 2 weeks to redesign the workforce plan. Current systems can barely track 15,000 employees — now you're expected to scale without accurate data.",
+    options: [
+      {
+        text: "Build a live headcount dashboard pulling from the legacy HRIS and reconcile manually each week.",
+        flow: "Workforce Planning -> Recruitment -> HRIS",
+        impact: { hrEfficiency: 8, talentQuality: 3, budgetHealth: -5 },
+      },
+      {
+        text: "Freeze non-critical hiring, outsource temp staffing, accept the 15% vendor penalty.",
+        flow: "Workforce Planning -> Finance -> Compliance",
+        impact: { budgetHealth: 6, talentQuality: -4, employeeTrust: -3 },
+      },
+      {
+        text: "Fast-track the HRMS cloud migration to get real-time workforce analytics before Q3.",
+        flow: "Workforce Planning -> HRIS -> Recruitment",
+        impact: { hrEfficiency: 10, talentQuality: 6, budgetHealth: -10, legalSafety: 4 },
+      },
+    ],
+  },
+  {
     module: "Recruitment",
     title: "High attrition in software team",
     description: "You must fill 14 engineering roles in 5 weeks without lowering hiring quality.",
