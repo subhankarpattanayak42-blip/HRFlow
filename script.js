@@ -362,6 +362,7 @@ function freshSession() {
     completed: false,
     log: [],
     resultSaved: false,
+    weekCompleted: 1,
     updatedAt: nowISO(),
   };
 }
@@ -373,8 +374,23 @@ function getTeam() {
 function getSession() {
   const team = getTeam();
   if (!team) return null;
+  // Ensure session exists
   if (!team.session || typeof team.session !== "object") {
     team.session = freshSession();
+    team.session.weekCompleted = state.activeWeek;
+  }
+  // Auto-detect week change: if session was completed for a different week, reset
+  if (team.session.completed && team.session.weekCompleted !== state.activeWeek) {
+    team.session = freshSession();
+    team.session.weekCompleted = state.activeWeek;
+    // Persist the reset to DB (fire-and-forget)
+    if (state.supabase) {
+      state.supabase
+        .from("teams")
+        .update({ session: team.session, updated_at: nowISO() })
+        .eq("id", team.id)
+        .then();
+    }
   }
   return team.session;
 }
