@@ -315,20 +315,21 @@ function isAdminUser() {
 }
 
 function getScenarios() {
-  const mappedCustom = state.customScenarios
-    .filter((row) => (row.week_number || 1) === (state.activeWeek || 1))
-    .map((row) => ({
+  // Week 1 = hardcoded default scenarios
+  if (!state.activeWeek || state.activeWeek === 1) {
+    const mappedCustom = state.customScenarios.map((row) => ({
       id: row.id,
       module: row.module,
       title: row.title,
       description: row.description,
       options: row.options,
     }));
-  // Week 1 = hardcoded default scenarios, weeks 2+ = custom scenarios only
-  if (!state.activeWeek || state.activeWeek === 1) {
     return [...defaultScenarios, ...mappedCustom];
   }
-  return mappedCustom;
+  // Weeks 2+ = pre-built scenario packs
+  const pack = weekScenarios[state.activeWeek];
+  if (pack && pack.length) return pack;
+  return defaultScenarios;
 }
 
 function freshSession() {
