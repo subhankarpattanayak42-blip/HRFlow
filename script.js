@@ -1,3 +1,25 @@
+const WEEK_LABELS = {
+  1: "Week 1: HRIS Fundamentals",
+  2: "Week 2: Digital Transformation",
+  3: "Week 3: Mergers & Acquisitions",
+  4: "Week 4: Global Compliance",
+  5: "Week 5: Talent Analytics",
+  6: "Week 6: Employee Experience",
+  7: "Week 7: Compensation Strategy",
+  8: "Week 8: HRIS Security",
+  9: "Week 9: Future of Work",
+  10: "Week 10: Strategic HR",
+};
+
+function updateWeekDisplay() {
+  const label = WEEK_LABELS[state.activeWeek] || `Week ${state.activeWeek}`;
+  const badge = document.getElementById("week-badge");
+  if (badge) badge.textContent = label;
+  if (refs.weekSelect) refs.weekSelect.value = state.activeWeek;
+  const status = document.getElementById("week-status");
+  if (status) status.textContent = `Currently active: ${label}`;
+}
+
 const BASELINE_METRICS = {
   talentQuality: 55,
   employeeTrust: 55,
@@ -477,7 +499,7 @@ async function loadRemoteData() {
     state.supabase.from("teams").select("*").order("created_at", { ascending: true }),
     state.supabase.from("custom_scenarios").select("*").order("created_at", { ascending: true }),
     state.supabase.from("results").select("*").order("completed_at", { ascending: false }),
-    state.supabase.from("classroom_runs").select("active_week").limit(1).single(),
+    state.supabase.from("classroom_runs").select("id,stage_index,title").limit(1).maybeSingle(),
   ]);
 
   if (teamsRes.error || customRes.error || resultsRes.error) {
@@ -494,10 +516,11 @@ async function loadRemoteData() {
   state.customScenarios = customRes.data || [];
   state.results = resultsRes.data || [];
   // Load active week from classroom_runs stage_index
-  if (runsRes.data && runsRes.data.stage_index !== undefined && runsRes.data.stage_index !== null) {
+  if (runsRes.data && runsRes.data.stage_index !== null && runsRes.data.stage_index !== undefined) {
     state.activeWeek = runsRes.data.stage_index || 1;
   }
-  // Update week selector UI
+  // Update week badge in header and week selector
+  updateWeekDisplay();
   if (refs.weekSelect) refs.weekSelect.value = state.activeWeek;
 
   if (!state.selectedTeamId && state.teams.length) {
