@@ -538,13 +538,19 @@ function renderTeamMembers() {
 
 function renderModules(activeTitle = "") {
   refs.moduleMap.innerHTML = "";
-  modules.forEach((module) => {
+  modules.forEach((module, i) => {
     const card = document.createElement("div");
     card.className = "module";
     const isActive = activeTitle.toLowerCase().includes(module.title.toLowerCase());
     if (isActive) card.classList.add("active", "connected");
-    card.innerHTML = `<strong>${module.title}</strong><span>sends to: ${module.sendsTo}</span>`;
+    card.innerHTML = `<strong>${module.title}</strong><small>→ ${module.sendsTo}</small>`;
     refs.moduleMap.appendChild(card);
+    if (i < modules.length - 1) {
+      const arrow = document.createElement("span");
+      arrow.className = "module-arrow";
+      arrow.textContent = "→";
+      refs.moduleMap.appendChild(arrow);
+    }
   });
 }
 
@@ -580,8 +586,11 @@ function renderTimeline() {
   [...session.log].reverse().forEach((entry) => {
     const item = document.createElement("li");
     const deltas = Object.entries(entry.impact)
-      .map(([k, v]) => `${metricLabels[k]} ${v > 0 ? "+" : ""}${v}`)
-      .join(" | ");
+      .map(([k, v]) => {
+        const cls = v > 0 ? "impact-positive" : "impact-negative";
+        const sign = v > 0 ? "+" : "";
+        return `<span class="impact-badge ${cls}">${metricLabels[k]} ${sign}${v}</span>`;
+      }).join(" ");
     item.innerHTML = `<strong>${entry.module}:</strong> ${entry.choice}<small>${entry.flow}</small><small>${deltas}</small>`;
     refs.timeline.appendChild(item);
   });
@@ -644,7 +653,13 @@ function renderScenario() {
   scenario.options.forEach((option) => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
-    btn.innerHTML = `<strong>${option.text}</strong><small>${option.flow}</small>`;
+    const impacts = Object.entries(option.impact)
+      .map(([k, v]) => {
+        const cls = v > 0 ? "impact-positive" : "impact-negative";
+        const sign = v > 0 ? "+" : "";
+        return `<span class="impact-badge ${cls}">${metricLabels[k]} ${sign}${v}</span>`;
+      }).join("");
+    btn.innerHTML = `<strong>${option.text}</strong><small>${option.flow}</small><div class="option-impacts">${impacts}</div>`;
     btn.addEventListener("click", () => {
       void chooseOption(scenario, option);
     });

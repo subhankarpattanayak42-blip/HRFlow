@@ -3,46 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HR Flow Lab</title>
+  <title>MG3003 — HR Flow Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="noise"></div>
   <main class="app-shell">
     <header class="hero">
-      <div>
-        <p class="tag">Interactive Learning Game</p>
+      <div class="hero-left">
+        <span class="course-code">MG3003 · Silicon University</span>
         <h1>HR Flow Lab</h1>
-        <p class="subtitle">Run the HR department for one semester. Every decision changes people, policy, and process.</p>
+        <p class="subtitle">Enterprise HRIS Architecture — run the HR department, make real decisions, see the impact.</p>
       </div>
       <div class="hero-actions">
         <p id="session-banner" class="session-banner">Not logged in</p>
-        <button id="logout-btn" class="ghost" disabled>Logout</button>
+        <button id="logout-btn" class="ghost" style="color:#fff;border-color:rgba(255,255,255,0.3);background:transparent" disabled>Logout</button>
       </div>
     </header>
 
     <section class="top-grid">
       <article class="panel auth-panel">
-        <h2>Authentication</h2>
+        <h2>🔐 Get Started</h2>
         <div class="form-grid two-col">
           <form id="register-form" class="stack">
-            <h3>Register</h3>
+            <h3 style="font-size:0.9rem;color:var(--muted);font-weight:500">New here?</h3>
             <input id="register-name" type="text" placeholder="Display name" required />
             <input id="register-email" type="email" placeholder="Email" required />
             <input id="register-password" type="password" placeholder="Password" required />
             <div id="register-role-wrap">
               <select id="register-role">
                 <option value="student">Student</option>
-                <option value="admin">Admin</option>
+                <option value="admin">Faculty</option>
               </select>
             </div>
             <button class="primary" type="submit">Create Account</button>
           </form>
           <form id="login-form" class="stack">
-            <h3>Login</h3>
+            <h3 style="font-size:0.9rem;color:var(--muted);font-weight:500">Already have an account?</h3>
             <input id="login-name" type="email" placeholder="Email" required />
             <input id="login-password" type="password" placeholder="Password" required />
             <button class="primary" type="submit">Login</button>
@@ -52,7 +51,7 @@
       </article>
 
       <article class="panel team-panel">
-        <h2>Team & Session</h2>
+        <h2>👥 Your Team</h2>
         <div class="stack">
           <select id="team-select"></select>
           <div id="team-create-wrap" class="inline-row">
@@ -60,7 +59,7 @@
             <button id="create-team-btn" class="ghost" type="button">Create Team</button>
           </div>
           <div id="team-member-wrap" class="inline-row">
-            <input id="member-name" type="text" placeholder="Add student name to team" />
+            <input id="member-name" type="text" placeholder="Add member email" />
             <button id="add-member-btn" class="ghost" type="button">Add Member</button>
           </div>
           <p id="team-members" class="small muted">No team selected.</p>
@@ -73,67 +72,67 @@
     </section>
 
     <section id="admin-panel" class="panel admin-panel hidden">
-      <h2>Faculty Admin: Scenario Builder</h2>
-      <p class="small muted">Create custom scenarios. They are added after default modules and shared in this browser.</p>
-      <div class="form-grid">
+      <h2>⚙️ Faculty Admin</h2>
+      <p class="small muted">Create custom scenarios. They're added after default modules and shared across teams.</p>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem">
         <input id="admin-module" type="text" placeholder="Module (e.g., Recruitment)" />
         <input id="admin-title" type="text" placeholder="Scenario title" />
-        <textarea id="admin-description" rows="3" placeholder="Scenario description"></textarea>
       </div>
+      <textarea id="admin-description" rows="3" placeholder="Scenario description" style="margin-bottom:0.5rem"></textarea>
       <div class="admin-options-header">
-        <h3>Options</h3>
-        <button id="add-option-btn" class="ghost" type="button">Add Option</button>
+        <h3 style="font-size:0.9rem">Options</h3>
+        <button id="add-option-btn" class="ghost" type="button">+ Add Option</button>
       </div>
       <div id="admin-options" class="options-editor"></div>
-      <div class="inline-row">
+      <div class="inline-row" style="margin-top:0.5rem">
         <button id="save-scenario-btn" class="primary" type="button">Save Scenario</button>
-        <button id="seed-options-btn" class="ghost" type="button">Seed 3 Empty Options</button>
+        <button id="seed-options-btn" class="ghost" type="button">Seed 3 Options</button>
       </div>
-      <p id="admin-message" class="message"></p>
+      <p id="admin-message" class="message" style="margin-top:0.3rem"></p>
       <hr />
       <div class="danger-zone">
-        <h3>Danger Zone</h3>
-        <p class="small muted">These actions remove historical records from Supabase.</p>
-        <div class="inline-row">
+        <h3>⚠️ Danger Zone</h3>
+        <p class="small muted">These actions permanently remove data from the database.</p>
+        <div class="inline-row" style="margin-top:0.4rem">
           <button id="wipe-results-btn" class="danger" type="button">Wipe Results</button>
-          <button id="reset-sessions-btn" class="danger" type="button">Reset All Team Sessions</button>
-          <button id="wipe-all-btn" class="danger" type="button">Wipe All DB Values</button>
+          <button id="reset-sessions-btn" class="danger" type="button">Reset All Sessions</button>
+          <button id="wipe-all-btn" class="danger" type="button">Wipe All Data</button>
         </div>
       </div>
     </section>
 
     <section class="grid">
       <article class="panel stats-panel">
-        <h2>Department Health</h2>
+        <h2>📊 Department Health</h2>
         <div id="stats" class="stats"></div>
         <p id="round-label" class="round">Round 0 / 0</p>
       </article>
 
       <article class="panel module-panel">
-        <h2>HR Information Flow</h2>
+        <h2>🔄 HR Information Flow</h2>
         <div id="module-map" class="module-map"></div>
       </article>
 
       <article class="panel scenario-panel">
-        <h2>Scenario</h2>
+        <h2>📋 Scenario</h2>
         <div id="scenario-box" class="scenario-box">
-          <p class="hint">Login, choose a team, and press <strong>Start Simulation</strong>.</p>
+          <p class="hint" style="color:var(--muted);font-size:0.85rem;margin:0">Login, choose a team, and press <strong>Start Simulation</strong>.</p>
         </div>
         <div id="options" class="options"></div>
       </article>
 
       <article class="panel timeline-panel">
-        <h2>Decision Timeline</h2>
+        <h2>📜 Decision Log</h2>
         <ul id="timeline" class="timeline"></ul>
       </article>
 
       <article id="leaderboard-panel" class="panel leaderboard-panel">
-        <h2>Leaderboard</h2>
+        <h2>🏆 Leaderboard</h2>
         <ul id="leaderboard" class="timeline"></ul>
       </article>
 
       <article id="analytics-panel" class="panel analytics-panel">
-        <h2>Progress Analytics</h2>
+        <h2>📈 Progress Analytics</h2>
         <div id="analytics" class="stack"></div>
       </article>
     </section>
