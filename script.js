@@ -492,9 +492,9 @@ async function loadRemoteData() {
   }));
   state.customScenarios = customRes.data || [];
   state.results = resultsRes.data || [];
-  // Load active week from classroom_runs
-  if (runsRes.data && runsRes.data.active_week) {
-    state.activeWeek = runsRes.data.active_week;
+  // Load active week from classroom_runs stage_index
+  if (runsRes.data && runsRes.data.stage_index !== undefined && runsRes.data.stage_index !== null) {
+    state.activeWeek = runsRes.data.stage_index || 1;
   }
   // Update week selector UI
   if (refs.weekSelect) refs.weekSelect.value = state.activeWeek;
@@ -1112,7 +1112,7 @@ function setupAdminHandlers() {
     if (!state.supabase) return;
     const { error } = await state.supabase
       .from("classroom_runs")
-      .update({ active_week: week })
+      .update({ stage_index: week })
       .not("id", "is", null);
     if (error) {
       refs.weekStatus.textContent = `Error: ${error.message}`;
