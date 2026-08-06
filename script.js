@@ -760,6 +760,8 @@ async function addResultIfNeeded(session) {
     metrics: session.metrics,
     modules_played: session.log.map((x) => x.module),
     completed_at: nowISO(),
+    week: state.activeWeek,
+    week_label: WEEK_LABELS[state.activeWeek] || `Week ${state.activeWeek}`,
   };
 
   session.resultSaved = "pending";
@@ -843,11 +845,12 @@ function renderLeaderboard() {
     return;
   }
 
-  const top = [...state.results].sort((a, b) => b.score - a.score).slice(0, 10);
+  const top = [...state.results].sort((a, b) => b.score - a.score).slice(0, 20);
   top.forEach((entry, idx) => {
     const item = document.createElement("li");
     const date = new Date(entry.completed_at || entry.completedAt).toLocaleDateString();
-    item.innerHTML = `<strong>#${idx + 1} ${entry.team_name || entry.teamName}</strong> - ${entry.score} (${entry.label})<small>Player: ${entry.user_email || "N/A"} | ${date}</small>`;
+    const weekInfo = entry.week_label || entry.week_label || (entry.week ? `Week ${entry.week}` : "");
+    item.innerHTML = `<strong>#${idx + 1} ${entry.team_name || entry.teamName}</strong> - ${entry.score} (${entry.label})<small>${weekInfo} · ${entry.user_email || "N/A"} · ${date}</small>`;
     refs.leaderboard.appendChild(item);
   });
 }
@@ -859,49 +862,70 @@ function renderAnalytics() {
     return;
   }
 
-  const averageScore = Math.round(
-    state.results.reduce((sum, record) => sum + record.score, 0) / totalRuns
-  );
-
-  const metricAvg = {};
-  Object.keys(BASELINE_METRICS).forEach((key) => {
-    metricAvg[key] = Math.round(
-      state.results.reduce((sum, record) => sum + ((record.metrics || {})[key] || 0), 0) / totalRuns
-    );
-  });
-
-  const moduleCounts = {};
-  state.results.forEach((record) => {
-    (record.modules_played || []).forEach((name) => {
-      moduleCounts[name] = (moduleCounts[name] || 0) + 1;
+  // Group results by week
+    const byWeek = {};
+    state.results.forEach(r => {
+      const wk = r.week || 1;
+      if (!byWeek[wk]) byWeek[wk] = [];
+      byWeek[wk].push(r);
     });
-  });
 
-  const topModules = Object.entries(moduleCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
-    .map(([name, count]) => `${name} (${count})`)
-    .join(", ");
+    let weekHtml = "";
+    Object.keys(byWeek).sort().forEach(wk => {
+      const runs = byWeek[wk];
+      const avg = Math.round(runs.reduce((s, r) => s + r.score, 0) / runs.length);
+      const label = runs[0].week_label || `Week ${wk}`;
+      weekHtml += `<div class="stat"><div class="stat-head"><span>${label}</span><strong>${runs.length} run(s) · Avg ${avg}</strong></div></div>`;
+    });
 
-  refs.analytics.innerHTML = `
-    <p><strong>Total Completed Runs:</strong> ${totalRuns}</p>
-    <p><strong>Average Final Score:</strong> ${averageScore}</p>
-    <p><strong>Most Frequent Modules:</strong> ${topModules || "N/A"}</p>
-    <div class="stats">
-      ${Object.entries(metricAvg)
-        .map(
-          ([key, value]) => `
-        <div class="stat">
-          <div class="stat-head">
-            <span>${metricLabels[key]}</span>
-            <strong>${value}</strong>
-          </div>
-          <div class="bar-wrap"><div class="bar" style="width:${value}%; background:${metricTone(value)}"></div></div>
-        </div>`
-        )
-        .join("")}
-    </div>
-  `;
+    const averageScore = Math.round(
+      state.results.reduce((sum, record) => sum + record.score, 0) / totalRuns
+    );
+
+    const metricAvg = {};
+    Object.keys(BASELINE_METRICS).forEach((key) => {
+      metricAvg[key] = Math.round(
+        state.results.reduce((sum, record) => sum + ((record.metrics || {})[key] || 0), 0) / totalRuns
+      );
+    });
+
+    const moduleCounts = {};
+    state.results.forEach((record) => {
+      (record.modules_played || []).forEach((name) => {
+        moduleCounts[name] = (moduleCounts[name] || 0) + 1;
+      });
+    });
+
+    const topModules = Object.entries(moduleCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([name, count]) => `${name} (${count})`)
+      .join(", ");
+
+    refs.analytics.innerHTML = `
+      ${weekHtml}
+      <div class="stat" style="border-color:var(--navy)">
+        <div class="stat-head"><span>📊 Total Runs</span><strong>${totalRuns}</strong></div>
+      </div>
+      <div class="stat" style="border-color:var(--gold)">
+        <div class="stat-head"><span>📈 Overall Average</span><strong>${averageScore}</strong></div>
+      </div>
+      <p class="small muted" style="margin-top:0.5rem"><strong>Most Played Modules:</strong> ${topModules || "N/A"}</p>
+      <p class="small muted" style="margin-top:0.3rem"><strong>Avg Metrics Across All Runs:</strong></p>
+      <div class="stats">
+        ${Object.entries(metricAvg)
+          .map(
+            ([key, value]) => `
+          <div class="stat">
+            <div class="stat-head">
+              <span>${metricLabels[key]}</span>
+              <strong>${value}</strong>
+            </div>
+            <div class="bar-wrap"><div class="bar" style="width:${value}%; background:${metricTone(value)}"></div></div>
+          </div>`
+          )
+          .join("")}
+      </div>`;
 }
 
 function addOptionEditor(prefill = null) {
