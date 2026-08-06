@@ -292,6 +292,8 @@ const refs = {
   summary: document.getElementById("summary"),
   leaderboard: document.getElementById("leaderboard"),
   leaderboardPanel: document.getElementById("leaderboard-panel"),
+  myresults: document.getElementById("myresults"),
+  myresultsPanel: document.getElementById("myresults-panel"),
   analytics: document.getElementById("analytics"),
   analyticsPanel: document.getElementById("analytics-panel"),
   adminPanel: document.getElementById("admin-panel"),
@@ -855,6 +857,31 @@ function renderLeaderboard() {
   });
 }
 
+function renderMyResults() {
+  refs.myresults.innerHTML = "";
+  if (!state.currentUser || !state.results.length) {
+    refs.myresults.innerHTML = "<p class='small muted'>Complete a simulation to see your results here.</p>";
+    return;
+  }
+
+  // Filter results for current user
+  const myResults = state.results.filter(r => r.user_id === state.currentUser.id || r.user_email === state.currentUser.email);
+  if (!myResults.length) {
+    refs.myresults.innerHTML = "<p class='small muted'>No results yet. Play the simulation!</p>";
+    return;
+  }
+
+  myResults.sort((a, b) => new Date(b.completed_at || b.completedAt) - new Date(a.completed_at || a.completedAt));
+  myResults.forEach((entry) => {
+    const date = new Date(entry.completed_at || entry.completedAt).toLocaleDateString();
+    const weekLabel = (entry.metrics && entry.metrics._week_label) || `Week ${entry.metrics && entry.metrics._week || 1}`;
+    const div = document.createElement("div");
+    div.className = "stat";
+    div.innerHTML = `<div class="stat-head"><span>${weekLabel}</span><strong>${entry.score}</strong></div><div class="stat-head" style="font-size:0.75rem;color:var(--muted)"><span>${entry.label}</span><span>${date}</span></div>`;
+    refs.myresults.appendChild(div);
+  });
+}
+
 function renderAnalytics() {
   const totalRuns = state.results.length;
   if (!totalRuns) {
@@ -1377,13 +1404,17 @@ function refreshUI() {
   renderTimeline();
   renderScenario();
   renderLeaderboard();
+  renderMyResults();
   renderAnalytics();
   setControlStates();
 
   const isAdmin = isAdminUser();
   const isStudent = !!state.currentUser && !isAdmin;
   refs.adminPanel.classList.toggle("hidden", !isAdmin);
-  refs.leaderboardPanel.classList.toggle("hidden", !isAdmin);
+  // Leaderboard visible to all
+  refs.leaderboardPanel.classList.remove("hidden");
+  // My Results visible to logged-in users
+  refs.myresultsPanel.classList.toggle("hidden", !state.currentUser);
   refs.analyticsPanel.classList.toggle("hidden", !isAdmin);
   refs.registerRoleWrap.classList.toggle("hidden", isStudent);
   refs.teamCreateWrap.classList.toggle("hidden", isStudent);

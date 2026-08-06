@@ -142,8 +142,9 @@ body {
 .module-panel { grid-column: span 8; }
 .scenario-panel { grid-column: span 7; }
 .timeline-panel { grid-column: span 5; }
-.leaderboard-panel { grid-column: span 5; }
-.analytics-panel { grid-column: span 7; }
+.leaderboard-panel { grid-column: span 4; }
+.myresults-panel { grid-column: span 4; }
+.analytics-panel { grid-column: span 4; }
 
 /* ── Forms ──────────────────────────────────── */
 .form-grid { display: grid; gap: 0.65rem; }
