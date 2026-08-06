@@ -234,6 +234,7 @@ const state = {
   customScenarios: [],
   results: [],
   selectedTeamId: "",
+  activeWeek: 1,
   authListenerSet: false,
 };
 
@@ -272,6 +273,7 @@ const refs = {
   analytics: document.getElementById("analytics"),
   analyticsPanel: document.getElementById("analytics-panel"),
   adminPanel: document.getElementById("admin-panel"),
+  weekSelect: document.getElementById("week-select"),
   adminModule: document.getElementById("admin-module"),
   adminTitle: document.getElementById("admin-title"),
   adminDescription: document.getElementById("admin-description"),
@@ -313,14 +315,20 @@ function isAdminUser() {
 }
 
 function getScenarios() {
-  const mappedCustom = state.customScenarios.map((row) => ({
-    id: row.id,
-    module: row.module,
-    title: row.title,
-    description: row.description,
-    options: row.options,
-  }));
-  return [...defaultScenarios, ...mappedCustom];
+  const mappedCustom = state.customScenarios
+    .filter((row) => (row.week_number || 1) === (state.activeWeek || 1))
+    .map((row) => ({
+      id: row.id,
+      module: row.module,
+      title: row.title,
+      description: row.description,
+      options: row.options,
+    }));
+  // Week 1 = hardcoded default scenarios, weeks 2+ = custom scenarios only
+  if (!state.activeWeek || state.activeWeek === 1) {
+    return [...defaultScenarios, ...mappedCustom];
+  }
+  return mappedCustom;
 }
 
 function freshSession() {
@@ -464,10 +472,11 @@ async function hydrateCurrentUser(user) {
 async function loadRemoteData() {
   if (!state.supabase || !state.currentUser) return;
 
-  const [teamsRes, customRes, resultsRes] = await Promise.all([
+  const [teamsRes, customRes, resultsRes, runsRes] = await Promise.all([
     state.supabase.from("teams").select("*").order("created_at", { ascending: true }),
     state.supabase.from("custom_scenarios").select("*").order("created_at", { ascending: true }),
     state.supabase.from("results").select("*").order("completed_at", { ascending: false }),
+    state.supabase.from("classroom_runs").select("active_week").limit(1).single(),
   ]);
 
   if (teamsRes.error || customRes.error || resultsRes.error) {
@@ -483,6 +492,12 @@ async function loadRemoteData() {
   }));
   state.customScenarios = customRes.data || [];
   state.results = resultsRes.data || [];
+  // Load active week from classroom_runs
+  if (runsRes.data && runsRes.data.active_week) {
+    state.activeWeek = runsRes.data.active_week;
+  }
+  // Update week selector UI
+  if (refs.weekSelect) refs.weekSelect.value = state.activeWeek;
 
   if (!state.selectedTeamId && state.teams.length) {
     state.selectedTeamId = state.teams[0].id;
@@ -1086,6 +1101,38 @@ function setupTeamHandlers() {
 }
 
 function setupAdminHandlers() {
+  // Week activation handler
+  refs.weekSelect.addEventListener("change", () => {
+    const week = parseInt(refs.weekSelect.value);
+    refs.weekStatus.textContent = `Previewing Week ${week} (not yet saved)`;
+  });
+
+  document.getElementById("activate-week-btn").addEventListener("click", async () => {
+    const week = parseInt(refs.weekSelect.value);
+    if (!state.supabase) return;
+    const { error } = await state.supabase
+      .from("classroom_runs")
+      .update({ active_week: week })
+      .not("id", "is", null);
+    if (error) {
+      refs.weekStatus.textContent = `Error: ${error.message}`;
+      refs.weekStatus.style.color = "var(--danger)";
+      return;
+    }
+    state.activeWeek = week;
+    refs.weekStatus.textContent = `✅ Week ${week} activated! Reloading scenarios...`;
+    refs.weekStatus.style.color = "var(--success)";
+    // Clear team sessions so they start from round 0 with new scenarios
+    for (const team of state.teams) {
+      team.session = freshSession();
+      await state.supabase
+        .from("teams")
+        .update({ session: team.session, updated_at: nowISO() })
+        .eq("id", team.id);
+    }
+    setTimeout(() => location.reload(), 1500);
+  });
+
   refs.addOptionBtn.addEventListener("click", () => addOptionEditor());
 
   refs.seedOptionsBtn.addEventListener("click", () => {
