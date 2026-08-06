@@ -750,6 +750,8 @@ async function addResultIfNeeded(session) {
   if (!team || !state.currentUser) return;
 
   const grade = overallGrade(session.metrics);
+  // Store week info inside the metrics JSONB object (no schema change needed)
+  const payloadMetrics = { ...session.metrics, _week: state.activeWeek, _week_label: WEEK_LABELS[state.activeWeek] || `Week ${state.activeWeek}` };
   const payload = {
     team_id: team.id,
     team_name: team.name,
@@ -757,11 +759,9 @@ async function addResultIfNeeded(session) {
     user_email: state.currentUser.email,
     score: grade.score,
     label: grade.label,
-    metrics: session.metrics,
+    metrics: payloadMetrics,
     modules_played: session.log.map((x) => x.module),
     completed_at: nowISO(),
-    week: state.activeWeek,
-    week_label: WEEK_LABELS[state.activeWeek] || `Week ${state.activeWeek}`,
   };
 
   session.resultSaved = "pending";
@@ -849,7 +849,7 @@ function renderLeaderboard() {
   top.forEach((entry, idx) => {
     const item = document.createElement("li");
     const date = new Date(entry.completed_at || entry.completedAt).toLocaleDateString();
-    const weekInfo = entry.week_label || entry.week_label || (entry.week ? `Week ${entry.week}` : "");
+    const weekInfo = (entry.metrics && entry.metrics._week_label) || (entry.week_label) || (entry.week ? `Week ${entry.week}` : "");
     item.innerHTML = `<strong>#${idx + 1} ${entry.team_name || entry.teamName}</strong> - ${entry.score} (${entry.label})<small>${weekInfo} · ${entry.user_email || "N/A"} · ${date}</small>`;
     refs.leaderboard.appendChild(item);
   });
@@ -865,7 +865,7 @@ function renderAnalytics() {
   // Group results by week
     const byWeek = {};
     state.results.forEach(r => {
-      const wk = r.week || 1;
+      const wk = (r.metrics && r.metrics._week) || 1;
       if (!byWeek[wk]) byWeek[wk] = [];
       byWeek[wk].push(r);
     });
@@ -874,7 +874,7 @@ function renderAnalytics() {
     Object.keys(byWeek).sort().forEach(wk => {
       const runs = byWeek[wk];
       const avg = Math.round(runs.reduce((s, r) => s + r.score, 0) / runs.length);
-      const label = runs[0].week_label || `Week ${wk}`;
+      const label = (runs[0].metrics && runs[0].metrics._week_label) || `Week ${wk}`;
       weekHtml += `<div class="stat"><div class="stat-head"><span>${label}</span><strong>${runs.length} run(s) · Avg ${avg}</strong></div></div>`;
     });
 
