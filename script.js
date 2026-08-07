@@ -525,10 +525,9 @@ async function loadRemoteData() {
     state.supabase.from("custom_scenarios").select("*").order("created_at", { ascending: true }),
     state.supabase.from("results").select("*").order("completed_at", { ascending: false }),
     state.supabase.from("classroom_runs").select("id,stage_index,title").limit(1).maybeSingle(),
-    state.supabase.from("learning_journal").select("*").order("created_at", { ascending: false }),
   ];
 
-  const [teamsRes, customRes, resultsRes, runsRes, journalRes] = await Promise.all(queries);
+  const [teamsRes, customRes, resultsRes, runsRes] = await Promise.all(queries);
 
   if (teamsRes.error || customRes.error || resultsRes.error) {
     const msg = teamsRes.error?.message || customRes.error?.message || resultsRes.error?.message;
@@ -536,7 +535,17 @@ async function loadRemoteData() {
     return;
   }
 
-  state.journalEntries = journalRes.data || [];
+  state.journalEntries = (customRes.data || [])
+    .filter(row => row.module === "_JOURNAL_")
+    .map(row => ({
+      id: row.id,
+      user_id: row.created_by,
+      user_email: "",
+      display_name: "",
+      session_number: parseInt(row.title.replace("Session ", "")) || 1,
+      content: row.description,
+      created_at: row.created_at,
+    }));
   state.teams = (teamsRes.data || []).map((team) => ({
     ...team,
     members: Array.isArray(team.members) ? team.members : [],
@@ -1053,14 +1062,16 @@ function setupJournalHandlers() {
       refs.journalMessage.textContent = "Write something!";
       return;
     }
+    // Store journal entries in custom_scenarios table with module='_JOURNAL_'
+    // This avoids needing to create a new table (no SQL migration needed)
     const { data, error } = await state.supabase
-      .from("learning_journal")
+      .from("custom_scenarios")
       .insert({
-        user_id: state.currentUser.id,
-        user_email: state.currentUser.email,
-        display_name: state.currentUser.user_metadata?.display_name || state.currentUser.email,
-        session_number: sessionNum,
-        content: content,
+        module: "_JOURNAL_",
+        title: `Session ${sessionNum}`,
+        description: content,
+        options: [],
+        created_by: state.currentUser.id,
       })
       .select()
       .single();
@@ -1070,7 +1081,15 @@ function setupJournalHandlers() {
     }
     refs.journalContent.value = "";
     refs.journalMessage.textContent = "✅ Saved!";
-    state.journalEntries.unshift(data);
+    state.journalEntries.unshift({
+      id: data.id,
+      user_id: state.currentUser.id,
+      user_email: state.currentUser.email,
+      display_name: state.currentUser.user_metadata?.display_name || state.currentUser.email,
+      session_number: sessionNum,
+      content: content,
+      created_at: data.created_at,
+    });
     renderJournal();
     setTimeout(() => { refs.journalMessage.textContent = ""; }, 2000);
   });
