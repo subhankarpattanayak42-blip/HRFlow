@@ -152,6 +152,31 @@
         <div id="myresults" class="stats"></div>
       </article>
 
+      <article id="journal-panel" class="panel journal-panel">
+        <h2>📝 Learning Journal</h2>
+        <div class="stack" id="journal-form">
+          <select id="journal-session">
+            <option value="1">Session 1: HRIS Foundations</option>
+            <option value="2">Session 2: Data Modeling</option>
+            <option value="3">Session 3: Talent Acquisition</option>
+            <option value="4">Session 4: Onboarding & Compliance</option>
+            <option value="5">Session 5: Time & Payroll</option>
+            <option value="6">Session 6: Compensation</option>
+            <option value="7">Session 7: Performance</option>
+            <option value="8">Session 8: Learning & Succession</option>
+            <option value="9">Session 9: Service Delivery</option>
+            <option value="10">Session 10: Integration & Capstone</option>
+          </select>
+          <textarea id="journal-content" rows="3" placeholder="What did you learn today? What surprised you? What's still fuzzy?" style="font-size:0.85rem"></textarea>
+          <div class="inline-row">
+            <button id="journal-save-btn" class="primary" type="button" style="font-size:0.8rem">Save Entry</button>
+            <span id="journal-message" class="small muted" style="font-size:0.78rem"></span>
+          </div>
+        </div>
+        <hr style="margin:0.5rem 0" />
+        <div id="journal-entries" class="stack"></div>
+      </article>
+
       <article id="leaderboard-panel" class="panel leaderboard-panel">
         <h2>🏆 Leaderboard</h2>
         <ul id="leaderboard" class="timeline"></ul>

@@ -144,6 +144,7 @@ body {
 .timeline-panel { grid-column: span 5; }
 .leaderboard-panel { grid-column: span 4; }
 .myresults-panel { grid-column: span 4; }
+.journal-panel { grid-column: span 6; }
 .analytics-panel { grid-column: span 4; }
 
 /* ── Forms ──────────────────────────────────── */

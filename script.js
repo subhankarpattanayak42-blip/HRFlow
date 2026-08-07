@@ -255,6 +255,7 @@ const state = {
   teams: [],
   customScenarios: [],
   results: [],
+  journalEntries: [],
   selectedTeamId: "",
   activeWeek: 1,
   authListenerSet: false,
@@ -294,6 +295,12 @@ const refs = {
   leaderboardPanel: document.getElementById("leaderboard-panel"),
   myresults: document.getElementById("myresults"),
   myresultsPanel: document.getElementById("myresults-panel"),
+  journalPanel: document.getElementById("journal-panel"),
+  journalSession: document.getElementById("journal-session"),
+  journalContent: document.getElementById("journal-content"),
+  journalSaveBtn: document.getElementById("journal-save-btn"),
+  journalMessage: document.getElementById("journal-message"),
+  journalEntries: document.getElementById("journal-entries"),
   analytics: document.getElementById("analytics"),
   analyticsPanel: document.getElementById("analytics-panel"),
   adminPanel: document.getElementById("admin-panel"),
@@ -513,12 +520,15 @@ async function hydrateCurrentUser(user) {
 async function loadRemoteData() {
   if (!state.supabase || !state.currentUser) return;
 
-  const [teamsRes, customRes, resultsRes, runsRes] = await Promise.all([
+  const queries = [
     state.supabase.from("teams").select("*").order("created_at", { ascending: true }),
     state.supabase.from("custom_scenarios").select("*").order("created_at", { ascending: true }),
     state.supabase.from("results").select("*").order("completed_at", { ascending: false }),
     state.supabase.from("classroom_runs").select("id,stage_index,title").limit(1).maybeSingle(),
-  ]);
+    state.supabase.from("learning_journal").select("*").order("created_at", { ascending: false }),
+  ];
+
+  const [teamsRes, customRes, resultsRes, runsRes, journalRes] = await Promise.all(queries);
 
   if (teamsRes.error || customRes.error || resultsRes.error) {
     const msg = teamsRes.error?.message || customRes.error?.message || resultsRes.error?.message;
@@ -526,6 +536,7 @@ async function loadRemoteData() {
     return;
   }
 
+  state.journalEntries = journalRes.data || [];
   state.teams = (teamsRes.data || []).map((team) => ({
     ...team,
     members: Array.isArray(team.members) ? team.members : [],
@@ -882,6 +893,30 @@ function renderMyResults() {
   });
 }
 
+function renderJournal() {
+  refs.journalEntries.innerHTML = "";
+  if (!state.currentUser) {
+    refs.journalPanel.classList.add("hidden");
+    return;
+  }
+  refs.journalPanel.classList.remove("hidden");
+
+  // Show user's entries
+  const myEntries = state.journalEntries.filter(e => e.user_id === state.currentUser.id);
+  if (!myEntries.length) {
+    refs.journalEntries.innerHTML = "<p class='small muted'>No journal entries yet. Write your first one above!</p>";
+    return;
+  }
+
+  myEntries.forEach(entry => {
+    const div = document.createElement("div");
+    div.className = "stat";
+    const date = new Date(entry.created_at).toLocaleDateString();
+    div.innerHTML = `<div class="stat-head"><span>Session ${entry.session_number}</span><strong>${date}</strong></div><div style="font-size:0.82rem;margin-top:3px">${entry.content}</div>`;
+    refs.journalEntries.appendChild(div);
+  });
+}
+
 function renderAnalytics() {
   const totalRuns = state.results.length;
   if (!totalRuns) {
@@ -1004,6 +1039,41 @@ function parseImpact(input) {
     });
 
   return impact;
+}
+
+function setupJournalHandlers() {
+  refs.journalSaveBtn.addEventListener("click", async () => {
+    if (!state.supabase || !state.currentUser) {
+      refs.journalMessage.textContent = "Login first!";
+      return;
+    }
+    const sessionNum = parseInt(refs.journalSession.value);
+    const content = refs.journalContent.value.trim();
+    if (!content) {
+      refs.journalMessage.textContent = "Write something!";
+      return;
+    }
+    const { data, error } = await state.supabase
+      .from("learning_journal")
+      .insert({
+        user_id: state.currentUser.id,
+        user_email: state.currentUser.email,
+        display_name: state.currentUser.user_metadata?.display_name || state.currentUser.email,
+        session_number: sessionNum,
+        content: content,
+      })
+      .select()
+      .single();
+    if (error) {
+      refs.journalMessage.textContent = `Error: ${error.message}`;
+      return;
+    }
+    refs.journalContent.value = "";
+    refs.journalMessage.textContent = "✅ Saved!";
+    state.journalEntries.unshift(data);
+    renderJournal();
+    setTimeout(() => { refs.journalMessage.textContent = ""; }, 2000);
+  });
 }
 
 function setupAuthHandlers() {
@@ -1405,6 +1475,7 @@ function refreshUI() {
   renderScenario();
   renderLeaderboard();
   renderMyResults();
+  renderJournal();
   renderAnalytics();
   setControlStates();
 
@@ -1431,6 +1502,7 @@ async function bootstrap() {
   setupAuthHandlers();
   setupTeamHandlers();
   setupAdminHandlers();
+  setupJournalHandlers();
   renderModules("");
 
   const hardcoded = window.HRFLOW_SUPABASE || {};
