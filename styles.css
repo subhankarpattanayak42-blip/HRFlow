@@ -811,3 +811,69 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   color: var(--muted);
   font-style: italic;
 }
+
+/* ── Session slides panel ──────────────────────────────── */
+.deliv-slides {
+  margin-top: 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.deliv-slides-head {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+.deliv-slide-link {
+  display: block;
+  background: rgba(78,168,222,0.12);
+  border: 1px solid rgba(78,168,222,0.3);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.6rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.deliv-slide-link:hover {
+  background: rgba(78,168,222,0.22);
+}
+.deliv-slide-current {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.deliv-slide-all {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+.deliv-slide-pill {
+  display: inline-block;
+  font-size: 0.68rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.deliv-slide-pill:hover {
+  background: rgba(255,255,255,0.12);
+}
+.deliv-slide-pill-sim {
+  border-color: rgba(245,158,11,0.4);
+  color: #f59e0b;
+}
+.deliv-slide-alllink {
+  display: inline-block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+.deliv-slide-alllink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}

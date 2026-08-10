@@ -45,7 +45,22 @@
     portfolios: "https://drive.google.com/drive/folders/1KrrMdJzAKYyRGJWTyEFdnITyfC6HGJl4"  // 02-Portfolios root
   };
 
-  /* ── Per-week deliverables ────────────────────────────────── */
+  /* ── Session slides on Google Drive ──────────────────────── */
+  const SESSION_SLIDES = {
+    0: { name: "📖 Course Intro", url: "https://docs.google.com/presentation/d/11CJwmvOzSTxzj1t5rKM8Ebp5mS64xTyR" },
+    1: { name: "🧱 HRIS Foundations", url: "https://docs.google.com/presentation/d/1cjV3a-DeUQjO_Lx-ICrdKYy76zJfj1m4" },
+    2: { name: "🗄️ Data Modeling & Org Architecture", url: "https://docs.google.com/presentation/d/1kLl41NttJXtT7okmqHHicWDGVXnx7ebt" },
+    3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1EWN5GWWzVDRONL4B1k7-u3hi3lg_03kK" },
+    4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/1tTZ_r5nz_4Hd-E6Ygm1PFNGj13ATin-O" },
+    5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1rWxGXsIxkSj_gekgWF5zefFNvjrLsOcZ" },
+    6: { name: "💰 Payroll & Compensation", url: "https://docs.google.com/presentation/d/170RsUz68kAJXTVuNXvbCY-gvHAMB1-1Y" },
+    7: { name: "📈 Performance Management", url: "https://docs.google.com/presentation/d/1GBx2F4RM66gCGFwAOl6s4qDxn6l6X9qM" },
+    8: { name: "🧠 Learning, Succession & Analytics", url: "https://docs.google.com/presentation/d/1VroYxm05v44L2osNqEb4Atx6BJqD-DO6" },
+    9: { name: "🔒 Service Delivery & Security", url: "https://docs.google.com/presentation/d/1xn0kRwVds8gt_CFvzkEJj-86mD8qzYUl" },
+    10: { name: "🔗 Integration, Analytics & Roadmap", url: "https://docs.google.com/presentation/d/1FT0q7_W2Vj7rt-m-9gvGPSzU-rMWiqEF" },
+  };
+  const SIM_INSTRUCTIONS_URL = "https://docs.google.com/presentation/d/105JWvqXTZZ5hPE2ftbO8AO57jV4wJvwK";
+  const SLIDES_FOLDER_URL = "https://drive.google.com/drive/folders/1Oe6G2mGYE73wti9hMlANawZuOKsa4Oae";
   const WEEK_DELIVERABLES = {
     1: {
       sprint: "Foundation Assessment",
@@ -218,6 +233,19 @@
       </div>
       <ul class="deliv-list">${itemsHtml}</ul>
       ${submitHtml}
+      <div class="deliv-slides">
+        <div class="deliv-slides-head">📽️ Session Slides</div>
+        <a class="deliv-slide-link" href="${SESSION_SLIDES[week] ? SESSION_SLIDES[week].url : SESSION_SLIDES[1].url}" target="_blank" rel="noopener">
+          <span class="deliv-slide-current">📺 Current: ${SESSION_SLIDES[week] ? SESSION_SLIDES[week].name : SESSION_SLIDES[1].name}</span>
+        </a>
+        <div class="deliv-slide-all">
+          ${Object.entries(SESSION_SLIDES).map(([k, v]) =>
+            `<a class="deliv-slide-pill" href="${v.url}" target="_blank" rel="noopener">${v.name}</a>`
+          ).join('')}
+          <a class="deliv-slide-pill deliv-slide-pill-sim" href="${SIM_INSTRUCTIONS_URL}" target="_blank" rel="noopener">🎮 Sim Instructions</a>
+        </div>
+        <a class="deliv-slide-alllink" href="${SLIDES_FOLDER_URL}" target="_blank" rel="noopener">📂 All slides on Google Drive →</a>
+      </div>
     `;
   }
 
