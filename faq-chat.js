@@ -36,7 +36,7 @@
     {
       t: "Assessment",
       q: ["grade", "mark", "assessment", "evaluation", "weight", "scoring", "breakdown", "percent"],
-      a: "Your grade is 100% based on deliverables — there are NO exams. Breakdown:\n• Simulation Sprints (10) — 40% (4% each, team)\n• Individual Portfolio — 20%\n• Weekly Quiz — 10% (1% per session, lowest dropped)\n• Capstone Presentation — 20% (team)\n• Peer Evaluation — 10%"
+      a: "Your grade is 100% based on deliverables — there are NO exams. Breakdown:\n• Simulation Sprints (10) — 40% (4% each, team)\n• Individual Portfolio — 20% (5 artifacts, one per module)\n• Weekly Quiz — 10% (1% per session, lowest dropped)\n• Capstone Presentation — 20% (team)\n• Peer Evaluation — 10% (anonymous after each sprint)\n\nIn short: 40% teamwork, 40% your own work, 10% in-class performance, 10% how you work with your team."
     },
     {
       t: "Assessment",
