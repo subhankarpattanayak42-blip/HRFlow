@@ -18,6 +18,8 @@ function updateWeekDisplay() {
   if (refs.weekSelect) refs.weekSelect.value = state.activeWeek;
   const status = document.getElementById("week-status");
   if (status) status.textContent = `Currently active: ${label}`;
+  /* Refresh deliverables panel if it exists */
+  if (window.refreshDeliverables) window.refreshDeliverables();
 }
 
 const BASELINE_METRICS = {
@@ -260,6 +262,9 @@ const state = {
   activeWeek: 1,
   authListenerSet: false,
 };
+
+/* Expose state for deliverables panel */
+window.HRFLOW_STATE = state;
 
 const refs = {
   registerForm: document.getElementById("register-form"),
