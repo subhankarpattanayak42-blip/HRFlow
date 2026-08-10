@@ -146,7 +146,7 @@
     {
       t: "Logistics",
       q: ["hours", "time", "duration", "how long", "sessions", "schedule", "when"],
-      a: "10 sessions total, each a 4-hour block (2 hours core concepts + 2 hours simulation sprint). You'll also spend time weekly on your team sprint deliverable and, at the end, your portfolio and capstone prep. 3 credits, 5th semester."
+      a: "10 sessions total, each 3h36m — totalling 36 contact hours. Each session breaks into: a 5-minute quiz, 1h40m of core concepts, and 1h40m of simulation sprint. 3 credits, 5th semester."
     },
 
     /* ── Contact / help ──────────────────────────────────────── */
