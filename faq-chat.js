@@ -154,6 +154,11 @@
       t: "Help",
       q: ["help", "contact", "reach", "ask", "doubt", "question", "problem", "issue", "stuck"],
       a: "This AI assistant answers common course questions. For anything not covered here, or if you're stuck on a sprint, a technical issue with HR Flow Lab, or a grade concern — ask the instructor in class or after a session. The instructor's philosophy is Figure-It-Out: try to solve it yourself first, but don't suffer silently. (For a real human, that's Subhankar Pattanayak.)"
+    },
+    {
+      t: "Access Control",
+      q: ["access", "permission", "see", "view", "who can see", "private", "folder", "share", "only my team", "visibility"],
+      a: "Access is controlled per team and per individual:\n\n👥 **Team sprint folders** (01-Teams/Team-X/): Only members of that team and the instructor can access them. When you log in to HR Flow Lab, the deliverables panel detects your team from your email and shows the correct submission link.\n\n👤 **Individual portfolio folders** (02-Portfolios/Your-Name/): Only you and the instructor can see your folder. The deliverables panel shows your portfolio link personalized with your name.\n\n📊 **Master Tracker Sheet**: All students can view (read-only). Only the instructor can edit.\n\n💡 If you're not logged in to HR Flow Lab, the panel shows generic master links. Log in with your @silicon.ac.in email to see your team-specific links."
     }
   ];
 
