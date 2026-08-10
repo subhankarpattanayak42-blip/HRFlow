@@ -766,3 +766,23 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 .deliv-btn-ghost:hover {
   background: #eef2ff;
 }
+
+/* Team badge + access note */
+.deliv-team-badge {
+  display: inline-block;
+  background: #eef2ff;
+  color: var(--navy);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #c7d2fe;
+}
+.deliv-note {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+}
