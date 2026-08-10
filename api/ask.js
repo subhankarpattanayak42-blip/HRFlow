@@ -125,7 +125,7 @@ module.exports = async function handler(req, res) {
         "X-Title": "MG3003 HR Flow Lab"
       },
       body: JSON.stringify({
-        model: "google/gemini-2.0-flash-001",
+        model: "google/gemini-2.5-flash-lite",
         messages: [
           { role: "system", content: FAQ_CONTEXT },
           { role: "user", content: question }
