@@ -93,6 +93,10 @@ body {
   white-space: nowrap;
 }
 
+/* Poll & Ask link */
+.poll-link { transition: all 200ms ease; }
+.poll-link:hover { transform: translateY(-1px); box-shadow: 0 2px 10px rgba(16,185,129,0.3); }
+
 /* ── Grid ───────────────────────────────────── */
 .top-grid, .grid {
   display: grid;
@@ -765,6 +769,27 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 }
 .deliv-btn-ghost:hover {
   background: #eef2ff;
+}
+
+/* Outline button variant (used for Poll & Ask) */
+.deliv-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 200ms;
+  background: transparent;
+  color: #059669;
+  border: 1px solid #6ee7b7;
+}
+.deliv-btn-outline:hover {
+  background: #ecfdf5;
+  border-color: #10b981;
+  transform: translateY(-1px);
 }
 
 /* Team badge + access note */

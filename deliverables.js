@@ -191,15 +191,17 @@
           <a class="deliv-btn" href="${tf.url}" target="_blank" rel="noopener">📁 Submit ${teamLabel} Sprint</a>
           <a class="deliv-btn deliv-btn-ghost" href="${LINKS.tracker}" target="_blank" rel="noopener">📊 Master Tracker Sheet</a>
           <a class="deliv-btn deliv-btn-ghost" href="${portfolioUrl}" target="_blank" rel="noopener">📂 My Portfolio (${displayName})</a>
+          <a class="deliv-btn deliv-btn-outline" href="https://interactive-polling-1bxf.bolt.host/join/EXRYDY" target="_blank" rel="noopener">📬 Poll & Ask</a>
         </div>
-        <p class="deliv-note">🔒 Team sprint folders are visible only to your team members. Portfolio folders are individual — only you and the instructor can see yours.</p>`;
+        <p class="deliv-note">🔒 Team sprint folders are visible only to your team members. Portfolio folders are individual — only you and the instructor can see yours. Have a question the FAQ didn't answer? Use <strong>Poll & Ask</strong>.</p>`;
     } else {
       submitHtml = `
         <div class="deliv-actions">
           <a class="deliv-btn" href="${LINKS.driveMaster}" target="_blank" rel="noopener">📁 Google Drive (Master)</a>
           <a class="deliv-btn deliv-btn-ghost" href="${LINKS.tracker}" target="_blank" rel="noopener">📊 Master Tracker Sheet</a>
+          <a class="deliv-btn deliv-btn-outline" href="https://interactive-polling-1bxf.bolt.host/join/EXRYDY" target="_blank" rel="noopener">📬 Poll & Ask</a>
         </div>
-        <p class="deliv-note">💡 Log in and select your team to see your personalised submission links.</p>`;
+        <p class="deliv-note">💡 Log in and select your team to see your personalised submission links. Have a question? Use <strong>Poll & Ask</strong>.</p>`;
     }
 
     /* Build deliverable items */

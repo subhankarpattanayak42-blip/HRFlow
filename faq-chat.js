@@ -152,8 +152,8 @@
     /* ── Contact / help ──────────────────────────────────────── */
     {
       t: "Help",
-      q: ["help", "contact", "reach", "ask", "doubt", "question", "problem", "issue", "stuck"],
-      a: "This AI assistant answers common course questions. For anything not covered here, or if you're stuck on a sprint, a technical issue with HR Flow Lab, or a grade concern — ask the instructor in class or after a session. The instructor's philosophy is Figure-It-Out: try to solve it yourself first, but don't suffer silently. (For a real human, that's Subhankar Pattanayak.)"
+      q: ["help", "contact", "reach", "ask", "doubt", "question", "problem", "issue", "stuck", "poll", "feedback"],
+      a: "This AI assistant answers common course questions. If I couldn't answer your question, use the **📬 Poll & Ask** button at the top of the page or in the Deliverables panel — it opens a live Q&A where you can post questions the instructor will see and answer. You can also ask the instructor directly in class or after a session. The instructor's philosophy is Figure-It-Out: try to solve it yourself first, but don't suffer silently."
     },
     {
       t: "Access Control",
