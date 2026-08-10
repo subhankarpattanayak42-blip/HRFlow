@@ -7,22 +7,42 @@
   "use strict";
 
   /* ── Submission destinations ────────────────────────────────
-     Each team has its own sprint subfolders inside the master Drive.
-     Folder URLs are constructed from the parent + team subfolder.
-     Update these IDs once the Drive structure is finalised. */
+     Real folder IDs pulled from Google Drive (MG3003-HRIS-2026).
+     Portfolio folders are individual — mapped by student email. */
 
   const MASTER_FOLDER_ID = "1GRHwPgOFTP9x9xbfOMm0DV3w6Zb30Wqs";
 
   const TEAM_FOLDERS = {
-    1: { name: "Team-1", url: "https://drive.google.com/drive/folders/" },  // ← Insert Team-1 folder ID
-    2: { name: "Team-2", url: "https://drive.google.com/drive/folders/" },  // ← Insert Team-2 folder ID
-    3: { name: "Team-3", url: "https://drive.google.com/drive/folders/" },  // ← Insert Team-3 folder ID
+    1: { name: "Team-1", url: "https://drive.google.com/drive/folders/1mY2uOPBjTbRzdMo7IqrX1lpQsB1RM7Zc" },
+    2: { name: "Team-2", url: "https://drive.google.com/drive/folders/1e6zZwfS7ky28BcRgcnY1bb0MTBWCzq_t" },
+    3: { name: "Team-3", url: "https://drive.google.com/drive/folders/1GT-xgAetJn9ks131kIKmC0_ekk5B84wP" },
+  };
+
+  /* Individual portfolio folders — keyed by student email */
+  const PORTFOLIO_FOLDERS = {
+    "cse.24bcsg59@silicon.ac.in": "https://drive.google.com/drive/folders/1dXmr_YZ7OmWdtuYwyptgG1tY0ljlTb13", // Anikesh Ransingh
+    "cse.24bcsa13@silicon.ac.in": "https://drive.google.com/drive/folders/140EKI47EgAYuHFGhJ060noJzlM0gmY1J", // Gayatri Pati
+    "cse.24bcsh39@silicon.ac.in": "https://drive.google.com/drive/folders/1m15m8XXdsI1aBcaDGZRAioNzDmLxNwxi", // Swastik Ranjan Das
+    "cse.24bcsf14@silicon.ac.in": "https://drive.google.com/drive/folders/1xcXT53geSRbbAJdkfB2k7YqcbOrUmM5Q", // Ritika Behera
+    "ece.24becf22@silicon.ac.in": "https://drive.google.com/drive/folders/1ki3Ra8uuUBm5YpUUhL-uinDQ0PsO8hjz", // Sindhuja Gouda
+    "cse.24bcsg10@silicon.ac.in": "https://drive.google.com/drive/folders/1rh5tdIqayWJ-snSdtJWoQxGGs4gvz-Za", // Abhisekh Mohanty
+    "cse.25bcsl20@silicon.ac.in": "https://drive.google.com/drive/folders/1MqCVXnfA6QjN_DdS9CpTB5h0N95BdNGw", // Prithwish Sarkar
+    "cse.24bcsf23@silicon.ac.in": "https://drive.google.com/drive/folders/1MlSzVq-sMNeDnpgIG_QerWY2lSoLjdmZ", // Smruti Ranjan Nayak
+    "cse.24bcsh51@silicon.ac.in": "https://drive.google.com/drive/folders/1WKCj8jk0JUg0uiM9dTVLuXtc3XIwPv9W", // Deepakshi Nayak
+    "cse.24bcsc59@silicon.ac.in": "https://drive.google.com/drive/folders/1Q58Wmg-PKSJZTjxql_ekVly5jcAGB28Z", // Eva Adyasha Dash
+    "ece.24becf01@silicon.ac.in": "https://drive.google.com/drive/folders/154KS_7pFlPyD2tMa2_vBxSytxgixOG52", // Priyanshu Kumar Singh
+    "ece.24bece88@silicon.ac.in": "https://drive.google.com/drive/folders/1YqD_NTx8tv5SWb2Uxtw6t0Npy7xp0FiD", // Abhigyan Dash
+    "ece.24bech61@silicon.ac.in": "https://drive.google.com/drive/folders/10wiSc2FqJP-uKkqolo5ejUsCHLTYmnAY", // Abinash Nanda
+    "ece.24beca89@silicon.ac.in": "https://drive.google.com/drive/folders/1Hz9Qmg9DC0i2e3TYdU2OXn30uaA2YTC4", // Rajashree Priyadarshini Bihari
+    "ece.24bece58@silicon.ac.in": "https://drive.google.com/drive/folders/1PZI9aLPeX0UJraucmhVH6rBpkCOneTQe", // Tapaswini Sahoo
+    "eee.24beeg29@silicon.ac.in": "https://drive.google.com/drive/folders/1U1Z2iIvhaSgkgJ0c-qU82n0OyHrRGsrX", // Jayprakash Sahu
+    "eee.24beeb59@silicon.ac.in": "https://drive.google.com/drive/folders/1bKG4YBKIPJc3XEXc1iByj2EeOd-5c3vB", // Sammona Mohanty
   };
 
   const LINKS = {
     driveMaster: `https://drive.google.com/drive/folders/${MASTER_FOLDER_ID}`,
     tracker: "https://docs.google.com/spreadsheets/d/114XhDWMKLSjj-BBIxM2vFlbVRs__nYeUqfcjTVXDS3Q/edit",
-    portfolios: `https://drive.google.com/drive/folders/${MASTER_FOLDER_ID}`  // 02-Portfolios subfolder
+    portfolios: "https://drive.google.com/drive/folders/1KrrMdJzAKYyRGJWTyEFdnITyfC6HGJl4"  // 02-Portfolios root
   };
 
   /* ── Per-week deliverables ────────────────────────────────── */
@@ -161,19 +181,16 @@
     let submitHtml = "";
     if (userTeam) {
       const tf = TEAM_FOLDERS[userTeam.name === "Team-1" ? 1 : userTeam.name === "Team-2" ? 2 : 3];
-      // If the folder URL has a real ID, use it; otherwise fall back to master
-      const driveHref = (tf && tf.url.length > 45)
-        ? `${tf.url}`
-        : `${LINKS.driveMaster}`;
+      const studentEmail = s.currentUser.email;
+      const portfolioUrl = PORTFOLIO_FOLDERS[studentEmail] || LINKS.portfolios;
       const teamLabel = tf ? tf.name : userTeam.name;
-      // Individual portfolio link — student name from email
-      const studentName = s.currentUser.email.split("@")[0];
+      const displayName = s.currentUser.displayName || studentEmail.split("@")[0];
       submitHtml = `
         <div class="deliv-team-badge">👥 Your Team: ${teamLabel}</div>
         <div class="deliv-actions">
-          <a class="deliv-btn" href="${driveHref}" target="_blank" rel="noopener">📁 Submit ${teamLabel} Sprint</a>
+          <a class="deliv-btn" href="${tf.url}" target="_blank" rel="noopener">📁 Submit ${teamLabel} Sprint</a>
           <a class="deliv-btn deliv-btn-ghost" href="${LINKS.tracker}" target="_blank" rel="noopener">📊 Master Tracker Sheet</a>
-          <a class="deliv-btn deliv-btn-ghost" href="${LINKS.portfolios}" target="_blank" rel="noopener">📂 My Portfolio (${studentName})</a>
+          <a class="deliv-btn deliv-btn-ghost" href="${portfolioUrl}" target="_blank" rel="noopener">📂 My Portfolio (${displayName})</a>
         </div>
         <p class="deliv-note">🔒 Team sprint folders are visible only to your team members. Portfolio folders are individual — only you and the instructor can see yours.</p>`;
     } else {
