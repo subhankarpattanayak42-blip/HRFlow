@@ -551,6 +551,13 @@ async function loadRemoteData() {
       content: row.description,
       created_at: row.created_at,
     }));
+
+  // Load profiles for display name lookup
+  const profilesRes = await state.supabase.from("profiles").select("id,display_name");
+  state.profileMap = {};
+  (profilesRes.data || []).forEach(p => {
+    state.profileMap[p.id] = p.display_name;
+  });
   state.teams = (teamsRes.data || []).map((team) => ({
     ...team,
     members: Array.isArray(team.members) ? team.members : [],
@@ -629,6 +636,36 @@ function renderTeamSelect() {
   });
 }
 
+const NAME_MAP = {
+  "cse.24bcsg59@silicon.ac.in": "Anikesh Ransingh",
+  "cse.24bcsa13@silicon.ac.in": "Gayatri Pati",
+  "cse.24bcsh39@silicon.ac.in": "Swastik Ranjan Das",
+  "cse.24bcsf14@silicon.ac.in": "Ritika Behera",
+  "ece.24becf22@silicon.ac.in": "Sindhuja Gouda",
+  "cse.24bcsg10@silicon.ac.in": "Abhisekh Mohanty",
+  "cse.25bcsl20@silicon.ac.in": "Prithwish Sarkar",
+  "cse.24bcsf23@silicon.ac.in": "Smruti Ranjan Nayak",
+  "cse.24bcsh51@silicon.ac.in": "Deepakshi Nayak",
+  "cse.24bcsc59@silicon.ac.in": "Eva Adyasha Dash",
+  "ece.24becf01@silicon.ac.in": "Priyanshu Kumar Singh",
+  "ece.24bece88@silicon.ac.in": "Abhigyan Dash",
+  "ece.24bech61@silicon.ac.in": "Abinash Nanda",
+  "ece.24beca89@silicon.ac.in": "Rajashree Priyadarshini Bihari",
+  "ece.24bece58@silicon.ac.in": "Tapaswini Sahoo",
+  "eee.24beeg29@silicon.ac.in": "Jayprakash Sahu",
+  "eee.24beeb59@silicon.ac.in": "Sammona Mohanty",
+  "student@tech.com": "Test Student",
+  "subhankarpattanayak42@gmail.com": "Subhankar Pattanayak",
+};
+
+function nameFromEmail(email) {
+  return NAME_MAP[email] || (email ? email.split("@")[0] : "N/A");
+}
+
+function nameFromUserId(uid) {
+  return (state.profileMap && state.profileMap[uid]) || "N/A";
+}
+
 function renderTeamMembers() {
   const team = getTeam();
   if (!team) {
@@ -636,7 +673,9 @@ function renderTeamMembers() {
     return;
   }
 
-  const members = team.members.length ? team.members.join(", ") : "No members yet";
+  const members = team.members.length
+    ? team.members.map(e => nameFromEmail(e)).join(", ")
+    : "No members yet";
   refs.teamMembers.textContent = `Members: ${members}`;
 }
 
@@ -877,7 +916,8 @@ function renderLeaderboard() {
     const item = document.createElement("li");
     const date = new Date(entry.completed_at || entry.completedAt).toLocaleDateString();
     const weekInfo = (entry.metrics && entry.metrics._week_label) || (entry.week_label) || (entry.week ? `Week ${entry.week}` : "");
-    item.innerHTML = `<strong>#${idx + 1} ${entry.team_name || entry.teamName}</strong> - ${entry.score} (${entry.label})<small>${weekInfo} · ${entry.user_email || "N/A"} · ${date}</small>`;
+    const displayName = nameFromUserId(entry.user_id) || (entry.user_email || "N/A").split("@")[0];
+    item.innerHTML = `<strong>#${idx + 1} ${entry.team_name || entry.teamName}</strong> - ${entry.score} (${entry.label})<small>${displayName} · ${weekInfo} · ${date}</small>`;
     refs.leaderboard.appendChild(item);
   });
 }
