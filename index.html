@@ -29,14 +29,12 @@
     <section class="top-grid">
       <article class="panel auth-panel">
         <h2>🔐 Sign In</h2>
-        <p class="small muted" style="margin-bottom:0.75rem">Use your Silicon University email to access the simulation.</p>
-        <form id="login-form" class="stack">
-          <input id="login-name" type="email" placeholder="Your email" required style="padding:0.65rem 0.75rem;font-size:0.95rem" />
-          <input id="login-password" type="password" placeholder="Password" required style="padding:0.65rem 0.75rem;font-size:0.95rem" />
-          <button class="primary" type="submit" style="padding:0.65rem;font-size:0.95rem">Sign In</button>
-          <p class="small muted" style="text-align:center;margin:0">Default password: <code style="background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:0.8rem">mg3003@2026</code></p>
+        <form id="login-form" class="inline-row" style="gap:0.4rem;align-items:stretch">
+          <input id="login-name" type="email" placeholder="Your email" required style="padding:0.5rem 0.65rem;font-size:0.85rem;flex:2;min-width:160px" />
+          <input id="login-password" type="password" placeholder="Password" required style="padding:0.5rem 0.65rem;font-size:0.85rem;flex:1;min-width:120px" />
+          <button class="primary" type="submit" style="padding:0.5rem 0.85rem;font-size:0.85rem;white-space:nowrap;flex-shrink:0">Sign In</button>
         </form>
-        <p id="auth-message" class="message" style="min-height:1.4rem;margin-top:0.5rem"></p>
+        <p id="auth-message" class="message" style="min-height:1.2rem;margin-top:0.3rem;font-size:0.78rem"></p>
       </article>
 
       <article class="panel team-panel">
