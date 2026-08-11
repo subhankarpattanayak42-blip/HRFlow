@@ -625,8 +625,25 @@ function renderTeamSelect() {
     return;
   }
 
+  const isAdmin = isAdminUser();
+  const userEmail = state.currentUser.email;
+
+  // For students: auto-detect team based on their email
+  if (!isAdmin) {
+    const myTeam = state.teams.find(t => t.members && t.members.includes(userEmail));
+    if (myTeam) {
+      state.selectedTeamId = myTeam.id;
+      refs.teamSelect.innerHTML = `<option value="${myTeam.id}" selected>${myTeam.name}</option>`;
+    } else {
+      refs.teamSelect.innerHTML = `<option value="">No team assigned</option>`;
+    }
+    refs.teamSelect.disabled = true;
+    return;
+  }
+
+  // For admin: show all teams, allow switching
   refs.teamSelect.disabled = false;
-  refs.teamSelect.innerHTML = `<option value="">Select team</option>`;
+  refs.teamSelect.innerHTML = `<option value="">Select team to view</option>`;
   state.teams.forEach((team) => {
     const option = document.createElement("option");
     option.value = team.id;
@@ -1550,9 +1567,11 @@ function refreshUI() {
   refs.leaderboardPanel.classList.remove("hidden");
   // My Results visible to logged-in users
   refs.myresultsPanel.classList.toggle("hidden", !state.currentUser);
+  // Hide team creation UI for students
+  refs.teamCreateWrap.classList.toggle("hidden", !!state.currentUser && !isAdmin);
+  refs.teamMemberWrap.classList.toggle("hidden", !!state.currentUser && !isAdmin);
   refs.analyticsPanel.classList.toggle("hidden", !isAdmin);
   refs.registerRoleWrap.classList.toggle("hidden", isStudent);
-  refs.teamCreateWrap.classList.toggle("hidden", isStudent);
   refs.teamMemberWrap.classList.toggle("hidden", isStudent);
 }
 
