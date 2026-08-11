@@ -267,13 +267,7 @@ const state = {
 window.HRFLOW_STATE = state;
 
 const refs = {
-  registerForm: document.getElementById("register-form"),
   loginForm: document.getElementById("login-form"),
-  registerName: document.getElementById("register-name"),
-  registerEmail: document.getElementById("register-email"),
-  registerPassword: document.getElementById("register-password"),
-  registerRole: document.getElementById("register-role"),
-  registerRoleWrap: document.getElementById("register-role-wrap"),
   loginName: document.getElementById("login-name"),
   loginPassword: document.getElementById("login-password"),
   authMessage: document.getElementById("auth-message"),
@@ -1158,58 +1152,6 @@ function setupJournalHandlers() {
 }
 
 function setupAuthHandlers() {
-  refs.registerForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    void (async () => {
-      if (!state.supabase) {
-        showMessage(refs.authMessage, "Connect backend first.", true);
-        return;
-      }
-
-      const displayName = refs.registerName.value.trim();
-      const email = refs.registerEmail.value.trim();
-      const password = refs.registerPassword.value.trim();
-      const role = refs.registerRole.value;
-
-      if (!displayName || !email || !password) {
-        showMessage(refs.authMessage, "Display name, email and password are required.", true);
-        return;
-      }
-
-      const { data, error } = await state.supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            display_name: displayName,
-            role,
-          },
-        },
-      });
-
-      if (error) {
-        showMessage(refs.authMessage, error.message, true);
-        return;
-      }
-
-      if (data.user) {
-        const profileWrite = await state.supabase.from("profiles").upsert({
-          id: data.user.id,
-          display_name: displayName,
-          role,
-        });
-
-        if (profileWrite.error) {
-          showMessage(refs.authMessage, `Account created but profile failed: ${profileWrite.error.message}`, true);
-          return;
-        }
-      }
-
-      refs.registerForm.reset();
-      showMessage(refs.authMessage, "Account created. Login if email confirmation is disabled.");
-    })();
-  });
-
   refs.loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
     void (async () => {
@@ -1535,9 +1477,7 @@ function setControlStates() {
   const hasTeam = !!getTeam();
   const isAdmin = isAdminUser();
 
-  refs.registerForm.querySelectorAll("input, select, button").forEach((el) => {
-    el.disabled = !hasConnection;
-  });
+  // Disable login inputs if not connected
   refs.loginForm.querySelectorAll("input, button").forEach((el) => {
     el.disabled = !hasConnection;
   });
@@ -1571,7 +1511,6 @@ function refreshUI() {
   refs.teamCreateWrap.classList.toggle("hidden", !!state.currentUser && !isAdmin);
   refs.teamMemberWrap.classList.toggle("hidden", !!state.currentUser && !isAdmin);
   refs.analyticsPanel.classList.toggle("hidden", !isAdmin);
-  refs.registerRoleWrap.classList.toggle("hidden", isStudent);
   refs.teamMemberWrap.classList.toggle("hidden", isStudent);
 }
 
