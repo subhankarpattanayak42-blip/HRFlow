@@ -260,6 +260,7 @@ const state = {
   journalEntries: [],
   selectedTeamId: "",
   activeWeek: 1,
+  quizCode: "",
   authListenerSet: false,
 };
 
@@ -304,6 +305,11 @@ const refs = {
   analyticsPanel: document.getElementById("analytics-panel"),
   adminPanel: document.getElementById("admin-panel"),
   weekSelect: document.getElementById("week-select"),
+  quizCodeInput: document.getElementById("quiz-code-input"),
+  setQuizBtn: document.getElementById("set-quiz-btn"),
+  clearQuizBtn: document.getElementById("clear-quiz-btn"),
+  quizAdminStatus: document.getElementById("quiz-admin-status"),
+  quizCodeDisplay: document.getElementById("quiz-code-display"),
   adminModule: document.getElementById("admin-module"),
   adminTitle: document.getElementById("admin-title"),
   adminDescription: document.getElementById("admin-description"),
@@ -545,6 +551,10 @@ async function loadRemoteData() {
       content: row.description,
       created_at: row.created_at,
     }));
+
+  // Load quiz code from custom_scenarios
+  const quizRow = (customRes.data || []).find(row => row.module === "_QUIZCODE_");
+  state.quizCode = quizRow ? quizRow.description || "" : "";
 
   // Load profiles for display name lookup
   const profilesRes = await state.supabase.from("profiles").select("id,display_name");
@@ -958,6 +968,15 @@ function renderMyResults() {
   });
 }
 
+function renderQuizCode() {
+  const code = state.quizCode || "";
+  if (refs.quizCodeDisplay) {
+    refs.quizCodeDisplay.textContent = code ? `Quiz: ${code}` : "Not started";
+    refs.quizCodeDisplay.style.color = code ? "#c4b5fd" : "";
+  }
+  if (refs.quizCodeInput) refs.quizCodeInput.value = code;
+}
+
 function renderJournal() {
   refs.journalEntries.innerHTML = "";
   if (!state.currentUser) {
@@ -1319,6 +1338,38 @@ function setupAdminHandlers() {
 
   refs.addOptionBtn.addEventListener("click", () => addOptionEditor());
 
+  // Quiz code handlers
+  refs.setQuizBtn.addEventListener("click", async () => {
+    const code = refs.quizCodeInput.value.trim().toUpperCase();
+    if (!state.supabase || !state.currentUser) return;
+    // Upsert a custom_scenarios row with module='_QUIZCODE_'
+    const existing = state.customScenarios.find(r => r.module === "_QUIZCODE_");
+    if (existing) {
+      await state.supabase.from("custom_scenarios").update({ description: code }).eq("id", existing.id);
+    } else {
+      await state.supabase.from("custom_scenarios").insert({
+        module: "_QUIZCODE_", title: "current", description: code, options: [], created_by: state.currentUser.id,
+      });
+    }
+    state.quizCode = code;
+    renderQuizCode();
+    refs.quizAdminStatus.textContent = `✅ Quiz code set to ${code}`;
+    setTimeout(() => { refs.quizAdminStatus.textContent = ""; }, 2000);
+  });
+
+  refs.clearQuizBtn.addEventListener("click", async () => {
+    if (!state.supabase) return;
+    const existing = state.customScenarios.find(r => r.module === "_QUIZCODE_");
+    if (existing) {
+      await state.supabase.from("custom_scenarios").delete().eq("id", existing.id);
+    }
+    state.quizCode = "";
+    refs.quizCodeInput.value = "";
+    renderQuizCode();
+    refs.quizAdminStatus.textContent = "✅ Quiz cleared";
+    setTimeout(() => { refs.quizAdminStatus.textContent = ""; }, 2000);
+  });
+
   refs.seedOptionsBtn.addEventListener("click", () => {
     if (refs.adminOptions.children.length) return;
     addOptionEditor();
@@ -1496,6 +1547,7 @@ function refreshUI() {
   renderScenario();
   renderLeaderboard();
   renderMyResults();
+  renderQuizCode();
   renderJournal();
   renderAnalytics();
   setControlStates();
