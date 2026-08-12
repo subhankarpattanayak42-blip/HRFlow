@@ -306,6 +306,7 @@ const refs = {
   adminPanel: document.getElementById("admin-panel"),
   weekSelect: document.getElementById("week-select"),
   quizCodeInput: document.getElementById("quiz-code-input"),
+  quizBtn: document.getElementById("quiz-btn"),
   setQuizBtn: document.getElementById("set-quiz-btn"),
   clearQuizBtn: document.getElementById("clear-quiz-btn"),
   quizAdminStatus: document.getElementById("quiz-admin-status"),
@@ -970,9 +971,14 @@ function renderMyResults() {
 
 function renderQuizCode() {
   const code = state.quizCode || "";
+  const quizHref = code ? `https://kahoot-clone-eight.vercel.app/play/${code}` : `https://kahoot-clone-eight.vercel.app/`;
   if (refs.quizCodeDisplay) {
     refs.quizCodeDisplay.textContent = code ? `Quiz: ${code}` : "Not started";
     refs.quizCodeDisplay.style.color = code ? "#c4b5fd" : "";
+  }
+  // Update the link href to include the code
+  if (refs.quizBtn) {
+    refs.quizBtn.href = quizHref;
   }
   if (refs.quizCodeInput) refs.quizCodeInput.value = code;
 }
