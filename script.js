@@ -971,7 +971,7 @@ function renderMyResults() {
 
 function renderQuizCode() {
   const code = state.quizCode || "";
-  const quizHref = code ? `https://kahoot-clone-eight.vercel.app/play/${code}` : `https://kahoot-clone-eight.vercel.app/`;
+  const quizHref = "https://kahoot-clone-eight.vercel.app/";
   if (refs.quizCodeDisplay) {
     refs.quizCodeDisplay.textContent = code ? `Quiz: ${code}` : "Not started";
     refs.quizCodeDisplay.style.color = code ? "#c4b5fd" : "";
