@@ -971,7 +971,13 @@ function renderMyResults() {
 
 function renderQuizCode() {
   const code = state.quizCode || "";
-  const quizHref = "https://kahoot-clone-eight.vercel.app/";
+  // Include the logged-in user's email so the direct-join link bypasses the data-entry page
+  const email = (state.currentUser && state.currentUser.email) || "";
+  const quizHref = code && email
+    ? `https://kahoot-clone-eight.vercel.app/play?code=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`
+    : code
+      ? `https://kahoot-clone-eight.vercel.app/play?code=${encodeURIComponent(code)}`
+      : "https://kahoot-clone-eight.vercel.app/";
   if (refs.quizCodeDisplay) {
     refs.quizCodeDisplay.textContent = code ? `Quiz: ${code}` : "Not started";
     refs.quizCodeDisplay.style.color = code ? "#c4b5fd" : "";
