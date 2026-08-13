@@ -371,6 +371,45 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 .impact-positive { background: #d1fae5; color: #065f46; }
 .impact-negative { background: #fee2e2; color: #991b1b; }
 
+/* ── Risk Badges ────────────────────────────── */
+.risk-badge {
+  font-size: 0.65rem;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+.risk-badge.safe { background: #d1fae5; color: #065f46; }
+.risk-badge.balanced { background: #fef3c7; color: #92400e; }
+.risk-badge.bold { background: #fee2e2; color: #991b1b; }
+
+/* ── What Happened Card ─────────────────────── */
+.what-happened {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border-left: 4px solid var(--gold);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.what-happened h4 {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: var(--navy);
+}
+.what-happened p {
+  margin: 3px 0;
+}
+.what-happened-verdict {
+  font-weight: 600;
+  color: var(--navy);
+  margin-top: 6px !important;
+  padding-top: 6px;
+  border-top: 1px dashed #ddd;
+}
+
 /* ── Timeline ───────────────────────────────── */
 .timeline {
   margin: 0;

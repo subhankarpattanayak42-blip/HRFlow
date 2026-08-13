@@ -342,6 +342,51 @@ function metricTone(value) {
   return "var(--bad)";
 }
 
+function metricEmoji(value) {
+  if (value >= 70) return "🟢";
+  if (value >= 40) return "🟡";
+  return "🔴";
+}
+
+function riskBadge(delta) {
+  const total = Math.abs(delta.talentQuality||0) + Math.abs(delta.employeeTrust||0) + Math.abs(delta.legalSafety||0) + Math.abs(delta.hrEfficiency||0) + Math.abs(delta.budgetHealth||0);
+  if (total <= 10) return '<span class="risk-badge safe">🟢 Safe</span>';
+  if (total <= 20) return '<span class="risk-badge balanced">🟡 Balanced</span>';
+  return '<span class="risk-badge bold">🔴 Bold</span>';
+}
+
+function whatHappenedCard(scenario, option) {
+  const totalImpact = Object.values(option.impact).reduce((a, b) => a + Math.abs(b), 0);
+  let vibe = "neutral";
+  if (totalImpact > 20) vibe = "big";
+  else if (totalImpact < 10) vibe = "small";
+
+  const pos = Object.entries(option.impact).filter(([k,v]) => v > 0).map(([k,v]) => `${metricLabels[k]} +${v}`).join(", ");
+  const neg = Object.entries(option.impact).filter(([k,v]) => v < 0).map(([k,v]) => `${metricLabels[k]} ${v}`).join(", ");
+  const posStr = pos ? "✅ " + pos : "";
+  const negStr = neg ? "⚠️ " + neg : "";
+  const divider = pos && neg ? "  |  " : "";
+
+  return `<div class="what-happened">
+    <h4>📋 What Happened?</h4>
+    <p><strong>You chose:</strong> ${option.text}</p>
+    <p>${posStr}${divider}${negStr}</p>
+    <p class="what-happened-verdict">${verdictText(option)}</p>
+  </div>`;
+}
+
+function verdictText(option) {
+  const impacts = option.impact;
+  const pos = Object.entries(impacts).filter(([k,v]) => v > 0).length;
+  const neg = Object.entries(impacts).filter(([k,v]) => v < 0).length;
+  if (pos >= 3) return "💪 Strong strategic move — this decision improved most areas.";
+  if (neg >= 3) return "⚠️ Risky choice — this decision hurt most areas. Watch the downstream effects.";
+  if (pos === 2 && neg === 1) return "⚖️ Balanced trade-off — you gained in key areas with one sacrifice.";
+  if (pos === 1 && neg === 1) return "↔️ Direct trade-off — you gave something to get something.";
+  if (neg >= 2 && pos === 0) return "❌ This backfired — consider a different approach next time.";
+  return "📊 Measured move — small but steady impact.";
+}
+
 function showMessage(ref, text, isError = false) {
   ref.textContent = text;
   ref.style.color = isError ? "var(--bad)" : "var(--muted)";
@@ -729,7 +774,7 @@ function renderStats() {
     row.className = "stat";
     row.innerHTML = `
       <div class="stat-head">
-        <span>${metricLabels[key]}</span>
+        <span>${metricLabels[key]} ${metricEmoji(value)}</span>
         <strong>${value}</strong>
       </div>
       <div class="bar-wrap">
@@ -757,6 +802,17 @@ function renderTimeline() {
         return `<span class="impact-badge ${cls}">${metricLabels[k]} ${sign}${v}</span>`;
       }).join(" ");
     item.innerHTML = `<strong>${entry.module}:</strong> ${entry.choice}<small>${entry.flow}</small><small>${deltas}</small>`;
+    // Add What Happened card for the most recent entry
+    if (entry === session.log[session.log.length - 1] && session.log.length > 0) {
+      item.innerHTML += `<div class="what-happened" style="margin-top:6px;padding:8px;background:var(--bg);border-radius:6px;border-left:3px solid var(--gold);font-size:0.85rem">
+        <strong>📋 What Happened?</strong><br/>
+        ${(() => {
+          const pos = Object.entries(entry.impact).filter(([k,v]) => v > 0).map(([k,v]) => `${metricLabels[k]} +${v}`).join(", ");
+          const neg = Object.entries(entry.impact).filter(([k,v]) => v < 0).map(([k,v]) => `${metricLabels[k]} ${v}`).join(", ");
+          return (pos ? "✅ " + pos : "") + (pos && neg ? " | " : "") + (neg ? "⚠️ " + neg : "");
+        })()}
+      </div>`;
+    }
     refs.timeline.appendChild(item);
   });
 }
@@ -824,7 +880,7 @@ function renderScenario() {
         const sign = v > 0 ? "+" : "";
         return `<span class="impact-badge ${cls}">${metricLabels[k]} ${sign}${v}</span>`;
       }).join("");
-    btn.innerHTML = `<strong>${option.text}</strong><small>${option.flow}</small><div class="option-impacts">${impacts}</div>`;
+    btn.innerHTML = `<strong>${option.text}</strong> ${riskBadge(option.impact)}<small>${option.flow}</small><div class="option-impacts">${impacts}</div>`;
     btn.addEventListener("click", () => {
       void chooseOption(scenario, option);
     });
