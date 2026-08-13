@@ -874,13 +874,7 @@ function renderScenario() {
   scenario.options.forEach((option) => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
-    const impacts = Object.entries(option.impact)
-      .map(([k, v]) => {
-        const cls = v > 0 ? "impact-positive" : "impact-negative";
-        const sign = v > 0 ? "+" : "";
-        return `<span class="impact-badge ${cls}">${metricLabels[k]} ${sign}${v}</span>`;
-      }).join("");
-    btn.innerHTML = `<strong>${option.text}</strong> ${riskBadge(option.impact)}<small>${option.flow}</small><div class="option-impacts">${impacts}</div>`;
+    btn.innerHTML = `<strong>${option.text}</strong> ${riskBadge(option.impact)}<small>${option.flow}</small>`;
     btn.addEventListener("click", () => {
       void chooseOption(scenario, option);
     });
