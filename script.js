@@ -397,95 +397,145 @@ function isAdminUser() {
 }
 
 // Render per-student simulation results for the admin panel.
-// Simulation runs are TEAM-based: a single recorded run covers all team members.
+// Sessions are PER-PLAYER: each team member owns their own session
+// (team.session.players[<email>]) and their own row in the results table.
+// The team score shown is the AVERAGE of its members' individual result scores.
 function renderAdminStudentResults() {
   const container = document.getElementById("admin-student-results");
   if (!container) return;
 
   const teams = state.teams || [];
   const results = state.results || [];
+
+  // Index authoritative per-user result rows by team name -> user_email -> best result
   const byTeam = {};
   results.forEach((r) => {
     const tn = r.team_name || "Unknown";
-    // Keep the highest score per team per week as the representative run
-    if (!byTeam[tn] || r.score > byTeam[tn].score) byTeam[tn] = r;
+    if (!Array.isArray(byTeam[tn])) byTeam[tn] = [];
+    byTeam[tn].push(r);
   });
 
-  // Build per-team decision aggregation keyed by member identity
-  // Each team's session.log holds every decision; if tagged with played_by/played_name,
-  // we can attribute contributions per member. Untagged entries go to "Team (shared)".
-  const teamLogByTeam = {};
-  teams.forEach((team) => {
-    const log = (team.session && Array.isArray(team.session.log)) ? team.session.log : [];
-    const perMember = {}; // key: identity string
-    let shared = 0, sharedImpact = 0;
-    log.forEach((entry) => {
-      const who = entry.played_name || entry.played_by || null;
-      const impact = entry.impact || {};
-      const net = Object.values(impact).reduce((s, v) => s + (typeof v === "number" ? v : 0), 0);
-      if (!who) { shared++; sharedImpact += net; return; }
-      if (!perMember[who]) perMember[who] = { count: 0, impact: 0 };
-      perMember[who].count++;
-      perMember[who].impact += net;
+  // Best result per member email within a team
+  const bestPerMember = (tn) => {
+    const map = {};
+    (byTeam[tn] || []).forEach((r) => {
+      const key = r.user_email;
+      if (!key) return;
+      if (!map[key] || r.score > map[key].score) map[key] = r;
     });
-    teamLogByTeam[team.name] = { perMember, shared, sharedImpact };
-  });
+    return map;
+  };
 
-  const rows = [];
+  const logStats = (entries) => {
+    let decisions = 0, impact = 0;
+    (entries || []).forEach((e) => {
+      decisions++;
+      impact += Object.values(e.impact || {}).reduce((s, v) => s + (typeof v === "number" ? v : 0), 0);
+    });
+    return { decisions, impact };
+  };
+
+  let html = "";
+  let completed = 0, total = 0;
+
   teams.forEach((team) => {
     const members = Array.isArray(team.members) ? team.members : [];
-    const res = byTeam[team.name];
     if (!members.length) return;
-    const attr = teamLogByTeam[team.name] || { perMember: {}, shared: 0, sharedImpact: 0 };
+
+    // Per-player session container
+    const players = (team.session && team.session.players && typeof team.session.players === "object" && !Array.isArray(team.session.players))
+      ? team.session.players
+      : {};
+
+    const memberBest = bestPerMember(team.name);
+
+    // Legacy / shared run: only a 'shared' player session exists (old team-level run)
+    const hasShared = Object.prototype.hasOwnProperty.call(players, "shared");
+    const anyMemberSession = members.some((m) => players[m]);
+    const isLegacy = hasShared && !anyMemberSession;
+
+    // Legacy team single result row (covers the whole team)
+    const teamLegacyResult = (byTeam[team.name] || []).slice().sort((a, b) => b.score - a.score)[0] || null;
+
+    // Individual member scores (authoritative, from results table)
+    const memberScores = members.map((m) => (memberBest[m] ? memberBest[m].score : null)).filter((s) => s !== null);
+
+    // Team score = average of members' individual scores; fall back to legacy single-row score
+    let teamAvg = null;
+    if (memberScores.length > 0) {
+      teamAvg = Math.round(memberScores.reduce((a, b) => a + b, 0) / memberScores.length);
+    } else if (isLegacy && teamLegacyResult) {
+      teamAvg = teamLegacyResult.score;
+    }
+
+    // Team summary row (spanning the non-team columns)
+    html += `<tr style="border-top:2px solid var(--gold, #f59e0b);background:rgba(245,158,11,0.10)">
+      <td style="padding:0.35rem 0.5rem;font-weight:700;color:#92400e">${team.name}</td>
+      <td colspan="5" style="padding:0.35rem 0.5rem;font-weight:700;color:#92400e">Team Score: ${teamAvg !== null ? `${teamAvg}/100` : "—"} (avg of member scores)</td>
+    </tr>`;
+
     members.forEach((email) => {
       const displayName = nameFromEmail(email) || email;
-      const m = attr.perMember[displayName] || attr.perMember[email] || { count: 0, impact: 0 };
-      rows.push({
-        team: team.name,
-        name: displayName,
-        email,
-        status: res ? "✅ Completed" : "⚠️ No run recorded",
-        run: res ? `${res.score}/100 (${res.label})` : "—",
-        decisions: m.count,
-        impact: m.impact,
-      });
+      const res = memberBest[email];
+      const pl = players[email];
+      let row;
+
+      if (isLegacy && teamLegacyResult) {
+        // Legacy team-level run covers every member
+        const stats = logStats(players.shared && players.shared.log);
+        total++;
+        completed++;
+        row = {
+          status: "✅ Completed",
+          run: `${teamLegacyResult.score}/100 (${teamLegacyResult.label})`,
+          decisions: stats.decisions,
+          impact: stats.impact,
+        };
+      } else if (res) {
+        const stats = logStats(pl && pl.log);
+        total++;
+        completed++;
+        row = {
+          status: "✅ Completed",
+          run: `${res.score}/100 (${res.label})`,
+          decisions: stats.decisions,
+          impact: stats.impact,
+        };
+      } else {
+        const stats = logStats(pl && pl.log);
+        total++;
+        row = {
+          status: "⚠️ No run recorded",
+          run: "—",
+          decisions: stats.decisions,
+          impact: stats.impact,
+        };
+      }
+
+      const impactTxt = row.decisions > 0 ? (row.impact >= 0 ? `+${row.impact}` : row.impact) : "—";
+      html += `<tr style="border-top:1px solid #eef2f7">
+      <td style="padding:0.3rem 0.5rem;font-weight:600">${team.name}</td>
+      <td style="padding:0.3rem 0.5rem">${displayName}<br/><span style="color:var(--muted);font-size:0.68rem">${email}</span></td>
+      <td style="padding:0.3rem 0.5rem">${row.status}</td>
+      <td style="padding:0.3rem 0.5rem">${row.run}</td>
+      <td style="padding:0.3rem 0.5rem">${row.decisions || "—"}</td>
+      <td style="padding:0.3rem 0.5rem;font-weight:600;color:${row.decisions > 0 ? (row.impact >= 0 ? "#10b981" : "#e53e3e") : "var(--muted)"}">${impactTxt}</td>
+    </tr>`;
     });
   });
-  rows.sort((a, b) => (a.team === b.team ? a.name.localeCompare(b.name) : a.team.localeCompare(b.team)));
 
-  if (!rows.length) {
+  if (!total) {
     container.innerHTML = "<p class='hint' style='color:var(--muted);font-size:0.85rem;margin:0.5rem'>No student data loaded.</p>";
     return;
   }
 
-  const completedCount = rows.filter((r) => r.status.startsWith("✅")).length;
-  let html = `<div style="padding:0.4rem 0.6rem;font-size:0.8rem;background:var(--bg,#f8fafc);border-bottom:1px solid #e2e8f0;font-weight:600">${completedCount} / ${rows.length} students covered by a team run</div>`;
-  html += '<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:0.75rem;min-width:640px"><thead><tr style="text-align:left;background:rgba(245,158,11,0.12)">';
-  html += "<th style='padding:0.35rem 0.5rem'>Team</th><th style='padding:0.35rem 0.5rem'>Student</th><th style='padding:0.35rem 0.5rem'>Status</th><th style='padding:0.35rem 0.5rem'>Team Run</th><th style='padding:0.35rem 0.5rem'>Rounds Played</th><th style='padding:0.35rem 0.5rem'>Metric Impact</th></tr></thead><tbody>";
-  rows.forEach((r) => {
-    const impactTxt = r.decisions > 0 ? (r.impact >= 0 ? `+${r.impact}` : r.impact) : "—";
-    html += `<tr style="border-top:1px solid #eef2f7">
-      <td style="padding:0.3rem 0.5rem;font-weight:600">${r.team}</td>
-      <td style="padding:0.3rem 0.5rem">${r.name}<br/><span style="color:var(--muted);font-size:0.68rem">${r.email}</span></td>
-      <td style="padding:0.3rem 0.5rem">${r.status}</td>
-      <td style="padding:0.3rem 0.5rem">${r.run}</td>
-      <td style="padding:0.3rem 0.5rem">${r.decisions || "—"}</td>
-      <td style="padding:0.3rem 0.5rem;font-weight:600;color:${r.decisions > 0 ? (r.impact >= 0 ? "#10b981" : "#e53e3e") : "var(--muted)"}">${impactTxt}</td>
-    </tr>`;
-  });
-  html += "</tbody></table></div>";
+  html = `<div style="padding:0.4rem 0.6rem;font-size:0.8rem;background:var(--bg,#f8fafc);border-bottom:1px solid #e2e8f0;font-weight:600">${completed} / ${total} students covered by a completed run</div>
+  <div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:0.75rem;min-width:640px"><thead><tr style="text-align:left;background:rgba(245,158,11,0.12)">`
+    + `<th style='padding:0.35rem 0.5rem'>Team</th><th style='padding:0.35rem 0.5rem'>Student</th><th style='padding:0.35rem 0.5rem'>Status</th><th style='padding:0.35rem 0.5rem'>Score</th><th style='padding:0.35rem 0.5rem'>Rounds Played</th><th style='padding:0.35rem 0.5rem'>Metric Impact</th></tr></thead><tbody>`
+    + html
+    + `</tbody></table></div>
+    <p style="margin:0.5rem 0.6rem;font-size:0.72rem;color:var(--muted)">Sessions are per-player: each member's Score reflects their own result row, and the Team Score is the average of its members' scores. Legacy team-level runs (made before per-player sessions) are shown under the shared run covering all members.</p>`;
 
-  // Note about attribution
-  let totalDecisions = 0, taggedDecisions = 0;
-  teams.forEach((team) => {
-    const log = (team.session && Array.isArray(team.session.log)) ? team.session.log : [];
-    totalDecisions += log.length;
-    log.forEach((e) => { if (e.played_name || e.played_by) taggedDecisions++; });
-  });
-  if (totalDecisions > 0 && taggedDecisions < totalDecisions) {
-    const untagged = totalDecisions - taggedDecisions;
-    html += `<p style="margin:0.5rem 0.6rem;font-size:0.72rem;color:var(--muted)">Note: ${untagged} decision(s) from completed runs were not attributed per-member (previously untracked). Per-member rounds & impact apply to tagged runs going forward.</p>`;
-  }
   container.innerHTML = html;
 }
 
@@ -527,19 +577,57 @@ function getTeam() {
   return state.teams.find((team) => team.id === state.selectedTeamId) || null;
 }
 
+function isSessionContainer(v) {
+  return !!v && typeof v === "object" && !Array.isArray(v) &&
+    v.players && typeof v.players === "object" && !Array.isArray(v.players);
+}
+function isLegacyFlatSession(v) {
+  return !!v && typeof v === "object" && !Array.isArray(v) &&
+    !isSessionContainer(v) &&
+    (Array.isArray(v.log) || v.metrics !== undefined || typeof v.currentRound === "number");
+}
+// Ensure team.session is a per-player container: { players: { <email>: <session> } }.
+// Old-style team-level sessions (a single flat session) are migrated under the "shared" key
+// so previously completed team runs still display in the admin view.
+function ensureSessionContainer(team) {
+  const s = team.session;
+  if (isSessionContainer(s)) return;
+  if (!s || typeof s !== "object" || Array.isArray(s) || Object.keys(s).length === 0) {
+    team.session = { players: {} };
+  } else if (isLegacyFlatSession(s)) {
+    team.session = { players: { shared: s } };
+  } else {
+    team.session = { players: {} };
+  }
+}
+function getPlayerSessionKey() {
+  if (state.currentUser && state.currentUser.email) return state.currentUser.email;
+  return "shared";
+}
+function resetCurrentPlayerSession(team) {
+  ensureSessionContainer(team);
+  const key = getPlayerSessionKey();
+  const fresh = freshSession();
+  fresh.weekCompleted = state.activeWeek;
+  team.session.players[key] = fresh;
+}
+
 function getSession() {
   const team = getTeam();
   if (!team) return null;
-  // Ensure session exists
-  if (!team.session || typeof team.session !== "object") {
-    team.session = freshSession();
-    team.session.weekCompleted = state.activeWeek;
+  // Ensure this is a per-player container (migrating legacy team-level sessions on first access)
+  ensureSessionContainer(team);
+  const key = getPlayerSessionKey();
+  if (!team.session.players[key]) {
+    team.session.players[key] = freshSession();
+    team.session.players[key].weekCompleted = state.activeWeek;
   }
-  // Auto-detect week change: if session was completed for a different week, reset
-  if (team.session.completed && team.session.weekCompleted !== state.activeWeek) {
-    team.session = freshSession();
-    team.session.weekCompleted = state.activeWeek;
-    // Persist the reset to DB (fire-and-forget)
+  // Auto-detect week change: if THIS player's completed session belongs to a different week,
+  // reset only that player's session and persist the container (fire-and-forget).
+  const session = team.session.players[key];
+  if (session.completed && session.weekCompleted !== state.activeWeek) {
+    team.session.players[key] = freshSession();
+    team.session.players[key].weekCompleted = state.activeWeek;
     if (state.supabase) {
       state.supabase
         .from("teams")
@@ -548,7 +636,7 @@ function getSession() {
         .then();
     }
   }
-  return team.session;
+  return team.session.players[key];
 }
 
 function overallGrade(metrics) {
@@ -704,11 +792,16 @@ async function loadRemoteData() {
   (profilesRes.data || []).forEach(p => {
     state.profileMap[p.id] = p.display_name;
   });
-  state.teams = (teamsRes.data || []).map((team) => ({
-    ...team,
-    members: Array.isArray(team.members) ? team.members : [],
-    session: team.session || freshSession(),
-  }));
+  state.teams = (teamsRes.data || []).map((team) => {
+    const t = {
+      ...team,
+      members: Array.isArray(team.members) ? team.members : [],
+      session: team.session || null,
+    };
+    // Normalize (and migrate legacy flat sessions) into per-player containers on load
+    ensureSessionContainer(t);
+    return t;
+  });
   state.customScenarios = customRes.data || [];
   state.results = resultsRes.data || [];
   // Load active week from classroom_runs stage_index
@@ -1033,7 +1126,8 @@ function showSummary() {
     void (async () => {
       const team = getTeam();
       if (!team) return;
-      team.session = freshSession();
+      // Reset only the current player's own session
+      resetCurrentPlayerSession(team);
       const ok = await persistTeam(team);
       if (ok) refreshUI();
     })();
@@ -1399,7 +1493,7 @@ function setupTeamHandlers() {
           name,
           created_by: state.currentUser.id,
           members: [],
-          session: freshSession(),
+          session: { players: {} },
         })
         .select("*")
         .single();
@@ -1437,17 +1531,14 @@ function setupTeamHandlers() {
 
   refs.startBtn.addEventListener("click", () => {
     void (async () => {
+      const session = getSession();
+      if (!session) return;
+      if (!session.started) {
+        session.started = true;
+        session.updatedAt = nowISO();
+      }
       const team = getTeam();
-      if (!team) return;
-      if (!team.session || typeof team.session !== "object") {
-        team.session = freshSession();
-      }
-      if (!team.session.started) {
-        team.session.started = true;
-        team.session.updatedAt = nowISO();
-      }
-
-      const ok = await persistTeam(team);
+      const ok = team ? await persistTeam(team) : false;
       if (ok) refreshUI();
     })();
   });
@@ -1456,7 +1547,8 @@ function setupTeamHandlers() {
     void (async () => {
       const team = getTeam();
       if (!team) return;
-      team.session = freshSession();
+      // Reset the current player's own session (not the whole team's)
+      resetCurrentPlayerSession(team);
       const ok = await persistTeam(team);
       if (ok) refreshUI();
     })();
@@ -1485,9 +1577,9 @@ function setupAdminHandlers() {
     state.activeWeek = week;
     refs.weekStatus.textContent = `✅ Week ${week} activated! Reloading scenarios...`;
     refs.weekStatus.style.color = "var(--success)";
-    // Clear team sessions so they start from round 0 with new scenarios
+    // Clear team player sessions so everyone starts from round 0 with new scenarios
     for (const team of state.teams) {
-      team.session = freshSession();
+      team.session = { players: {} };
       await state.supabase
         .from("teams")
         .update({ session: team.session, updated_at: nowISO() })
@@ -1631,7 +1723,7 @@ function setupAdminHandlers() {
       for (const team of currentTeams) {
         const { error } = await state.supabase
           .from("teams")
-          .update({ session: freshSession(), updated_at: nowISO() })
+          .update({ session: { players: {} }, updated_at: nowISO() })
           .eq("id", team.id);
         if (error) {
           showMessage(refs.adminMessage, `Reset sessions failed: ${error.message}`, true);
