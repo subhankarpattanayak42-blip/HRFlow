@@ -399,13 +399,16 @@ function isAdminUser() {
 function getScenarios() {
   // Week 1 = hardcoded default scenarios
   if (!state.activeWeek || state.activeWeek === 1) {
-    const mappedCustom = state.customScenarios.map((row) => ({
-      id: row.id,
-      module: row.module,
-      title: row.title,
-      description: row.description,
-      options: row.options,
-    }));
+    // Only playable custom scenarios (exclude journal + quiz code rows)
+    const mappedCustom = (state.customScenarios || [])
+      .filter(row => row.module && row.module !== "_JOURNAL_" && row.module !== "_QUIZCODE_")
+      .map((row) => ({
+        id: row.id,
+        module: row.module,
+        title: row.title,
+        description: row.description,
+        options: row.options,
+      }));
     return [...defaultScenarios, ...mappedCustom];
   }
   // Weeks 2+ = pre-built scenario packs
