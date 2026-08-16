@@ -105,10 +105,18 @@
       <div class="inline-row" style="margin-top:0.5rem">
         <button id="save-scenario-btn" class="primary" type="button">Save Scenario</button>
         <button id="seed-options-btn" class="ghost" type="button">Seed 3 Options</button>
-      </div>
-      <p id="admin-message" class="message" style="margin-top:0.3rem"></p>
-      <hr />
-      <div class="danger-zone">
+        </div>
+        <p id="admin-message" class="message" style="margin-top:0.3rem"></p>
+        <hr />
+        <div class="admin-results-section" style="margin:0.75rem 0">
+          <h3 style="font-size:0.9rem;margin-bottom:0.4rem">📊 Per-Student Simulation Results</h3>
+          <p class="small muted" style="margin-bottom:0.5rem">Each student is shown with their team's recorded run. Simulation results are team-based, so a single team run covers all its members.</p>
+          <div id="admin-student-results" style="max-height:360px;overflow:auto;border:1px solid var(--border,#e2e8f0);border-radius:6px">
+            <p class="hint" style="color:var(--muted);font-size:0.85rem;margin:0.5rem">Loading…</p>
+          </div>
+        </div>
+        <hr />
+        <div class="danger-zone">
         <h3>⚠️ Danger Zone</h3>
         <p class="small muted">These actions permanently remove data from the database.</p>
         <div class="inline-row" style="margin-top:0.4rem">
@@ -210,6 +218,6 @@
   <script src="week_scenarios.js"></script>
   <script src="faq-chat.js"></script>
   <script src="deliverables.js"></script>
-  <script src="script.js?v=2"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>

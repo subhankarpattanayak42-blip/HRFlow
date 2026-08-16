@@ -396,6 +396,60 @@ function isAdminUser() {
   return !!(state.currentUser && state.currentUser.role === "admin");
 }
 
+// Render per-student simulation results for the admin panel.
+// Simulation runs are TEAM-based: a single recorded run covers all team members.
+function renderAdminStudentResults() {
+  const container = document.getElementById("admin-student-results");
+  if (!container) return;
+
+  const teams = state.teams || [];
+  const results = state.results || [];
+  const byTeam = {};
+  results.forEach((r) => {
+    const tn = r.team_name || "Unknown";
+    // Keep the highest score per team per week as the representative run
+    if (!byTeam[tn] || r.score > byTeam[tn].score) byTeam[tn] = r;
+  });
+
+  const rows = [];
+  teams.forEach((team) => {
+    const members = Array.isArray(team.members) ? team.members : [];
+    const res = byTeam[team.name];
+    if (!members.length) return;
+    members.forEach((email) => {
+      const displayName = nameFromEmail(email) || email;
+      rows.push({
+        team: team.name,
+        name: displayName,
+        email,
+        status: res ? "✅ Completed" : "⚠️ No run recorded",
+        run: res ? `${res.score}/100 (${res.label})` : "—",
+      });
+    });
+  });
+  rows.sort((a, b) => (a.team === b.team ? a.name.localeCompare(b.name) : a.team.localeCompare(b.team)));
+
+  if (!rows.length) {
+    container.innerHTML = "<p class='hint' style='color:var(--muted);font-size:0.85rem;margin:0.5rem'>No student data loaded.</p>";
+    return;
+  }
+
+  const completedCount = rows.filter((r) => r.status.startsWith("✅")).length;
+  let html = `<div style="padding:0.4rem 0.6rem;font-size:0.8rem;background:var(--bg,#f8fafc);border-bottom:1px solid #e2e8f0;font-weight:600">${completedCount} / ${rows.length} students covered by a team run</div>`;
+  html += '<table style="width:100%;border-collapse:collapse;font-size:0.78rem"><thead><tr style="text-align:left;background:rgba(245,158,11,0.12)">';
+  html += "<th style='padding:0.35rem 0.5rem'>Team</th><th style='padding:0.35rem 0.5rem'>Student</th><th style='padding:0.35rem 0.5rem'>Status</th><th style='padding:0.35rem 0.5rem'>Team Run</th></tr></thead><tbody>";
+  rows.forEach((r) => {
+    html += `<tr style="border-top:1px solid #eef2f7">
+      <td style="padding:0.3rem 0.5rem;font-weight:600">${r.team}</td>
+      <td style="padding:0.3rem 0.5rem">${r.name}<br/><span style="color:var(--muted);font-size:0.68rem">${r.email}</span></td>
+      <td style="padding:0.3rem 0.5rem">${r.status}</td>
+      <td style="padding:0.3rem 0.5rem">${r.run}</td>
+    </tr>`;
+  });
+  html += "</tbody></table>";
+  container.innerHTML = html;
+}
+
 function getScenarios() {
   // Week 1 = hardcoded default scenarios
   if (!state.activeWeek || state.activeWeek === 1) {
@@ -1615,6 +1669,7 @@ function refreshUI() {
   renderQuizCode();
   renderJournal();
   renderAnalytics();
+  renderAdminStudentResults();
   setControlStates();
 
   const isAdmin = isAdminUser();
