@@ -411,19 +411,43 @@ function renderAdminStudentResults() {
     if (!byTeam[tn] || r.score > byTeam[tn].score) byTeam[tn] = r;
   });
 
+  // Build per-team decision aggregation keyed by member identity
+  // Each team's session.log holds every decision; if tagged with played_by/played_name,
+  // we can attribute contributions per member. Untagged entries go to "Team (shared)".
+  const teamLogByTeam = {};
+  teams.forEach((team) => {
+    const log = (team.session && Array.isArray(team.session.log)) ? team.session.log : [];
+    const perMember = {}; // key: identity string
+    let shared = 0, sharedImpact = 0;
+    log.forEach((entry) => {
+      const who = entry.played_name || entry.played_by || null;
+      const impact = entry.impact || {};
+      const net = Object.values(impact).reduce((s, v) => s + (typeof v === "number" ? v : 0), 0);
+      if (!who) { shared++; sharedImpact += net; return; }
+      if (!perMember[who]) perMember[who] = { count: 0, impact: 0 };
+      perMember[who].count++;
+      perMember[who].impact += net;
+    });
+    teamLogByTeam[team.name] = { perMember, shared, sharedImpact };
+  });
+
   const rows = [];
   teams.forEach((team) => {
     const members = Array.isArray(team.members) ? team.members : [];
     const res = byTeam[team.name];
     if (!members.length) return;
+    const attr = teamLogByTeam[team.name] || { perMember: {}, shared: 0, sharedImpact: 0 };
     members.forEach((email) => {
       const displayName = nameFromEmail(email) || email;
+      const m = attr.perMember[displayName] || attr.perMember[email] || { count: 0, impact: 0 };
       rows.push({
         team: team.name,
         name: displayName,
         email,
         status: res ? "✅ Completed" : "⚠️ No run recorded",
         run: res ? `${res.score}/100 (${res.label})` : "—",
+        decisions: m.count,
+        impact: m.impact,
       });
     });
   });
@@ -436,17 +460,32 @@ function renderAdminStudentResults() {
 
   const completedCount = rows.filter((r) => r.status.startsWith("✅")).length;
   let html = `<div style="padding:0.4rem 0.6rem;font-size:0.8rem;background:var(--bg,#f8fafc);border-bottom:1px solid #e2e8f0;font-weight:600">${completedCount} / ${rows.length} students covered by a team run</div>`;
-  html += '<table style="width:100%;border-collapse:collapse;font-size:0.78rem"><thead><tr style="text-align:left;background:rgba(245,158,11,0.12)">';
-  html += "<th style='padding:0.35rem 0.5rem'>Team</th><th style='padding:0.35rem 0.5rem'>Student</th><th style='padding:0.35rem 0.5rem'>Status</th><th style='padding:0.35rem 0.5rem'>Team Run</th></tr></thead><tbody>";
+  html += '<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:0.75rem;min-width:640px"><thead><tr style="text-align:left;background:rgba(245,158,11,0.12)">';
+  html += "<th style='padding:0.35rem 0.5rem'>Team</th><th style='padding:0.35rem 0.5rem'>Student</th><th style='padding:0.35rem 0.5rem'>Status</th><th style='padding:0.35rem 0.5rem'>Team Run</th><th style='padding:0.35rem 0.5rem'>Rounds Played</th><th style='padding:0.35rem 0.5rem'>Metric Impact</th></tr></thead><tbody>";
   rows.forEach((r) => {
+    const impactTxt = r.decisions > 0 ? (r.impact >= 0 ? `+${r.impact}` : r.impact) : "—";
     html += `<tr style="border-top:1px solid #eef2f7">
       <td style="padding:0.3rem 0.5rem;font-weight:600">${r.team}</td>
       <td style="padding:0.3rem 0.5rem">${r.name}<br/><span style="color:var(--muted);font-size:0.68rem">${r.email}</span></td>
       <td style="padding:0.3rem 0.5rem">${r.status}</td>
       <td style="padding:0.3rem 0.5rem">${r.run}</td>
+      <td style="padding:0.3rem 0.5rem">${r.decisions || "—"}</td>
+      <td style="padding:0.3rem 0.5rem;font-weight:600;color:${r.decisions > 0 ? (r.impact >= 0 ? "#10b981" : "#e53e3e") : "var(--muted)"}">${impactTxt}</td>
     </tr>`;
   });
-  html += "</tbody></table>";
+  html += "</tbody></table></div>";
+
+  // Note about attribution
+  let totalDecisions = 0, taggedDecisions = 0;
+  teams.forEach((team) => {
+    const log = (team.session && Array.isArray(team.session.log)) ? team.session.log : [];
+    totalDecisions += log.length;
+    log.forEach((e) => { if (e.played_name || e.played_by) taggedDecisions++; });
+  });
+  if (totalDecisions > 0 && taggedDecisions < totalDecisions) {
+    const untagged = totalDecisions - taggedDecisions;
+    html += `<p style="margin:0.5rem 0.6rem;font-size:0.72rem;color:var(--muted)">Note: ${untagged} decision(s) from completed runs were not attributed per-member (previously untracked). Per-member rounds & impact apply to tagged runs going forward.</p>`;
+  }
   container.innerHTML = html;
 }
 
@@ -1021,6 +1060,8 @@ async function chooseOption(scenario, option) {
     choice: option.text,
     flow: option.flow,
     impact: option.impact,
+    played_by: state.currentUser ? state.currentUser.id : null,
+    played_name: state.currentUser ? (state.currentUser.displayName || nameFromEmail(state.currentUser.email)) : null,
   });
 
   session.currentRound += 1;
