@@ -1808,8 +1808,8 @@ function refreshUI() {
   const isAdmin = isAdminUser();
   const isStudent = !!state.currentUser && !isAdmin;
   refs.adminPanel.classList.toggle("hidden", !isAdmin);
-  // Leaderboard visible to all
-  refs.leaderboardPanel.classList.remove("hidden");
+  // Leaderboard visible to admin only
+  refs.leaderboardPanel.classList.toggle("hidden", !isAdmin);
   // My Results visible to logged-in users
   refs.myresultsPanel.classList.toggle("hidden", !state.currentUser);
   // Hide team creation UI for students
