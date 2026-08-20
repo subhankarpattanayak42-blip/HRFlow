@@ -51,15 +51,15 @@
     1: { name: "🧱 HRIS Foundations", url: "https://docs.google.com/presentation/d/1cjV3a-DeUQjO_Lx-ICrdKYy76zJfj1m4" },
     2: { name: "🗄️ Data Modeling & Org Architecture", url: "https://docs.google.com/presentation/d/1RAgvxkm5NjupoPAarSiSlUTacX1aTSHd" },
     3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1EWN5GWWzVDRONL4B1k7-u3hi3lg_03kK" },
-    4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/1tTZ_r5nz_4Hd-E6Ygm1PFNGj13ATin-O" },
-    5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1rWxGXsIxkSj_gekgWF5zefFNvjrLsOcZ" },
+    4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/1JzdsSCP9HN5Awcfi_F99o9hv-XqzAC9Z" },
+    5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1T5tUsRsWIS6mvF4fwYBRYg02KO0jjD0v" },
     6: { name: "💰 Payroll & Compensation", url: "https://docs.google.com/presentation/d/170RsUz68kAJXTVuNXvbCY-gvHAMB1-1Y" },
-    7: { name: "📈 Performance Management", url: "https://docs.google.com/presentation/d/1GBx2F4RM66gCGFwAOl6s4qDxn6l6X9qM" },
-    8: { name: "🧠 Learning, Succession & Analytics", url: "https://docs.google.com/presentation/d/1VroYxm05v44L2osNqEb4Atx6BJqD-DO6" },
-    9: { name: "🔒 Service Delivery & Security", url: "https://docs.google.com/presentation/d/1xn0kRwVds8gt_CFvzkEJj-86mD8qzYUl" },
-    10: { name: "🔗 Integration, Analytics & Roadmap", url: "https://docs.google.com/presentation/d/1FT0q7_W2Vj7rt-m-9gvGPSzU-rMWiqEF" },
+    7: { name: "📈 Performance Management", url: "https://docs.google.com/presentation/d/1a1R55gxmJGqPz6w4zelJ7TsyTQ-5DIvB" },
+    8: { name: "🧠 Learning, Succession & Analytics", url: "https://docs.google.com/presentation/d/1VP25_DF6qUWNBw2iPH7mer-gKEwDRJyI" },
+    9: { name: "🔒 Service Delivery & Security", url: "https://docs.google.com/presentation/d/1VF4sgu4HS5eN8kM9KhVGcu5tXeBlVT4h" },
+    10: { name: "🔗 Integration, Analytics & Roadmap", url: "https://docs.google.com/presentation/d/1x13jR9JfMTLJv-bUVHrgD8LMFRfX39Ar" },
   };
-  const SIM_INSTRUCTIONS_URL = "https://docs.google.com/presentation/d/105JWvqXTZZ5hPE2ftbO8AO57jV4wJvwK";
+  const SIM_INSTRUCTIONS_URL = "https://docs.google.com/presentation/d/1uVuvzv4DlBPxuDA5TtmSOZaYPg4Hztnh";
   const SLIDES_FOLDER_URL = "https://drive.google.com/drive/folders/1Oe6G2mGYE73wti9hMlANawZuOKsa4Oae";
   const WEEK_DELIVERABLES = {
     1: {
