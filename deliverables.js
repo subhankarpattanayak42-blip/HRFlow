@@ -57,7 +57,7 @@
     7: { name: "📈 Performance Management", url: "https://docs.google.com/presentation/d/1smsmuIOrk6loVUfjM-sfQLLNIwnk2W6Y" },
     8: { name: "🧠 Learning, Succession & Analytics", url: "https://docs.google.com/presentation/d/1VS4DmbW0EZAs_Tg5sgmzDugYC3i8sity" },
     9: { name: "🔒 Service Delivery & Security", url: "https://docs.google.com/presentation/d/19X_shDoE9PLslWSsnz3DXDIaG6x_-i2y" },
-    10: { name: "🔗 Integration, Analytics & Roadmap", url: "https://docs.google.com/presentation/d/1jylfrfTvbbvmTRqctxQXBfE18JI6dj6Lxl" },
+    10: { name: "🔗 Integration, Analytics & Roadmap", url: "https://docs.google.com/presentation/d/1Oyi8ByK6QVAxT2AooDcrl6jVmh60a0jB" },
   };
   const SIM_INSTRUCTIONS_URL = "https://docs.google.com/presentation/d/1fzdvOpQVGNROKsjOsVkULV2uhcIVBlmG";
   const SLIDES_FOLDER_URL = "https://drive.google.com/drive/folders/1Oe6G2mGYE73wti9hMlANawZuOKsa4Oae";
