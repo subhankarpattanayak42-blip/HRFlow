@@ -251,6 +251,41 @@ body {
 .stack { display: grid; gap: 0.5rem; }
 .inline-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
 
+/* Labeled field — used by Sign In + Team panels for a consistent, airy form */
+.field {
+  display: grid;
+  gap: 0.3rem;
+}
+.field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+.field input,
+.field select {
+  width: 100%;
+}
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.login-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  align-items: end;
+}
+.login-grid .field:first-child { grid-column: span 1; }
+.login-grid .field:nth-child(2) { grid-column: span 1; }
+.login-grid .primary {
+  grid-column: span 2;
+  width: 100%;
+  padding: 0.6rem;
+}
+
 input, select, textarea, button { font: inherit; }
 
 input, select, textarea {
@@ -300,6 +335,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 .message { min-height: 1.1rem; color: var(--muted); margin: 0; font-size: 0.84rem; }
 .small { font-size: 0.82rem; }
 .muted { color: var(--muted); }
+
+/* Panel divider — consistent hairline under section headers / between rows */
+hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0.9rem 0;
+}
 
 /* ── Stats ──────────────────────────────────── */
 .stats { display: grid; gap: 0.5rem; }

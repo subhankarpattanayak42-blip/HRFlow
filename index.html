@@ -37,18 +37,33 @@
     <section class="top-grid">
       <article class="panel auth-panel">
         <h2>🔐 Sign In</h2>
-        <form id="login-form" class="inline-row" style="gap:0.4rem;align-items:stretch">
-          <input id="login-name" type="email" placeholder="Your email" required style="padding:0.5rem 0.65rem;font-size:0.85rem;flex:2;min-width:160px" />
-          <input id="login-password" type="password" placeholder="Password" required style="padding:0.5rem 0.65rem;font-size:0.85rem;flex:1;min-width:120px" />
-          <button class="primary" type="submit" style="padding:0.5rem 0.85rem;font-size:0.85rem;white-space:nowrap;flex-shrink:0">Sign In</button>
+        <form id="login-form" class="login-grid">
+          <div class="field">
+            <label for="login-name">Email</label>
+            <input id="login-name" type="email" placeholder="you@silicon.ac.in" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" placeholder="Password" required autocomplete="current-password" />
+          </div>
+          <button class="primary" type="submit">Sign In</button>
         </form>
-        <p id="auth-message" class="message" style="min-height:1.2rem;margin-top:0.3rem;font-size:0.78rem"></p>
+        <p id="auth-message" class="message"></p>
       </article>
 
       <article class="panel team-panel">
         <h2>👥 Your Team</h2>
         <div class="stack">
-          <select id="team-select"></select>
+          <div class="field">
+            <label for="team-select">Team</label>
+            <select id="team-select"></select>
+          </div>
+          <div class="form-actions">
+            <button id="start-btn" class="primary" type="button">Start Simulation</button>
+            <button id="reset-run-btn" class="ghost" type="button">Reset Run</button>
+          </div>
+          <p id="team-members" class="small muted">No team selected.</p>
+          <hr />
           <div id="team-create-wrap" class="inline-row">
             <input id="team-name" type="text" placeholder="New team name" />
             <button id="create-team-btn" class="ghost" type="button">Create Team</button>
@@ -56,11 +71,6 @@
           <div id="team-member-wrap" class="inline-row">
             <input id="member-name" type="text" placeholder="Add member email" />
             <button id="add-member-btn" class="ghost" type="button">Add Member</button>
-          </div>
-          <p id="team-members" class="small muted">No team selected.</p>
-          <div class="inline-row">
-            <button id="start-btn" class="primary" type="button">Start Simulation</button>
-            <button id="reset-run-btn" class="ghost" type="button">Reset Run</button>
           </div>
         </div>
       </article>
