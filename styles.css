@@ -147,6 +147,16 @@ body {
   border-color: rgba(236,72,153,0.6);
   color: #fecdd3;
 }
+.nav-btn.journal-link {
+  background: rgba(13,148,136,0.16);
+  border-color: rgba(13,148,136,0.42);
+  color: #5eead4;
+}
+.nav-btn.journal-link:hover {
+  background: rgba(13,148,136,0.3);
+  border-color: rgba(13,148,136,0.6);
+  color: #99f6e4;
+}
 
 /* Status: week chip + user + logout, muted and separated */
 .hero-status {
