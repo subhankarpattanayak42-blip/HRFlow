@@ -49,7 +49,7 @@
   const SESSION_SLIDES = {
     0: { name: "📖 Course Intro", url: "https://docs.google.com/presentation/d/11CJwmvOzSTxzj1t5rKM8Ebp5mS64xTyR" },
     1: { name: "🧱 HRIS Foundations", url: "https://docs.google.com/presentation/d/1cjV3a-DeUQjO_Lx-ICrdKYy76zJfj1m4" },
-    2: { name: "🗄️ Data Modeling & Org Architecture", url: "https://docs.google.com/presentation/d/1YZ2Xg127-1PYirc821diEM0cbKGCd7TM" },
+    2: { name: "🗄️ Data Modeling & Org Architecture", url: "https://docs.google.com/presentation/d/1lMr2QALcOXdEauFaMuzNl3qin9442rBUpSoTfnLr7u4" },
     3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1EWN5GWWzVDRONL4B1k7-u3hi3lg_03kK" },
     4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/1pGiBxxEMwOcD6ofab7sgcN6AKg2YMMtd" },
     5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1AbiwT5jC90fTp-sylAWEyhzq3DmvrUYt" },
