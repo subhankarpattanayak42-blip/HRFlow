@@ -13,10 +13,14 @@
     "What is the Individual Portfolio?",
     "How does the weekly quiz work?",
     "How do I log in to HR Flow Lab?",
-    "What tools do I need?",
     "What are the 5 modules?",
     "How do team grades work?",
-    "What is the Learning Journal?"
+    "What is the Learning Journal?",
+    "What is an HRIS?",
+    "What is effective dating in HR systems?",
+    "Explain talent management simply",
+    "What is payroll & how does it work?",
+    "What is an ERD / data dictionary?"
   ];
 
   /* ── 2. AI ANSWER ENGINE ────────────────────────────────────── */
@@ -32,7 +36,12 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
       const data = await res.json();
       if (data.answer) {
-        return { text: data.answer, topic: "AI Assistant", good: true };
+        return {
+          text: data.answer,
+          topic: data.source === "web" ? "AI · Web Search" : "AI · Course FAQ",
+          good: true,
+          citations: data.citations || []
+        };
       }
       throw new Error("No answer");
     } catch (e) {
@@ -67,7 +76,7 @@
       </div>
       <div class="ask-body">
         <div class="ask-msg ask-bot">
-          👋 Hi! I'm the MG3003 course assistant. Ask me anything about the course — assessment, quizzes, the simulation, the portfolio, teams, deadlines, tools. I'll answer using AI based on the course material!
+          👋 Hi! I'm your MG3003 study companion. Ask me about the course (assessment, sprints, portfolios, deadlines, teams) OR about HR concepts & terms like HRIS, talent management, payroll, or ERDs — I'll search the web and give you a clear answer with sources!
         </div>
         <div class="ask-chips"></div>
       </div>
@@ -117,6 +126,24 @@
           tag.className = "ask-topic";
           tag.textContent = res.topic;
           m.appendChild(tag);
+        }
+        if (res.citations && res.citations.length) {
+          const cite = document.createElement("div");
+          cite.className = "ask-cites";
+          cite.textContent = "Sources: ";
+          res.citations.slice(0, 4).forEach((url) => {
+            try {
+              const host = new URL(url).hostname.replace("www.", "");
+              const a = document.createElement("a");
+              a.href = url;
+              a.target = "_blank";
+              a.rel = "noopener";
+              a.textContent = host;
+              cite.appendChild(a);
+              cite.appendChild(document.createTextNode(" · "));
+            } catch (_) {}
+          });
+          m.appendChild(cite);
         }
       });
     }
