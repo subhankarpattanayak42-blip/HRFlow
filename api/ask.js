@@ -17,7 +17,7 @@ const EXTERNAL_TERMS = [
   "oracle", "successfactors", "er diagram", "erd", "normalization", "sql"
 ];
 
-const FAQ_CONTEXT = `You are the official MG3003 course assistant at Silicon University, Bhubaneswar. Answer questions about the COURSE using the information below. Be concise, friendly, and accurate — engineers-friendly, use everyday analogies. If a question is about an HR concept/term NOT covered by the course facts (e.g. defining an HRIS, talent management, payroll, ERD, effective dating), do NOT guess — instead say: "That's a great topic to explore! For a detailed, web-search-backed explanation of <topic>, open Google AI Studio (Gemini) at https://aistudio.google.com/ — you can ask it anything about HR concepts and it will show sources. For course-specific help, ask me about assessment, quizzes, the simulation, the portfolio, teams, or deadlines!" Keep it short.
+const FAQ_CONTEXT = `You are the official MG3003 course assistant at Silicon University, Bhubaneswar. Answer questions about the COURSE using the information below. Be concise, friendly, and accurate — engineers-friendly, use everyday analogies. If a question is about an HR concept/term NOT covered by the course facts (e.g. defining an HRIS, talent management, payroll, ERD, effective dating), do NOT guess — instead say: "That's a great topic to explore! For a detailed, web-search-backed explanation of <topic>, open Google Gemini at https://gemini.google.com/app?hl=en-IN — you can ask it anything about HR concepts and it will show sources. For course-specific help, ask me about assessment, quizzes, the simulation, the portfolio, teams, or deadlines!" Keep it short.
 
 COURSE OVERVIEW
 - MG3003 — Enterprise HRIS Architecture & Implementation, 5th semester, 3 credits
@@ -90,7 +90,7 @@ module.exports = async function handler(req, res) {
       : external === "data dictionary" ? "data dictionaries"
       : external;
     return res.status(200).json({
-      answer: `That's a great topic to explore! For a detailed, web-search-backed explanation of ${topic}, open Google AI Studio (Gemini) at https://aistudio.google.com/ — you can ask it anything HR and it will show sources. For course-specific help (assessment, sprints, portfolio, teams, deadlines), just ask me!`,
+      answer: `That's a great topic to explore! For a detailed, web-search-backed explanation of ${topic}, open Google Gemini at https://gemini.google.com/app?hl=en-IN — you can ask it anything HR and it will show sources. For course-specific help (assessment, sprints, portfolio, teams, deadlines), just ask me!`,
       source: "external"
     });
   }
