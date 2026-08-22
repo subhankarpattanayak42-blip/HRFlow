@@ -105,7 +105,7 @@ module.exports = async function handler(req, res) {
         "X-Title": "MG3003 HR Flow Lab"
       },
       body: JSON.stringify({
-        model: env.ASK_COURSE_MODEL || "google/gemini-2.5-flash-lite",
+        model: env.ASK_COURSE_MODEL || "deepseek/deepseek-v4-flash-0731",
         messages: [
           { role: "system", content: FAQ_CONTEXT },
           { role: "user", content: q }
