@@ -789,23 +789,6 @@ hr {
   border-radius: 99px;
 }
 
-/* Web-search citations (study companion) */
-.ask-cites {
-  margin-top: 0.5rem;
-  font-size: 0.68rem;
-  color: #334155;
-  word-break: break-word;
-}
-.ask-cites a {
-  color: #2563eb;
-  font-weight: 600;
-  text-decoration: none;
-  margin-right: 0.35rem;
-}
-.ask-cites a:hover {
-  text-decoration: underline;
-}
-
 /* Suggested chips */
 .ask-chips {
   display: flex;

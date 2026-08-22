@@ -1,27 +1,23 @@
 /* ═══════════════════════════════════════════════════════════════
    MG3003 — HR Flow Lab · AI Course Assistant API (Vercel Serverless)
-   ★ Enhanced Study Companion — v2.0 ★
-   
-   Two answer modes:
-   1. COURSE mode  → answers from the built-in course FAQ context (fast, cheap, accurate
-      for assessment / sprints / deadlines / teams / portfolios / simulation).
-   2. STUDY mode   → for HR terms & concepts, does a LIVE INTERNET SEARCH via
-      Perplexity Sonar (OpenRouter) and returns a grounded answer WITH CITATIONS,
-      so students can study HR terminology, trends and real-world context beyond the
-      course slides. The course context is still passed so answers stay relevant.
+   COURSE FAQ MODE ONLY.
+   Answers course-logistics questions from the built-in FAQ context using a
+   fast, low-cost model. For general HR terms / concepts / web research, we
+   tell the student to use Google AI Studio (Gemini) rather than paying for
+   a live web-search model — cost-friendly for a class of students.
    ═══════════════════════════════════════════════════════════════ */
 
-const COURSE_KEYWORDS = [
-  "assessment", "grade", "mid-term", "midterm", "end-term", "endterm", "internal",
-  "sprint", "portfolio", "quiz", "capstone", "deadline", "submis", "session",
-  "module", "simulation", "team-", "team 1", "team 2", "team 3", "journal",
-  "peer", "login", "password", "globaltech", "rubric", "portfolio", "attendance",
-  "deliverable", "tools", "textbook", "kavanagh", "hr flow", "leaderboard",
-  "my results", "weight", "marks", "schedule", "class", "syllabus", "credit"
+/* Detects HR-concept / study questions that are NOT answerable from the course
+   FAQ and need external research → we nudge the student to Google Gemini.
+   These are answered WITHOUT calling the LLM at all, so they cost zero tokens. */
+const EXTERNAL_TERMS = [
+  "hr analytics", "talent management", "payroll", "payroll cycle", "benefits admin",
+  "compensation", "succession", "ats", "onboarding", "rbac", "compliance matrix",
+  "workday", "sap successfactors", "oracle hcm", "effective dating", "data dictionary",
+  "oracle", "successfactors", "er diagram", "erd", "normalization", "sql"
 ];
 
-/* Course facts used in BOTH modes so the assistant stays grounded. */
-const FAQ_CONTEXT = `You are the official MG3003 course assistant at Silicon University, Bhubaneswar. You may answer course-specific questions from the information below (be concise, friendly, accurate), and you may ALSO use internet/web search to explain HR concepts and terminology in simple language for engineering students.
+const FAQ_CONTEXT = `You are the official MG3003 course assistant at Silicon University, Bhubaneswar. Answer questions about the COURSE using the information below. Be concise, friendly, and accurate — engineers-friendly, use everyday analogies. If a question is about an HR concept/term NOT covered by the course facts (e.g. defining an HRIS, talent management, payroll, ERD, effective dating), do NOT guess — instead say: "That's a great topic to explore! For a detailed, web-search-backed explanation of <topic>, open Google AI Studio (Gemini) at https://aistudio.google.com/ — you can ask it anything about HR concepts and it will show sources. For course-specific help, ask me about assessment, quizzes, the simulation, the portfolio, teams, or deadlines!" Keep it short.
 
 COURSE OVERVIEW
 - MG3003 — Enterprise HRIS Architecture & Implementation, 5th semester, 3 credits
@@ -37,14 +33,7 @@ ASSESSMENT (University: 30% Internal + 20% Mid-term + 50% End-term)
 - Sprint total: 20% overall (10% Sprints 1-5, 10% Sprints 6-10)
 - Exams total 35% (10% midterm + 25% endterm)
 
-SESSIONS & MODULES
-- Module 1: HRIS Fundamentals (Sessions 1-2)
-- Module 2: Talent Acquisition & Core HR (Sessions 3-4)
-- Module 3: Time, Payroll & Compensation (Sessions 5-6)
-- Module 4: Performance, Learning & Succession (Sessions 7-8)
-- Module 5: Service Delivery, Integration & Analytics (Sessions 9-10)
-
-SPRINTS (10 weekly team deliverables at 4% of the 40% sprint bucket)
+SPRINTS (10 weekly team deliverables)
 - Each week your team produces a consulting deliverable for GlobalTech Inc.
 - Examples: current-state analysis, ERD, ATS architecture, compliance matrix, payroll flow, RBAC matrix
 - Graded on: Completeness (30%), Technical Accuracy (30%), Team Contribution (20%), Documentation (20%)
@@ -56,39 +45,21 @@ INDIVIDUAL PORTFOLIO
 - Format: PDF or GitHub repo (recommended for interviews)
 - Graded on: Design Quality (30%), Reflective Depth (20%), Technical Accuracy (20%), Completeness (15%), Presentation (15%)
 
+SESSION/MODULES
+- Module 1: HRIS Fundamentals (Sessions 1-2)
+- Module 2: Talent Acquisition & Core HR (Sessions 3-4)
+- Module 3: Time, Payroll & Compensation (Sessions 5-6)
+- Module 4: Performance, Learning & Succession (Sessions 7-8)
+- Module 5: Service Delivery, Integration & Analytics (Sessions 9-10)
+
 LEARNING JOURNAL
 - Write what you learned each session — what surprised you, what's fuzzy, what you'd do differently
 - Part of Internal Assessment (10%)
-- Low-stakes reflection, not length-based
 
-CAUTION — for any classic HR terms (e.g. what is an HRIS, what is talent management, what is an ERD / data dictionary / effective dating / payroll / benefits), ALWAYS search the web to get a clear, simple definition with examples, then tie it back to the course.
-
-Students are ENGINEERS: explain with everyday analogies and short, structured answers.`;
-
-/* Detect whether a question is course-specific (use fast model) vs a study/term/
-   concept question (use web search). Keyword match is a fast, dependency-free router. */
-function isCourseQuestion(q) {
-  const s = " " + q.toLowerCase() + " ";
-  for (const k of COURSE_KEYWORDS) {
-    if (s.includes(" " + k + " ")) return true;
-    if (s.includes(k)) return true;
-  }
-  return false;
-}
-
-async function callOpenRouter(model, messages, maxTokens, env) {
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
-      "HTTP-Referer": "https://hr-flow-liart.vercel.app",
-      "X-Title": "MG3003 HR Flow Lab"
-    },
-    body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature: 0.3 })
-  });
-  return res;
-}
+TEAMS / SIMULATION
+- 3 teams (Team-1, Team-2, Team-3). Test account student@tech.com / mg3003@2026
+- Simulation app: hr-flow-liart.vercel.app · login @silicon.ac.in email / mg3003@2026
+- Admin activates weeks; session auto-resets when week changes`
 
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -109,65 +80,49 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: "API key not configured" });
   }
 
-  const useWeb = !isCourseQuestion(q);
-  const COURSE_MODEL = env.ASK_COURSE_MODEL || "google/gemini-2.5-flash-lite";
-  const WEB_MODEL = env.ASK_WEB_MODEL || "perplexity/sonar";
+  /* Cheap & deterministic: if the question mentions a known external HR/tech term,
+     answer with a Google Gemini nudge WITHOUT spending an LLM call. */
+  const lower = " " + q.toLowerCase() + " ";
+  const external = EXTERNAL_TERMS.find(k => lower.includes(" " + k + " ") || lower.includes(k));
+  if (external) {
+    const topic = external === "erd" || external === "er diagram" ? "ERDs and data modelling"
+      : external === "effective dating" ? "effective dating in HR systems"
+      : external === "data dictionary" ? "data dictionaries"
+      : external;
+    return res.status(200).json({
+      answer: `That's a great topic to explore! For a detailed, web-search-backed explanation of ${topic}, open Google AI Studio (Gemini) at https://aistudio.google.com/ — you can ask it anything HR and it will show sources. For course-specific help (assessment, sprints, portfolio, teams, deadlines), just ask me!`,
+      source: "external"
+    });
+  }
 
   try {
-    if (!useWeb) {
-      /* ── COURSE MODE: answer from course context (fast, no web) ── */
-      const r = await callOpenRouter(
-        COURSE_MODEL,
-        [
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "https://hr-flow-liart.vercel.app",
+        "X-Title": "MG3003 HR Flow Lab"
+      },
+      body: JSON.stringify({
+        model: env.ASK_COURSE_MODEL || "google/gemini-2.5-flash-lite",
+        messages: [
           { role: "system", content: FAQ_CONTEXT },
           { role: "user", content: q }
         ],
-        600,
-        env
-      );
-      const d = await r.json();
-      if (!r.ok) {
-        console.error("OpenRouter course error:", JSON.stringify(d).slice(0, 300));
-        return res.status(502).json({ error: "AI service error. Please try again." });
-      }
-      const answer = d.choices?.[0]?.message?.content?.trim();
-      if (!answer) return res.status(502).json({ error: "Empty response." });
-      return res.status(200).json({ answer, source: "course" });
-    }
+        max_tokens: 500,
+        temperature: 0.3
+      })
+    });
 
-    /* ── STUDY MODE (web search via Perplexity Sonar) ── */
-    const r = await callOpenRouter(
-      WEB_MODEL,
-      [
-        { role: "system", content: FAQ_CONTEXT + "\n\nAlways ground technical/HR answers with a live web search and include 2-4 clickable source links at the end under 'Sources:'." },
-        { role: "user", content: q }
-      ],
-      1000,
-      env
-    );
     const d = await r.json();
     if (!r.ok) {
-      console.error("OpenRouter web error:", JSON.stringify(d).slice(0, 300));
-      // fallback to course model so the user still gets an answer
-      const r2 = await callOpenRouter(COURSE_MODEL,
-        [{ role: "system", content: FAQ_CONTEXT }, { role: "user", content: q }], 600, env);
-      const d2 = await r2.json();
-      const ans2 = d2.choices?.[0]?.message?.content?.trim();
-      if (ans2) return res.status(200).json({ answer: ans2, source: "course" });
+      console.error("OpenRouter error:", JSON.stringify(d).slice(0, 300));
       return res.status(502).json({ error: "AI service error. Please try again." });
     }
-
     const answer = d.choices?.[0]?.message?.content?.trim();
     if (!answer) return res.status(502).json({ error: "Empty response." });
-
-    /* Pull citations if provided (Perplexity returns them), else extract links from text. */
-    let citations = [];
-    try { citations = d.citations || []; } catch (_) {}
-    if (!citations.length) {
-      const urls = answer.match(/https?:\/\/[^\s\)\]\}]+/g) || [];
-      citations = [...new Set(urls)].slice(0, 4);
-    }
-    return res.status(200).json({ answer, source: "web", citations });
+    return res.status(200).json({ answer, source: "course" });
   } catch (err) {
     console.error("API error:", err);
     return res.status(500).json({ error: "Failed to get answer. Please try again." });
