@@ -1433,6 +1433,19 @@ function setLoginLoading(on) {
   refs.loginBtnLabel.textContent = on ? "Signing In…" : "Sign In";
 }
 
+// Wrap a promise in a timeout so a hung request can never leave the UI stuck.
+function withTimeout(promise, ms, label) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(label || `Timed out after ${ms / 1000}s`));
+    }, ms);
+    promise.then(
+      (v) => { clearTimeout(timer); resolve(v); },
+      (e) => { clearTimeout(timer); reject(e); }
+    );
+  });
+}
+
 function setupAuthHandlers() {
   refs.loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1447,7 +1460,11 @@ function setupAuthHandlers() {
         const email = refs.loginName.value.trim();
         const password = refs.loginPassword.value.trim();
 
-        const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await withTimeout(
+          state.supabase.auth.signInWithPassword({ email, password }),
+          15000,
+          "The sign-in is taking too long to respond. Supabase may be experiencing issues — please try again in a moment."
+        );
         if (error) {
           showMessage(refs.authMessage, `Login failed: ${error.message}`, true);
           return;
@@ -1466,7 +1483,14 @@ function setupAuthHandlers() {
         showMessage(refs.authMessage, `Welcome, ${state.currentUser.displayName}.`);
         refreshUI();
       } catch (error) {
-        showMessage(refs.authMessage, `Login exception: ${error.message}`, true);
+        const timedOut = /tim(e|ing)-?out|too long to respond/i.test(error?.message || "");
+        showMessage(
+          refs.authMessage,
+          timedOut
+            ? error.message
+            : `Login exception: ${error.message}`,
+          true
+        );
       } finally {
         setLoginLoading(false);
       }
