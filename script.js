@@ -271,6 +271,8 @@ const refs = {
   loginForm: document.getElementById("login-form"),
   loginName: document.getElementById("login-name"),
   loginPassword: document.getElementById("login-password"),
+  loginBtn: document.getElementById("login-btn"),
+  loginBtnLabel: document.getElementById("login-btn-label"),
   authMessage: document.getElementById("auth-message"),
   sessionBanner: document.getElementById("session-banner"),
   logoutBtn: document.getElementById("logout-btn"),
@@ -1424,10 +1426,18 @@ function setupJournalHandlers() {
   });
 }
 
+function setLoginLoading(on) {
+  if (!refs.loginBtn) return;
+  refs.loginBtn.classList.toggle("loading", on);
+  refs.loginBtn.disabled = on;
+  refs.loginBtnLabel.textContent = on ? "Signing In…" : "Sign In";
+}
+
 function setupAuthHandlers() {
   refs.loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
     void (async () => {
+      setLoginLoading(true);
       try {
         if (!state.supabase || !state.connected) {
           showMessage(refs.authMessage, "Database not connected. Refresh and try again.", true);
@@ -1457,6 +1467,8 @@ function setupAuthHandlers() {
         refreshUI();
       } catch (error) {
         showMessage(refs.authMessage, `Login exception: ${error.message}`, true);
+      } finally {
+        setLoginLoading(false);
       }
     })();
   });

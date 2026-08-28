@@ -47,7 +47,10 @@
             <label for="login-password">Password</label>
             <input id="login-password" type="password" placeholder="Password" required autocomplete="current-password" />
           </div>
-          <button class="primary" type="submit">Sign In</button>
+          <button id="login-btn" class="primary" type="submit">
+            <span class="spinner" aria-hidden="true"></span>
+            <span id="login-btn-label">Sign In</span>
+          </button>
         </form>
         <p id="auth-message" class="message"></p>
       </article>
