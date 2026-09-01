@@ -1,14 +1,14 @@
 const WEEK_LABELS = {
-  1: "Week 1: HRIS Fundamentals",
-  2: "Week 2: Digital Transformation",
-  3: "Week 3: Mergers & Acquisitions",
-  4: "Week 4: Global Compliance",
-  5: "Week 5: Talent Analytics",
-  6: "Week 6: Employee Experience",
-  7: "Week 7: Compensation Strategy",
-  8: "Week 8: HRIS Security",
-  9: "Week 9: Future of Work",
-  10: "Week 10: Strategic HR",
+  1: "Week 1",
+  2: "Week 2",
+  3: "Week 3",
+  4: "Week 4",
+  5: "Week 5",
+  6: "Week 6",
+  7: "Week 7",
+  8: "Week 8",
+  9: "Week 9",
+  10: "Week 10",
 };
 
 function updateWeekDisplay() {
