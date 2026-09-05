@@ -51,7 +51,7 @@
     1: { name: "🧱 HRIS Foundations", url: "https://docs.google.com/presentation/d/1cjV3a-DeUQjO_Lx-ICrdKYy76zJfj1m4" },
     2: { name: "🗄️ Data Modeling & Org Architecture", url: "https://docs.google.com/presentation/d/1TcmOA88B8bPVXbZl6bICx7SI2oZzR9blKeFcZbYgx54" },
     3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1s7m-aAkmA9DJGqz_Nd-CViHzD30rqX8C13-4stBpReM" },
-    4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/1pGiBxxEMwOcD6ofab7sgcN6AKg2YMMtd" },
+    4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/17ZDvzaqmXoYVludGiOszzC8Drgghz_IMc-R1d7az1x0" },
     5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1AbiwT5jC90fTp-sylAWEyhzq3DmvrUYt" },
     6: { name: "💰 Payroll & Compensation", url: "https://docs.google.com/presentation/d/170RsUz68kAJXTVuNXvbCY-gvHAMB1-1Y" },
     7: { name: "📈 Performance Management", url: "https://docs.google.com/presentation/d/1smsmuIOrk6loVUfjM-sfQLLNIwnk2W6Y" },
