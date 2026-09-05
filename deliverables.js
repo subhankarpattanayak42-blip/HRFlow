@@ -50,7 +50,7 @@
     0: { name: "📖 Course Intro", url: "https://docs.google.com/presentation/d/11CJwmvOzSTxzj1t5rKM8Ebp5mS64xTyR" },
     1: { name: "🧱 HRIS Foundations", url: "https://docs.google.com/presentation/d/1cjV3a-DeUQjO_Lx-ICrdKYy76zJfj1m4" },
     2: { name: "🗄️ Data Modeling & Org Architecture", url: "https://docs.google.com/presentation/d/1TcmOA88B8bPVXbZl6bICx7SI2oZzR9blKeFcZbYgx54" },
-    3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1EWN5GWWzVDRONL4B1k7-u3hi3lg_03kK" },
+    3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1s7m-aAkmA9DJGqz_Nd-CViHzD30rqX8C13-4stBpReM" },
     4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/1pGiBxxEMwOcD6ofab7sgcN6AKg2YMMtd" },
     5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1AbiwT5jC90fTp-sylAWEyhzq3DmvrUYt" },
     6: { name: "💰 Payroll & Compensation", url: "https://docs.google.com/presentation/d/170RsUz68kAJXTVuNXvbCY-gvHAMB1-1Y" },
