@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MG3003 — Rate Your Teammates</title>
+<style>
+  :root{--navy:#11253e;--navy-2:#1a3354;--gold:#f0c14b;--gold-d:#d9a92e;--bg:#0b1423;
+    --card:#0f1b2e;--panel:#101d33;--line:#26344d;--muted:#8fa3bd;--text:#e7edf6;--accent:#3aa9ff;--green:#23c55e;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(160deg,#0b1423,#101d33);color:var(--text);line-height:1.5;min-height:100vh;}
+  .shell{max-width:880px;margin:0 auto;padding:20px 18px 60px;}
+  header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:linear-gradient(135deg,var(--navy),var(--navy-2));border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.4);}
+  .monogram{width:42px;height:42px;border-radius:10px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;}
+  header h1{font-size:19px;font-weight:700;letter-spacing:.2px;}
+  header p{font-size:12px;color:#c7d2e0;margin-top:2px;}
+  .chip{display:inline-block;background:rgba(240,193,75,.15);color:var(--gold);border:1px solid rgba(240,193,75,.4);border-radius:20px;padding:2px 12px;font-size:11px;font-weight:600;margin-left:6px;}
+  .msg{padding:12px 16px;border-radius:10px;margin:16px 0;font-size:13px;}
+  .msg.ok{background:rgba(35,197,94,.14);border:1px solid rgba(35,197,94,.4);color:var(--green);}
+  .msg.info{background:rgba(58,169,255,.10);border:1px solid rgba(58,169,255,.35);color:var(--accent);}
+  .msg.err{background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.4);color:#fca5a5;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0;}
+  .panel h2{font-size:15px;font-weight:700;color:var(--gold);}
+  .panel .sub{font-size:12px;color:var(--muted);margin:4px 0 14px;}
+  table.rows{width:100%;border-collapse:collapse;font-size:13.5px;}
+  table.rows th{color:var(--muted);padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);font-weight:600;}
+  table.rows td{padding:11px 10px;border-top:1px solid var(--line);}
+  .me-row{background:rgba(240,193,75,.06);}
+  .me-tag{display:inline-block;font-size:10px;background:rgba(240,193,75,.18);color:var(--gold);border-radius:10px;padding:1px 8px;margin-left:8px;font-weight:700;}
+  .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex:0 0 auto;}
+  .who{display:flex;align-items:center;gap:10px;}
+  .score{display:flex;gap:8px;align-items:center;}
+  select.pscore{background:#0b1423;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 6px;font-size:13px;min-width:52px;}
+  select.pscore option{background:#111c30;color:var(--text);}
+  .crit{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--muted);}
+  .crit b{font-size:10px;font-weight:700;}
+  .avg{font-size:13px;font-weight:700;color:var(--gold);min-width:44px;text-align:center;}
+  .btn{display:inline-block;background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:800;cursor:pointer;}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+  .deadline{display:flex;align-items:center;gap:8px;margin:14px 0;font-size:13px;color:var(--muted);}
+  .deadline .d{color:var(--green);font-weight:700;}
+  .deadtag{border:1px solid var(--line);border-radius:8px;padding:2px 10px;font-size:12px;}
+  .saved-state{padding:6px 10px;border-radius:8px;font-size:11.5px;}
+  .saved-state.saved{background:rgba(35,197,94,.14);color:var(--green);border:1px solid rgba(35,197,94,.4);}
+  .saved-state.unsaved{background:rgba(240,193,75,.12);color:var(--gold);border:1px solid rgba(240,193,75,.35);}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .back{color:var(--accent);text-decoration:none;font-size:13px;}
+  .empty{color:var(--muted);font-size:13.5px;padding:10px 0;}
+  @media(max-width:600px){ header h1{font-size:16px;} table.rows{font-size:12px;} .crit b{display:none;} }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="monogram">M</div>
+    <div>
+      <h1>MG3003 · Rate Your Teammates <span class="chip">0–10</span></h1>
+      <p>Peer evaluation — how helpful each teammate was in the project</p>
+    </div>
+  </header>
+
+  <div id="content"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://avzchxohvknqmenrmibz.supabase.co";
+  const SUPABASE_ANON = "sb_publishable_wlBgsi63ky37oF8Jq4h-_w_WJyNXPC8";
+  // Deadline — editable until this moment (IST, stored as ISO UTC). Change as needed.
+  // Course runs Aug–Dec 2026; default = end of Nov 2026 (confirm with instructor).
+  const DEADLINE_ISO = "2026-11-30T18:29:00+05:30";
+  const DEADLINE = new Date(DEADLINE_ISO).getTime();
+
+  const NAME_MAP = {
+    "cse.24bcsg59@silicon.ac.in":"Anikesh Ransingh","cse.24bcsa13@silicon.ac.in":"Gayatri Pati",
+    "cse.24bcsh39@silicon.ac.in":"Swastik Ranjan Das","cse.24bcsf14@silicon.ac.in":"Ritika Behera",
+    "ece.24becf22@silicon.ac.in":"Sindhuja Gouda","cse.24bcsg10@silicon.ac.in":"Abhisekh Mohanty",
+    "cse.25bcsl20@silicon.ac.in":"Prithwish Sarkar","cse.24bcsf23@silicon.ac.in":"Smruti Ranjan Nayak",
+    "cse.24bcsh51@silicon.ac.in":"Deepakshi Nayak","cse.24bcsc59@silicon.ac.in":"Eva Adyasha Dash",
+    "ece.24becf01@silicon.ac.in":"Priyanshu Kumar Singh","ece.24bece88@silicon.ac.in":"Abhigyan Dash",
+    "ece.24bech61@silicon.ac.in":"Abinash Nanda","ece.24beca89@silicon.ac.in":"Rajashree Priyadarshini Bihari",
+    "ece.24bece58@silicon.ac.in":"Tapaswini Sahoo","eee.24beeg29@silicon.ac.in":"Jayprakash Sahu",
+    "eee.24beeb59@silicon.ac.in":"Sammona Mohanty"
+  };
+  const AVATAR_COLORS = ["#0d9488","#1e3a5f","#b45309","#7c3aed","#be123c","#047857","#1d4ed8","#a16207","#0f766e","#6d28d9"];
+  function nameOf(e){ return NAME_MAP[e] || (e ? e.split("@")[0] : "N/A"); }
+  function initials(n){ const p=n.trim().split(/\s+/); return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():n.slice(0,2).toUpperCase(); }
+  function colorOf(n){ let h=0; for(let i=0;i<(n||"").length;i++) h=(h*31+n.charCodeAt(i))>>>0; return AVATAR_COLORS[h%AVATAR_COLORS.length]; }
+  function opts(sel){ let o='<option value=""></option>'; for(let i=0;i<=10;i++) o+=`<option value="${i}">${i}</option>`; return o; }
+
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  let currentEmail = null, currentTeam = null;
+
+  function deadlineNow(){ const diff=DEADLINE-Date.now(); if(diff<=0) return {open:false,label:"closed"}; 
+    const d=new Date(DEADLINE); return {open:true, label:d.toLocaleString(undefined,{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}; }
+
+  async function main(){
+    const { data:{ session } } = await client.auth.getSession();
+    const box=document.getElementById("content");
+    if(!session || !session.user){
+      box.innerHTML = `<div class="panel"><h2>Sign in to rate your teammates</h2>
+        <div class="sub">This page needs your Silicon University login to know your team and who to rate.</div>
+        <a class="btn" href="index.html">← Sign in to HR Flow Lab</a></div>`;
+      return;
+    }
+    currentEmail = session.user.email;
+    if(!currentEmail){ box.innerHTML=`<div class="msg err">No email on session — please sign out &amp; back in.</div>`; return; }
+
+    // find this student's team from teams table
+    const { data: teams } = await client.from("teams").select("name, members");
+    const row = (teams||[]).find(t => (t.members||[]).includes(currentEmail));
+    if(!row){ box.innerHTML=`<div class="msg err">You are not on a team yet — ask the instructor to assign you.</div>`; return; }
+    currentTeam = row.name;
+    const teammates = (row.members||[]).filter(e => e !== currentEmail);
+
+    const d = deadlineNow();
+    const dl = d.open
+      ? `<span class="deadtag">Editable until <b class="d">${d.label}</b></span>`
+      : `<span class="deadtag" style="color:#fca5a5">Closed after ${d.label}</span>`;
+    const myName = nameOf(currentEmail);
+
+    // load existing saved ratings for this evaluator
+    let saved = {};
+    try {
+      const { data } = await client.from("peer_evaluations")
+        .select("reviewee_email, contribution, reliability, quality, updated_at")
+        .eq("evaluator_email", currentEmail);
+      (data||[]).forEach(r => saved[r.reviewee_email] = r);
+    } catch(e){ /* table not ready yet */ }
+
+    if(!teammates.length){
+      box.innerHTML = `<div class="panel"><h2>No teammates to rate</h2><div class="sub">Your team has only one member (you).</div></div>`;
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="panel">
+        <div class="topbar">
+          <h2>${myName} <span class="chip">${currentTeam}</span></h2>
+          <span class="back"><a href="index.html" style="color:var(--accent)">← Back to app</a></span>
+        </div>
+        <div class="sub">Rate how helpful each teammate was in the project — 0 (not at all) to 10 (extremely helpful).
+          Averaged across <b>Contribution / Reliability / Quality</b>. You can change your scores any time until the deadline.</div>
+        <div class="deadline">⏰ ${dl}</div>
+      </div>
+      <div class="panel">
+        <table class="rows">
+          <thead><tr><th>Who</th><th class="crit" style="text-align:center">Contribution Reliability Quality</th><th style="text-align:center">Avg</th></tr></thead>
+          <tbody>
+            ${row.members.map(email => {
+              const nm = nameOf(email); const isMe = email===currentEmail; const av = colorOf(nm);
+              if(isMe) return `<tr class="me-row"><td><div class="who"><div class="avatar" style="background:${av}">${initials(nm)}</div>${nm}<span class="me-tag">You</span></div></td>
+                <td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--muted)">—</td></tr>`;
+              const r = saved[email]||{};
+              const c=r.contribution||'', rel=r.reliability||'', q=r.quality||'';
+              return `<tr data-email="${email}">
+                <td><div class="who"><div class="avatar" style="background:${av}">${initials(nm)}</div>${nm}</div></td>
+                <td><div class="score" style="justify-content:center">
+                  <div class="crit">Contribution<select class="pscore" data-k="contribution" data-avg="1">${opts()}</select></div>
+                  <div class="crit">Reliability<select class="pscore" data-k="reliability" data-avg="1">${opts()}</select></div>
+                  <div class="crit">Quality<select class="pscore" data-k="quality" data-avg="1">${opts()}</select></div>
+                </div></td>
+                <td class="avg" data-avg="1" style="text-align:center">–</td></tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+        <div style="margin-top:16px;text-align:right"><button class="btn" id="saveBtn" ${d.open?"":"disabled"}>💾 Save my ratings</button></div>
+        <div id="saveMsg"></div>
+      </div>`;
+
+    // fill saved values into dropdowns
+    document.querySelectorAll('tr[data-email]').forEach(tr=>{
+      const email=tr.dataset.email; const r=saved[email]||{};
+      document.querySelectorAll(`tr[data-email="${email}"] select[data-k]`).forEach(s=>{ const k=s.dataset.k; if(r[k]!==undefined) s.value=String(r[k]); });
+      updateAvg(tr);
+    });
+
+    // live avg
+    document.querySelectorAll('.pscore').forEach(s=> s.addEventListener('change', ()=> updateAvg(s.closest('tr[data-email]'))));
+
+    if(!d.open){ document.getElementById('saveMsg').innerHTML=`<div class="msg err">The deadline has passed — ratings are locked.</div>`; }
+
+    document.getElementById('saveBtn').addEventListener('click', async ()=>{
+      const rows=[...document.querySelectorAll('tr[data-email]')];
+      const writes=[];
+      for(const tr of rows){
+        const reviewee=tr.dataset.email;
+        const c=tr.querySelector('select[data-k="contribution"]').value;
+        const rel=tr.querySelector('select[data-k="reliability"]').value;
+        const q=tr.querySelector('select[data-k="quality"]').value;
+        if(c==='' && rel==='' && q==='') continue; // skip fully blank
+        writes.push({
+          evaluator_email:currentEmail, team:currentTeam, reviewee_email:reviewee,
+          reviewee_name:nameOf(reviewee),
+          contribution:c===''?0:parseInt(c), reliability:rel===''?0:parseInt(rel), quality:q===''?0:parseInt(q),
+          updated_at:new Date().toISOString()
+        });
+      }
+      if(!writes.length){ document.getElementById('saveMsg').innerHTML=`<div class="msg err">Rate at least one teammate first.</div>`; return; }
+      const btn=document.getElementById('saveBtn'); btn.disabled=true; btn.textContent='Saving…';
+      try {
+        // upsert on (evaluator_email, reviewee_email) — overwrite on re-save
+        const { error } = await client.from("peer_evaluations").upsert(writes, { onConflict: "evaluator_email,reviewee_email" });
+        if(error) throw error;
+        document.getElementById('saveMsg').innerHTML=`<div class="msg ok">✓ Saved. These are YOUR scores only — you can edit until ${deadlineNow().label}.</div>`;
+      } catch(e){
+        document.getElementById('saveMsg').innerHTML=`<div class="msg err">Save failed: ${(e.message||e).toString().slice(0,200)}
+          <br><small>This needs the peer_evaluations table + RLS. If this is the instructor, run peer_evaluations.sql in Supabase SQL Editor.</small></div>`;
+      }
+      btn.disabled=false; btn.textContent='💾 Save my ratings';
+    });
+
+    function updateAvg(tr){ if(!tr) return;
+      const vals=['contribution','reliability','quality'].map(k=>tr.querySelector(`select[data-k="${k}"]`).value).filter(v=>v!=='');
+      const a=tr.querySelector('.avg');
+      a.textContent = vals.length? (Math.round(vals.reduce((x,y)=>x+parseInt(y),0)/vals.length*100)/100).toFixed(2) : '–';
+    }
+  }
+  main();
+</script>
+</body>
+</html>
