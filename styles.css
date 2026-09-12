@@ -157,6 +157,16 @@ body {
   border-color: rgba(13,148,136,0.6);
   color: #99f6e4;
 }
+.nav-btn.team-eval {
+  background: rgba(20,184,166,0.16);
+  border-color: rgba(20,184,166,0.42);
+  color: #5eead4;
+}
+.nav-btn.team-eval:hover {
+  background: rgba(20,184,166,0.3);
+  border-color: rgba(20,184,166,0.6);
+  color: #99f6e4;
+}
 
 /* Status: week chip + user + logout, muted and separated */
 .hero-status {
