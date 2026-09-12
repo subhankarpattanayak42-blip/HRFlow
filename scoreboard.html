@@ -3,55 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MG3003 — Scoreboard · Quiz + Assignments</title>
+<title>MG3003 — Your Marks (Assessment Components)</title>
 <style>
   :root{--navy:#11253e; --navy-2:#1a3354; --gold:#f0c14b; --gold-d:#d9a92e;
-    --card:#ffffff; --muted:#6b7280; --line:#e5e7eb; --bg:#f5f7fa;}
+    --card:#ffffff; --muted:#6b7280; --line:#e5e7eb; --bg:#f5f7fa;
+    --na:#9ca3af; --scored:#16a34a; --total:#d97706;}
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:#1f2937; line-height:1.5; -webkit-font-smoothing:antialiased;}
-  .wrap{max-width:920px; margin:0 auto; padding:28px 20px 60px;}
+  body{font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:#1f2937; line-height:1.5;}
+  .wrap{max-width:1280px; margin:0 auto; padding:28px 20px 60px;}
   .brand{background:linear-gradient(135deg,var(--navy),var(--navy-2)); border-radius:14px; padding:26px 28px; color:#fff; box-shadow:0 8px 24px rgba(17,37,62,.22);}
   .brand .mono{display:flex; align-items:center; gap:14px;}
   .monogram{width:46px;height:46px;border-radius:10px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;}
-  .brand h1{font-size:22px; font-weight:700; letter-spacing:.2px;}
+  .brand h1{font-size:22px; font-weight:700;}
   .brand p{font-size:13px; color:#c7d2e0; margin-top:2px;}
   .brand .tagline{margin-top:14px; font-size:13px; color:#93a6bd; border-top:1px solid rgba(255,255,255,.12); padding-top:12px;}
   .chip{display:inline-block; background:rgba(240,193,75,.15); color:var(--gold); border:1px solid rgba(240,193,75,.4); border-radius:20px; padding:2px 12px; font-size:12px; font-weight:600; margin-left:8px;}
-  .strip{display:flex; gap:12px; margin-top:16px; flex-wrap:wrap;}
-  .stat{flex:1; min-width:130px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; text-align:center;}
-  .stat .num{font-size:22px; font-weight:800; color:var(--navy);}
-  .stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-top:2px;}
-  .podiums{display:flex; justify-content:center; align-items:flex-end; gap:12px; margin:26px 0 8px;}
-  .pod{text-align:center; width:118px;}
-  .pod .name{font-weight:700; font-size:13px; color:#374151;}
-  .pod .tm{font-size:11px; color:var(--muted);}
-  .pod .bar{border-radius:8px 8px 0 0; margin-top:8px; display:flex; align-items:flex-start; justify-content:center; padding-top:8px; color:#fff; font-weight:800;}
-  .pod .medal{font-size:26px; line-height:1;}
-  .pod1 .bar{height:110px; background:linear-gradient(180deg,#f4d03f,#e6b800);}
-  .pod2 .bar{height:86px;  background:linear-gradient(180deg,#bcc3cc,#9aa3af);}
-  .pod3 .bar{height:66px;  background:linear-gradient(180deg,#d99a5f,#c07a3a);}
   .card{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(17,37,62,.06);}
-  .thead{background:var(--navy); color:#fff; display:grid; grid-template-columns:44px 1fr 72px 84px 82px 78px 70px; padding:12px 16px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;}
-  .row{display:grid; grid-template-columns:44px 1fr 72px 84px 82px 78px 70px; padding:13px 16px; align-items:center; border-top:1px solid var(--line); font-size:14px;}
-  .row:hover{background:#f9fafb;}
-  .rank{font-weight:800; color:var(--muted);}
-  .rank.g{color:#16a34a;} .rank.s{color:#2563eb;} .rank.b{color:#9ca3af;}
-  .name{font-weight:600;}
-  .tm{font-size:12px; color:var(--muted);}
-  .num-q,.num-s,.num-t{font-variant-numeric:tabular-nums; font-weight:600;}
-  .num-t{font-weight:800; color:var(--navy);}
-  .total-h{background:var(--gold); color:var(--navy) !important; border-radius:6px; text-align:center;}
-  .today{font-weight:800; color:var(--gold-d);}
-  .leader{background:linear-gradient(90deg,rgba(240,193,75,.14),transparent 70%);}
-  .leader .rank{color:var(--gold-d);}
-  .foot{margin-top:18px; text-align:center; font-size:12px; color:var(--muted);}
-  .note{margin-top:14px; font-size:12px; color:var(--muted); background:#f9fafb; border:1px dashed var(--line); border-radius:10px; padding:12px 16px;}
-  .legend{margin-top:14px; font-size:12px; color:var(--muted); text-align:right;}
-  .legend .today{font-weight:700;}
-  @media(max-width:680px){
-    .thead,.row{grid-template-columns:34px 1fr 54px 60px 62px 58px 54px; padding-left:10px; padding-right:10px; font-size:11px;}
-    .brand h1{font-size:17px;}
-  }
+  .card>h2{background:var(--navy); color:#fff; padding:12px 18px; font-size:15px; font-weight:700;}
+  .table{width:100%; border-collapse:collapse; font-size:13px;}
+  .table th{background:#eef2f7; color:#334155; font-weight:700; padding:9px 8px; text-align:center; border:1px solid var(--line); position:sticky; top:0;}
+  .table th.rot{position:static; font-size:11px; writing-mode:vertical-rl; text-orientation:mixed; height:120px;}
+  .table td{padding:8px 8px; border:1px solid var(--line); text-align:center;}
+  .table tr:nth-child(even) td{background:#fbfcfd;}
+  .name-td{text-align:left; font-weight:600;}
+  .td-s{font-weight:700; color:var(--scored);}
+  .td-na{color:var(--na); font-weight:600;}
+  .td-total{font-weight:800; color:#11253e; background:#fde7ca;}
+  .legend{background:#f9fafb; border:1px dashed var(--line); border-radius:10px; padding:12px 16px; font-size:12.5px; color:var(--muted);}
+  .sec{margin:22px 0 8px; font-size:15px; font-weight:800; color:var(--navy);}
+  .sub{font-size:12.5px; color:var(--muted); margin:4px 0 10px;}
+  .imgcard{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(17,37,62,.06); margin:14px 0;}
+  .imgcard .cap{font-size:12px; color:var(--muted); padding:8px 14px; background:#f3f4f6;}
+  .imgcard img{width:100%; display:block;}
+  @media(max-width:760px){ .table{font-size:11px;} .wrap{padding:16px 10px;} }
 </style>
 </head>
 <body>
@@ -61,42 +45,87 @@
     <div class="mono">
       <div class="monogram">M</div>
       <div>
-        <h1>MG3003 · Class Scoreboard <span class="chip">Live ~ Sep 12</span></h1>
+        <h1>MG3003 · Your Marks <span class="chip">by component</span></h1>
         <p>Enterprise HRIS Architecture &amp; Implementation — Silicon University</p>
       </div>
     </div>
-    <div class="tagline">Combined standing on the components scored so far — <b>Weekly MCQ Quiz</b> (avg of 3 quizzes) and <b>Sprints 1–5 (team)</b>. <b>Today's quiz</b> is marked in gold. Out of 20. Peer Evaluation &amp; other components still NA.</div>
+    <div class="tagline">Every assessment component, with your mark where it has been scored and <b>NA</b> where it hasn't yet. This is a <b>running snapshot, not a final grade</b> — scores are added as components get marked. Updated Sep 12, 2026.</div>
   </div>
 
-  <div class="strip">
-    <div class="stat"><div class="num">17</div><div class="lbl">Students</div></div>
-    <div class="stat"><div class="num">18.55</div><div class="lbl">Top Score</div></div>
-    <div class="stat"><div class="num">16.85</div><div class="lbl">Class Avg</div></div>
-    <div class="stat"><div class="num">3</div><div class="lbl">Quizzes</div></div>
+  <!-- ASSESSMENT FRAMEWORK IMAGE (inserted) -->
+  <div class="imgcard">
+    <div class="cap">📋 Assessment framework — how the 100% is split:</div>
+    <img src="assets/assessment-framework.png" alt="MG3003 Assessment framework breakdown">
   </div>
 
-  <div class="podiums"><div class="pod pod2"><div class="tm">Team-3</div><div class="name">Abinash Nanda</div><div class="medal" style="margin-top:4px">🥈</div><div class="bar">18.50</div></div><div class="pod pod1"><div class="tm">Team-2</div><div class="name">Eva Adyasha Dash</div><div class="medal" style="margin-top:4px">🥇</div><div class="bar">18.55</div></div><div class="pod pod3"><div class="tm">Team-2</div><div class="name">Priyanshu Kumar Singh</div><div class="medal" style="margin-top:4px">🥉</div><div class="bar">18.40</div></div></div>
-
+  <!-- FRAMEWORK AT A GLANCE -->
+  <div class="sec">🧭 How your 100% is made up</div>
+  <div class="sub">Each component has a weight (its share of your final grade) and a term (when it's assessed). The mark you see for each is out of 10.</div>
   <div class="card">
-    <div class="thead">
-      <div style="text-align:center">#</div>
-      <div>Student</div>
-      <div style="text-align:center">Team</div>
-      <div style="text-align:center">Today</div>
-      <div style="text-align:center">Quiz Avg</div>
-      <div style="text-align:center">Sprints</div>
-      <div style="text-align:center; border-radius:6px; background:var(--gold); color:var(--navy);">Total</div>
-    </div>
-    <div class="row leader"><div class="rank g">1</div><div class="name">Eva Adyasha Dash</div><div class="tm">Team-2</div><div class="num-q today">9.18</div><div class="num-q">8.75</div><div class="num-s">9.80</div><div class="num-t total-h">18.55</div></div><div class="row"><div class="rank s">2</div><div class="name">Abinash Nanda</div><div class="tm">Team-3</div><div class="num-q today">9.73</div><div class="num-q">9.66</div><div class="num-s">8.84</div><div class="num-t total-h">18.50</div></div><div class="row"><div class="rank s">3</div><div class="name">Priyanshu Kumar Singh</div><div class="tm">Team-2</div><div class="num-q today">9.45</div><div class="num-q">8.60</div><div class="num-s">9.80</div><div class="num-t total-h">18.40</div></div><div class="row"><div class="rank b">4</div><div class="name">Prithwish Sarkar</div><div class="tm">Team-2</div><div class="num-q today">8.64</div><div class="num-q">8.36</div><div class="num-s">9.80</div><div class="num-t total-h">18.16</div></div><div class="row"><div class="rank b">5</div><div class="name">Ritika Behera</div><div class="tm">Team-1</div><div class="num-q today">8.91</div><div class="num-q">8.96</div><div class="num-s">9.18</div><div class="num-t total-h">18.14</div></div><div class="row"><div class="rank b">6</div><div class="name">Abhigyan Dash</div><div class="tm">Team-2</div><div class="num-q today">6.00</div><div class="num-q">7.88</div><div class="num-s">9.80</div><div class="num-t total-h">17.68</div></div><div class="row"><div class="rank b">7</div><div class="name">Smruti Ranjan Nayak</div><div class="tm">Team-2</div><div class="num-q today">8.36</div><div class="num-q">7.77</div><div class="num-s">9.80</div><div class="num-t total-h">17.57</div></div><div class="row"><div class="rank b">8</div><div class="name">Swastik Ranjan Das</div><div class="tm">Team-1</div><div class="num-q today">10.00</div><div class="num-q">8.07</div><div class="num-s">9.18</div><div class="num-t total-h">17.25</div></div><div class="row"><div class="rank b">9</div><div class="name">Anikesh Ransingh</div><div class="tm">Team-1</div><div class="num-q today">7.82</div><div class="num-q">7.73</div><div class="num-s">9.18</div><div class="num-t total-h">16.91</div></div><div class="row"><div class="rank b">10</div><div class="name">Sammona Mohanty</div><div class="tm">Team-3</div><div class="num-q today">6.00</div><div class="num-q">7.55</div><div class="num-s">8.84</div><div class="num-t total-h">16.39</div></div><div class="row"><div class="rank b">11</div><div class="name">Gayatri Pati</div><div class="tm">Team-1</div><div class="num-q today">7.00</div><div class="num-q">7.18</div><div class="num-s">9.18</div><div class="num-t total-h">16.36</div></div><div class="row"><div class="rank b">12</div><div class="name">Deepakshi Nayak</div><div class="tm">Team-2</div><div class="num-q today">6.00</div><div class="num-q">6.55</div><div class="num-s">9.80</div><div class="num-t total-h">16.35</div></div><div class="row"><div class="rank b">13</div><div class="name">Sindhuja Gouda</div><div class="tm">Team-1</div><div class="num-q today">8.09</div><div class="num-q">7.07</div><div class="num-s">9.18</div><div class="num-t total-h">16.25</div></div><div class="row"><div class="rank b">14</div><div class="name">Rajashree Priyadarshini Bihari</div><div class="tm">Team-3</div><div class="num-q today">7.55</div><div class="num-q">6.87</div><div class="num-s">8.84</div><div class="num-t total-h">15.71</div></div><div class="row"><div class="rank b">15</div><div class="name">Tapaswini Sahoo</div><div class="tm">Team-3</div><div class="num-q today">6.00</div><div class="num-q">6.67</div><div class="num-s">8.84</div><div class="num-t total-h">15.51</div></div><div class="row"><div class="rank b">16</div><div class="name">Abhisekh Mohanty</div><div class="tm">Team-1</div><div class="num-q today">7.27</div><div class="num-q">5.76</div><div class="num-s">9.18</div><div class="num-t total-h">14.94</div></div><div class="row"><div class="rank b">17</div><div class="name">Jayprakash Sahu</div><div class="tm">Team-3</div><div class="num-q today">6.00</div><div class="num-q">4.89</div><div class="num-s">8.84</div><div class="num-t total-h">13.73</div></div>
+    <table class="table">
+      <thead><tr>
+        <th>Component</th><th>Weight</th><th>Term</th><th>Status</th><th>Your mark</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="name-td">Weekly MCQ Quiz</td><td>10%</td><td>Internal</td><td class="td-s">Scored (avg of 3)</td><td class="td-s">✓</td></tr>
+        <tr><td class="name-td">Sprints 1–5 (team)</td><td>10%</td><td>Mid-term</td><td class="td-s">Scored</td><td class="td-s">✓</td></tr>
+        <tr><td class="name-td">Peer Evaluation</td><td>10%</td><td>Internal</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+        <tr><td class="name-td">Learning Journal</td><td>10%</td><td>Internal</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+        <tr><td class="name-td">Written Case Study Exam</td><td>10%</td><td>Mid-term</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+        <tr><td class="name-td">Sprints 6–10 (team)</td><td>10%</td><td>End-term</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+        <tr><td class="name-td">Individual Portfolio</td><td>10%</td><td>End-term</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+        <tr><td class="name-td">Capstone Presentation</td><td>5%</td><td>End-term</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+        <tr><td class="name-td">Written Case Study Exam</td><td>25%</td><td>End-term</td><td class="td-na">Not yet</td><td class="td-na">NA</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="legend"><span class="today">Today</span> = this session's quiz mark (top taken as 10, last participant as 7, absent 6)</div>
-
-  <div class="note">
-    <b>Read this correctly.</b> Combined standing on the <b>two scored track components only</b>: Weekly MCQ Quiz (running average across quizzes, /10) + Sprints 1–5 (/10) → /20. Peer Evaluation, Learning Journal, exams, Portfolio, Capstone, Sprints 6–10 are still <b>NA</b> — this is NOT a final grade. Sprints are a team score, so within a team the Quiz marks are what separate students.
+  <!-- THE LONG MARKS TABLE -->
+  <div class="sec">🏆 Your marks, component by component</div>
+  <div class="sub">Long table — one row per student. <span class="td-s">Green</span> = scored. <span class="td-na">Grey NA</span> = not yet marked. Column headers show the component and its weight. "Scored /20" = only the components you've been marked on so far (Quiz + Sprints 1–5).</div>
+  <div class="card">
+    <table class="table">
+      <thead><tr>
+        <th style="text-align:left">Student</th>
+        <th>Team</th>
+        <th>Quiz<br><small>10% Internal</small></th>
+        <th>Sprints<br>1–5<br><small>10% Mid</small></th>
+        <th>Peer<br>Eval<br><small>10%</small></th>
+        <th>Journal<br><small>10%</small></th>
+        <th>Mid-term<br>Exam<br><small>10%</small></th>
+        <th>Sprints<br>6–10<br><small>10%</small></th>
+        <th>Portfolio<br><small>10%</small></th>
+        <th>Capstone<br><small>5%</small></th>
+        <th>End-term<br>Exam<br><small>25%</small></th>
+        <th class="td-total">Scored<br>/20</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="name-td">Eva Adyasha Dash</td><td>Team-2</td><td class="td-s">8.75</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.55</td></tr>
+        <tr><td class="name-td">Abinash Nanda</td><td>Team-3</td><td class="td-s">9.66</td><td class="td-s">8.84</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.50</td></tr>
+        <tr><td class="name-td">Priyanshu Kumar Singh</td><td>Team-2</td><td class="td-s">8.60</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.40</td></tr>
+        <tr><td class="name-td">Prithwish Sarkar</td><td>Team-2</td><td class="td-s">8.36</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.16</td></tr>
+        <tr><td class="name-td">Ritika Behera</td><td>Team-1</td><td class="td-s">8.96</td><td class="td-s">9.18</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.14</td></tr>
+        <tr><td class="name-td">Abhigyan Dash</td><td>Team-2</td><td class="td-s">7.88</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">17.68</td></tr>
+        <tr><td class="name-td">Smruti Ranjan Nayak</td><td>Team-2</td><td class="td-s">7.77</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">17.57</td></tr>
+        <tr><td class="name-td">Swastik Ranjan Das</td><td>Team-1</td><td class="td-s">8.07</td><td class="td-s">9.18</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">17.25</td></tr>
+        <tr><td class="name-td">Anikesh Ransingh</td><td>Team-1</td><td class="td-s">7.73</td><td class="td-s">9.18</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">16.91</td></tr>
+        <tr><td class="name-td">Sammona Mohanty</td><td>Team-3</td><td class="td-s">7.55</td><td class="td-s">8.84</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">16.39</td></tr>
+        <tr><td class="name-td">Gayatri Pati</td><td>Team-1</td><td class="td-s">7.18</td><td class="td-s">9.18</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">16.36</td></tr>
+        <tr><td class="name-td">Deepakshi Nayak</td><td>Team-2</td><td class="td-s">6.55</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">16.35</td></tr>
+        <tr><td class="name-td">Sindhuja Gouda</td><td>Team-1</td><td class="td-s">7.07</td><td class="td-s">9.18</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">16.25</td></tr>
+        <tr><td class="name-td">Rajashree Priyadarshini Bihari</td><td>Team-3</td><td class="td-s">6.87</td><td class="td-s">8.84</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">15.71</td></tr>
+        <tr><td class="name-td">Tapaswini Sahoo</td><td>Team-3</td><td class="td-s">6.67</td><td class="td-s">8.84</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">15.51</td></tr>
+        <tr><td class="name-td">Abhisekh Mohanty</td><td>Team-1</td><td class="td-s">5.76</td><td class="td-s">9.18</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">14.94</td></tr>
+        <tr><td class="name-td">Jayprakash Sahu</td><td>Team-3</td><td class="td-s">4.89</td><td class="td-s">8.84</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">13.73</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="foot">MG3003 · Silicon University, Bhubaneswar · Built by TechSambad</div>
+  <div class="legend">
+    <b>How to read this:</b> <span class="td-s">Green</span> = component already scored (your mark shown /10). <span class="td-na">Grey NA</span> = not yet marked — nothing wrong, it just hasn't been assessed. <b>Scored /20</b> = your current total on the two scored components only (Weekly MCQ Quiz + Sprints 1–5). Sprints are a <b>team</b> score, so every member of a team shares the same Sprints mark — the Quiz column is what separates students within a team. This is <b>not a final grade</b>; marks are added as each component is scored.
+  </div>
+
+  <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:18px">MG3003 · Silicon University, Bhubaneswar · Built by TechSambad</div>
 </div>
 </body>
 </html>
