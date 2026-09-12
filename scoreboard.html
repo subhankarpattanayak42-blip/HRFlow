@@ -35,7 +35,11 @@
   .imgcard{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(17,37,62,.06); margin:14px 0;}
   .imgcard .cap{font-size:12px; color:var(--muted); padding:8px 14px; background:#f3f4f6;}
   .imgcard img{width:100%; display:block;}
-  @media(max-width:760px){ .table{font-size:11px;} .wrap{padding:16px 10px;} }
+  .thead-2 tr{background:#eef2f7;}
+  .sec-ongoing{background:#2f7d4f; color:#fff; font-weight:800; letter-spacing:.5px;}
+  .sec-mid{background:#1a3354; color:#fff; font-weight:800; letter-spacing:.5px;}
+  .sec-end{background:#6b2f8f; color:#fff; font-weight:800; letter-spacing:.5px;}
+  .th-col{background:var(--navy); color:#fff; font-weight:700;}
 </style>
 </head>
 <body>
@@ -85,20 +89,27 @@
   <div class="sub">Long table — one row per student. <span class="td-s">Green</span> = scored. <span class="td-na">Grey NA</span> = not yet marked. Column headers show the component and its weight. "Scored /20" = only the components you've been marked on so far (Quiz + Sprints 1–5).</div>
   <div class="card">
     <table class="table">
-      <thead><tr>
-        <th style="text-align:left">Student</th>
-        <th>Team</th>
-        <th>Quiz<br><small>10% Internal</small></th>
-        <th>Sprints<br>1–5<br><small>10% Mid</small></th>
-        <th>Peer<br>Eval<br><small>10%</small></th>
-        <th>Journal<br><small>10%</small></th>
-        <th>Mid-term<br>Exam<br><small>10%</small></th>
-        <th>Sprints<br>6–10<br><small>10%</small></th>
-        <th>Portfolio<br><small>10%</small></th>
-        <th>Capstone<br><small>5%</small></th>
-        <th>End-term<br>Exam<br><small>25%</small></th>
-        <th class="td-total">Scored<br>/20</th>
-      </tr></thead>
+      <thead>
+        <tr>
+          <th rowspan="2" style="text-align:left">Student</th>
+          <th rowspan="2">Team</th>
+          <th colspan="3" class="sec-ongoing">🟢 Ongoing (Internal)</th>
+          <th colspan="2" class="sec-mid">🔵 Mid Term</th>
+          <th colspan="4" class="sec-end">🟣 End Term</th>
+          <th rowspan="2" class="td-total">Scored<br>/20</th>
+        </tr>
+        <tr>
+          <th class="th-col">Quiz<br><small>10%</small></th>
+          <th class="th-col">Peer<br>Eval<br><small>10%</small></th>
+          <th class="th-col">Journal<br><small>10%</small></th>
+          <th class="th-col">Sprints<br>1–5<br><small>10%</small></th>
+          <th class="th-col">Mid-term<br>Exam<br><small>10%</small></th>
+          <th class="th-col">Sprints<br>6–10<br><small>10%</small></th>
+          <th class="th-col">Portfolio<br><small>10%</small></th>
+          <th class="th-col">Capstone<br><small>5%</small></th>
+          <th class="th-col">End-term<br>Exam<br><small>25%</small></th>
+        </tr>
+      </thead>
       <tbody>
         <tr><td class="name-td">Eva Adyasha Dash</td><td>Team-2</td><td class="td-s">8.75</td><td class="td-s">9.80</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.55</td></tr>
         <tr><td class="name-td">Abinash Nanda</td><td>Team-3</td><td class="td-s">9.66</td><td class="td-s">8.84</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-na">NA</td><td class="td-total">18.50</td></tr>
