@@ -1853,6 +1853,9 @@ function refreshUI() {
   refs.teamMemberWrap.classList.toggle("hidden", !!state.currentUser && !isAdmin);
   refs.analyticsPanel.classList.toggle("hidden", !isAdmin);
   refs.teamMemberWrap.classList.toggle("hidden", isStudent);
+  // Scoreboard (all-students ranking page) admin-only — hides the leaked grades from students
+  const scoreBtn = document.getElementById("scoreboard-btn");
+  if (scoreBtn) scoreBtn.classList.toggle("hidden", !isAdmin);
 }
 
 async function bootstrap() {
