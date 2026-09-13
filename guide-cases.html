@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MG3003 — How to Tackle the Prep Cases</title>
+<style>
+  :root{--navy:#11253e;--navy-2:#1a3354;--gold:#f0c14b;--gold-d:#d9a92e;--bg:#0b1423;
+    --card:#0f1b2e;--panel:#101d33;--line:#26344d;--muted:#8fa3bd;--text:#e7edf6;--accent:#3aa9ff;--green:#23c55e;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(160deg,#0b1423,#101d33);color:var(--text);line-height:1.55;min-height:100vh;}
+  .shell{max-width:960px;margin:0 auto;padding:20px 18px 70px;}
+  header{display:flex;align-items:center;gap:12px;padding:18px 22px;background:linear-gradient(135deg,var(--navy),var(--navy-2));border-radius:14px;box-shadow:0 6px 22px rgba(0,0,0,.45);}
+  .monogram{width:44px;height:44px;border-radius:10px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:23px;}
+  header h1{font-size:20px;font-weight:800;letter-spacing:.2px;}
+  header p{font-size:12.5px;color:#c7d2e0;margin-top:2px;}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0;}
+  .toc a{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:12.5px;color:var(--text);text-decoration:none;transition:all .15s;}
+  .toc a:hover{background:rgba(58,169,255,.15);border-color:var(--accent);color:#fff;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:14px 0;}
+  .card h2{font-size:17px;font-weight:800;color:var(--gold);}
+  .case{background:linear-gradient(135deg,#14203a,#1a2c4a);border:1px solid var(--line);border-radius:16px;padding:24px 26px;margin:22px 0;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  .case .ctag{display:inline-block;background:rgba(240,193,75,.16);color:var(--gold);border:1px solid rgba(240,193,75,.4);border-radius:16px;padding:2px 12px;font-size:11px;font-weight:700;margin:-4px 0 4px;}
+  .case h2{font-size:19px;font-weight:800;color:#fff;}
+  .case .blurb{font-size:13.5px;color:#c9d6e6;margin:8px 0;}
+  .case .focus{font-size:12.5px;color:var(--muted);margin:4px 0 14px;}
+  .step{display:flex;gap:14px;background:#0d1829;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px 0;}
+  .step .n{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;}
+  .step .body{flex:1;}
+  .step .body b{color:var(--gold);font-size:14px;}
+  .step .body p{font-size:13px;color:#dbe6f3;margin:4px 0 0;}
+  .step .body .tl{font-size:11.5px;color:var(--muted);margin-top:6px;}
+  .step .body .tl b{color:var(--green);}
+  .deliverable{background:#10203a;border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;margin:12px 0;}
+  .deliverable .dt{font-size:14px;font-weight:800;color:#cfe2ff;}
+  .deliverable .dsub{font-size:12.5px;color:var(--muted);margin:6px 0 10px;}
+  .deliverable ul{margin:8px 0 0;padding-left:18px;color:#cbd9ea;font-size:12.8px;}
+  .deliverable ul li{margin:4px 0;}
+  .deliverable ul li b{color:var(--gold);}
+  .golden{background:rgba(35,197,94,.08);border:1px solid rgba(35,197,94,.4);border-radius:10px;padding:12px 16px;margin:10px 0;color:var(--green);font-size:13px;}
+  .golden b{color:var(--green);}
+  .warn{background:rgba(240,173,78,.1);border:1px solid rgba(240,173,78,.45);border-radius:10px;padding:12px 16px;margin:10px 0;color:#fcd08a;font-size:12.8px;}
+  .method{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:14px 0;}
+  .method .ph{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .method .ph .n{color:var(--gold);font-weight:800;font-size:13px;}
+  .method .ph p{font-size:12.3px;color:#c9d6e6;margin-top:4px;}
+  .tip{font-size:12.5px;color:var(--muted);} 
+  .foot{text-align:center;font-size:12px;color:var(--muted);margin:22px 0;}
+  @media(max-width:640px){ .case{padding:18px 16px;} .step .n{width:28px;height:28px;font-size:13px;} header h1{font-size:16px;} }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header>
+    <div class="monogram">M</div>
+    <div>
+      <h1>MG3003 · How to Tackle the Prep Cases</h1>
+      <p>A step-by-step walkthrough for solving each of the 3 practice case studies</p>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#method">🧭 The Method</a>
+    <a href="#case1">1 · MedCorp (Talent)</a>
+    <a href="#case2">2 · Polaris (Compliance)</a>
+    <a href="#case3">3 · Atlas (Time &amp; Payroll)</a>
+    <a href="#mistakes">⚠️ Common Mistakes</a>
+  </nav>
+
+  <!-- ============ THE METHOD ============ -->
+  <div class="card" id="method">
+    <h2>🧭 The universal method — use this for EVERY case</h2>
+    <div class="method">
+      <div class="ph"><div class="n">1️⃣ READ for the ROLE</div><p>Who are you? A consultant designing a system. The company is always "you must design…". You are an engineer, not HR.</p></div>
+      <div class="ph"><div class="n">2️⃣ FIND THE NUMBER</div><p>Highlight the big number: 200 engineers in 3 weeks, 15 countries, 2,800 shift workers. That number dictates the scale of your answer.</p></div>
+      <div class="ph"><div class="n">3️⃣ SPLIT INTO DELIVERABLES</div><p>Each case asks 4 deliverables. Answer each as its OWN mini-answer (pipeline, map, table, rules, etc.). Never combine them.</p></div>
+      <div class="ph"><div class="n">4️⃣ ADD OWNERS + GATES</div><p>Whatever you draw — every step has a <b>who</b> (owner) and a <b>when/what</b> (gate/condition). That's what "done" means.</p></div>
+    </div>
+    <div class="golden"><b>Engineer's mindset:</b> Hiring = a <b>pipeline</b> · Compliance = a <b>risk register</b> · Onboarding = <b>IAM provisioning</b> · Audit trail = an <b>immutable log</b> · Time→Payroll = a <b>validated data pipeline</b>. If you can say the engineering analogy, you understand it.</div>
+  </div>
+
+  <!-- ============ CASE 1 ============ -->
+  <section class="case" id="case1">
+    <span class="ctag">Case Study 1 · Sessions 3 focus</span>
+    <h2>🏥 MedCorp's Talent Sprint — hire 140 field engineers in 9 weeks</h2>
+    <div class="blurb">MedCorp must recruit 140 engineers + support staff fast, cut time-to-hire from 38 → 21 days, and use AI screening fairly. Fix email + spreadsheets hiring.</div>
+    <div class="focus">The 4 deliverables: ① Hiring Pipeline · ② Integration Web · ③ Candidate→Employee Data Map + Compliance · ④ AI Screening &amp; Fairness policy</div>
+
+    <div class="step"><div class="n">1</div><div class="body">
+      <b>Deliverable ① — The Hiring Pipeline</b>
+      <p>Draw the stages in order: <b>Requisition → Job Posted → Applications → Screening → Interview → Offer → Accepted → Employee Created</b>. For EVERY stage write its OWNER and its GATE.</p>
+      <ul><li>Map the <b>approval chain FIRST</b> — hiring manager → HR → <b>finance</b>. This is where teams most often get stuck.</li>
+      <li>Write a one-line caption: <i>"a stage doesn't advance until its gate passes."</i></li></ul>
+      <div class="tl">Examiner checks: every stage has both an owner AND a gate · approval chain drawn before the stages</div>
+    </div></div>
+
+    <div class="step"><div class="n">2</div><div class="body">
+      <b>Deliverable ② — The Integration Web</b>
+      <p>The ATS is the <b>hub</b>. Draw 3 things: what goes OUT (job postings → LinkedIn via <b>API/webhook</b>), what comes IN (applications + background-check results), and the ONE handoff to <b>Core HR</b> (where the candidate BECOMES an employee).</p>
+      <div class="tl">Examiner checks: ATS at the centre · outbound/inbound arrows labelled · the candidate→Core-HR handoff drawn · a fallback if a vendor API is down (requeue &amp; retry, never drop)</div>
+    </div></div>
+
+    <div class="step"><div class="n">3</div><div class="body">
+      <b>Deliverable ③ — Candidate→Employee Field Map + Compliance</b>
+      <p>Build the table: <b>Candidate field (ATS) → Employee field (HRIS) → What happens</b>. Mark each as <b>COPY / CLEAN-SPLIT / NEW</b>. Then a 5–7 item compliance checklist.</p>
+      <ul><li><b>Never re-type compensation</b> — carry it from the approved offer.</li>
+      <li>Employee ID is <b>system-generated</b> (NEW), not taken from anywhere.</li></ul>
+      <div class="tl">Compliance checklist: consent · bg check only after a written offer · no protected data collected · retention period · access control · AI-bias audit · audit log</div>
+    </div></div>
+
+    <div class="step"><div class="n">4</div><div class="body">
+      <b>Deliverable ④ — AI Screening &amp; Fairness Statement</b>
+      <p>5–8 line policy covering: what candidates must be told (AI is used + right to human review), how you audit for bias (track pass-rate by demographic), and GDPR retention for unsuccessful candidates (6–12 months, purge on request).</p>
+      <div class="tl"><b>Recall:</b> Amazon scrapped its AI recruiter (gender bias) · NYC Local Law 144 requires an annual bias audit</div>
+    </div></div>
+
+    <div class="golden"><b>Done =</b> "I know who does what at every stage, and nothing is re-typed."</div>
+  </section>
+
+  <!-- ============ CASE 2 ============ -->
+  <section class="case" id="case2">
+    <span class="ctag">Case Study 2 · Sessions 3–4 focus</span>
+    <h2>🌍 Polaris Expands to 12 Countries — onboard right &amp; prove it</h2>
+    <div class="blurb">Fintech hires remote staff across 12 countries with different rules on documents, breaks, consultation and where data must live. Must onboard correctly and be provable.</div>
+    <div class="focus">The 4 deliverables: ① Welcome Checklist · ② Compliance Matrix · ③ Data Residency Map · ④ Audit Trail Design</div>
+
+    <div class="step"><div class="n">1</div><div class="body">
+      <b>Deliverable ① — The Welcome Checklist (Onboarding Workflow)</b>
+      <p>One-page "first 90 days" checklist: <b>Before Day 1 → Day 1 → Day 7–30 → Day 60–90</b>. <b>Each step has exactly ONE owner</b> (HR/IT/Manager/Employee). Add country branches as <code>IF country == … THEN run case</code>.</p>
+      <ul><li>Fill it in for ONE country of your choice (e.g. India: PAN/Aadhaar + POSH; Germany: works council + break after 6h; USA: I-9 + E-Verify).</li></ul>
+      <div class="tl">4-phase model to reference: <b>Preboarding → Orientation → Role Integration → Acculturation</b></div>
+    </div></div>
+
+    <div class="step"><div class="n">2</div><div class="body">
+      <b>Deliverable ② — The Compliance Matrix</b>
+      <p>Table: <b>Country | Regulation | What you must do | Risk if missed</b>. Cover ≥6 countries, one line per rule, mark each High/Med/Low risk.</p>
+      <ul><li>USA → I-9 Sec 1 by Day 1, Sec 2 within 3 business days</li>
+      <li>Germany → works council (Betriebsrat) consultation</li>
+      <li>India → PAN/Aadhaar, POSH, Factories Act</li>
+      <li>UK → right-to-work Share Code; Brazil → 13th salary, CLT</li></ul>
+      <div class="tl">Risk column = prioritisation: high-risk = system BLOCKS if missed; low-risk = warns but allows</div>
+    </div></div>
+
+    <div class="step"><div class="n">3</div><div class="body">
+      <b>Deliverable ③ — The Data Residency Map</b>
+      <p>Where must each country's employee data be stored? ID which regions need <b>EU servers</b> (GDPR: Germany, France) vs. those that allow flexible hosting, and how you prove compliance.</p>
+      <div class="tl">Key fact: Germany/GDPR requires EU-server residency — a regulator fined a competitor over this</div>
+    </div></div>
+
+    <div class="step"><div class="n">4</div><div class="body">
+      <b>Deliverable ④ — The Audit Trail Design</b>
+      <p>Show <b>5+ audit log rows</b> with the full recipe: <b>who · what · when · old→new</b>. Explain immutability (append-only; corrections add a NEW row, never overwrite) and how you handle a GDPR erasure request where the audit log itself can't be deleted.</p>
+      <div class="tl">Examiner checks: every row has who/what/when/before-after · logs even SYSTEM actions · immutable · document hashes</div>
+    </div></div>
+
+    <div class="golden"><b>Done =</b> "A busy HR person can follow it in 60 seconds, and I can prove each step."</div>
+  </section>
+
+  <!-- ============ CASE 3 ============ -->
+  <section class="case" id="case3">
+    <span class="ctag">Case Study 3 · Sessions 4–5 focus</span>
+    <h2>🚚 Atlas Logistics — time that pays correctly</h2>
+    <div class="blurb">2,800 shift workers (warehouse + drivers + office) across US, Germany, India. Budget punching, underreported overtime, late payroll. Must capture time accurately &amp; follow the law.</div>
+    <div class="focus">The 4 deliverables: ① Time Collection Architecture · ② Business Rules Engine · ③ Time-to-Payroll Flow · ④ Exception &amp; Fairness Plan</div>
+
+    <div class="step"><div class="n">1</div><div class="body">
+      <b>Deliverable ① — Time Collection Architecture</b>
+      <p>Draw the 4 ways to clock in (phone app for drivers/remote, computer for office, badge for site, <b>fingerprint for the warehouse</b>) all feeding <b>ONE time engine</b>. Every clock-in is a real timestamp. Engine dedupes + catches gaps/overlaps.</p>
+      <ul><li>Which fixes buddy punching at the warehouse? <b>Biometric (fingerprint)</b> — not shared badge cards.</li></ul>
+      <div class="tl">Buddy punching risk is highest with badge/RFID swipe cards, lowest with biometric/facial</div>
+    </div></div>
+
+    <div class="step"><div class="n">2</div><div class="body">
+      <b>Deliverable ② — The Business Rules Engine</b>
+      <p>A table of <b>10+ rules</b>, each a condition → action, tagged with its country.</p>
+      <ul><li>USA: FLSA overtime <b>1.5×</b> over 40h/wk</li>
+      <li>Germany: 30-min break after 6h; min 20 working days annual leave</li>
+      <li>EU: 48h weekly cap (incl. overtime)</li>
+      <li>Annual leave accrues 1.25 days/mo · sick leave granted upfront · carry-over capped at 5 days</li>
+      <li>Unapproved-at-cutoff → hold payment + alert; night work → shift differential</li></ul>
+      <div class="tl">Use the 3-rule starter kit (annual accrues monthly · sick upfront · carry-over capped) then extend</div>
+    </div></div>
+
+    <div class="step"><div class="n">3</div><div class="body">
+      <b>Deliverable ③ — Time-to-Payroll Flow</b>
+      <p>Draw the 6–8 step integration pipeline: <b>collection → timecard → rules → manager approval → validation → payroll feed → exception handling → posting</b>. Show what happens to a BAD row (unapproved, missing project code, hours over cap) → goes to an <b>exception queue</b>, never silently dropped.</p>
+      <div class="tl">Each step gates the next; the pipeline REFUSES bad data. Integration to payroll = scheduled batch export at period close.</div>
+    </div></div>
+
+    <div class="step"><div class="n">4</div><div class="body">
+      <b>Deliverable ④ — The Exception &amp; Fairness Plan</b>
+      <p>5–8 lines covering: how <b>exception management</b> surfaces underreporting for manager review; how you fix the underreporting culture (AUTOMATE capture, remove manual entry — don't discipline); and how <b>segregation of duties</b> stops the person submitting a timesheet from being its sole approver.</p>
+      <div class="tl">Segregation of duties: submitter ≠ approver · better to hold a row than pay it wrong</div>
+    </div></div>
+
+    <div class="golden"><b>Done =</b> "I know who worked what, and the system caught the errors."</div>
+  </section>
+
+  <!-- ============ MISTAKES ============ -->
+  <section class="card" id="mistakes">
+    <h2>⚠️ Common mistakes that lose marks</h2>
+    <div class="warn"><b>1 · Combining the deliverables.</b> Each case asks 4 distinct things. Answer each one separately with its own diagram/table. An examiner won't hunt for your 3rd deliverable buried inside your 1st.</div>
+    <div class="warn"><b>2 · No owners or gates.</b> A pipeline/steps with no "who" and no "what lets it move" is just a list. Adding owner + gate is what makes it a designed system.</div>
+    <div class="warn"><b>3 · Re-typing data.</b> The instant you suggest manually re-entering a number (pay, hours, employee data) between systems, you've missed the point. Integrations + source-of-truth prevent this.</div>
+    <div class="warn"><b>4 · Forgetting the country dimension.</b> Every case is multi-country. If your answer only handles one country's rules, it's incomplete. Cover the variety (US/DE/IN/UK/BR/EU).</div>
+    <div class="warn"><b>5 · No error handling.</b> Systems fail. Show what happens to a bad row / downed vendor / missed deadline — an exception queue or dead-letter queue, not a silent drop.</div>
+    <div class="warn"><b>6 · Not saying WHY.</b> The marking guidance loves justification. After drawing anything, add one line starting "Because…".</div>
+    <div style="margin-top:12px" class="tip">💡 <b>30-second rule:</b> after each deliverable, you should be able to explain it to a busy colleague in one breath. If you can't, it needs simplifying.</div>
+  </section>
+
+  <div class="foot">MG3003 · Silicon University, Bhubaneswar · Built by TechSambad</div>
+</div>
+</body>
+</html>

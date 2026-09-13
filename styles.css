@@ -167,6 +167,16 @@ body {
   border-color: rgba(20,184,166,0.6);
   color: #99f6e4;
 }
+.nav-btn.guide-link {
+  background: rgba(58,169,255,0.16);
+  border-color: rgba(58,169,255,0.42);
+  color: #93c8ff;
+}
+.nav-btn.guide-link:hover {
+  background: rgba(58,169,255,0.3);
+  border-color: rgba(58,169,255,0.6);
+  color: #cfe2ff;
+}
 
 /* Status: week chip + user + logout, muted and separated */
 .hero-status {
