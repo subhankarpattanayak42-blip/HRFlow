@@ -53,7 +53,7 @@
     3: { name: "🎯 Talent Acquisition & ATS", url: "https://docs.google.com/presentation/d/1s7m-aAkmA9DJGqz_Nd-CViHzD30rqX8C13-4stBpReM" },
     4: { name: "🌍 Onboarding & Global Compliance", url: "https://docs.google.com/presentation/d/17ZDvzaqmXoYVludGiOszzC8Drgghz_IMc-R1d7az1x0" },
     5: { name: "⏱️ Time & Attendance", url: "https://docs.google.com/presentation/d/1AbiwT5jC90fTp-sylAWEyhzq3DmvrUYt" },
-    6: { name: "💰 Payroll & Compensation", url: "https://docs.google.com/presentation/d/14fu_BFz4yaaDJ6_ylDHTMnJ7QdX0_cmKEVvqgh_0C88" },
+    6: { name: "💰 Payroll & Compensation", url: "https://docs.google.com/presentation/d/1PLb7KvAi11RFCSnlcLDgaof_RCmg3ZFz1ptSISF2Hwk" },
     7: { name: "📈 Performance Management", url: "https://docs.google.com/presentation/d/1smsmuIOrk6loVUfjM-sfQLLNIwnk2W6Y" },
     8: { name: "🧠 Learning, Succession & Analytics", url: "https://docs.google.com/presentation/d/1VS4DmbW0EZAs_Tg5sgmzDugYC3i8sity" },
     9: { name: "🔒 Service Delivery & Security", url: "https://docs.google.com/presentation/d/19X_shDoE9PLslWSsnz3DXDIaG6x_-i2y" },
