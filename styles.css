@@ -1038,6 +1038,107 @@ hr {
   font-style: italic;
 }
 
+/* ── Individual Portfolio widget ─────────────────────────── */
+.deliv-portfolio {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #0d9488;
+  border-radius: 10px;
+}
+.deliv-portfolio-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+.deliv-portfolio-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--navy, #1e3a5f);
+}
+.deliv-portfolio-status {
+  font-size: 0.72rem;
+  color: var(--muted, #64748b);
+}
+.deliv-portfolio-link {
+  color: #0d9488;
+  font-weight: 600;
+  word-break: break-all;
+}
+.deliv-portfolio-grid {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+.deliv-portfolio-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: transparent;
+  color: var(--ink, #1e293b);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 160ms;
+}
+.deliv-portfolio-choice:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+.deliv-portfolio-choice.active {
+  background: linear-gradient(135deg, var(--navy, #1e3a5f), var(--navy-light, #2b4a7a));
+  color: #fff;
+  border-color: var(--navy, #1e3a5f);
+  box-shadow: 0 1px 4px rgba(30, 58, 95, 0.25);
+}
+.deliv-portfolio-choice-icon {
+  font-size: 1rem;
+}
+.deliv-portfolio-form { margin-bottom: 0.3rem; }
+.deliv-portfolio-drive {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: var(--ink, #1e293b);
+}
+.deliv-portfolio-drive-icon { font-size: 1rem; }
+.deliv-portfolio-urlrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.deliv-portfolio-input {
+  flex: 1 1 320px;
+  min-width: 240px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+.deliv-portfolio-input:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+.deliv-portfolio-note {
+  margin: 0.25rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted, #64748b);
+  font-style: italic;
+}
+
 /* ── Session slides panel ──────────────────────────────── */
 .deliv-slides {
   margin-top: 1.2rem;

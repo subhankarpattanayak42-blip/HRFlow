@@ -541,6 +541,78 @@ function renderAdminStudentResults() {
   container.innerHTML = html;
 }
 
+// Admin view: every student's chosen portfolio destination (drive | github | website) + link.
+async function renderAdminPortfolios() {
+  const container = document.getElementById("admin-portfolios");
+  if (!container) return;
+  if (!isAdminUser() || !state.supabase) return;
+
+  let links = [];
+  try {
+    const { data, error } = await state.supabase.from("portfolio_links").select("user_email,portfolio_type,url,updated_at");
+    if (error) throw error;
+    links = data || [];
+  } catch (e) {
+    container.innerHTML = `<p style="margin:0.4rem 0.6rem;font-size:0.75rem;color:#b91c1c">Couldn't load portfolio links: ${(e.message||e).toString().slice(0,140)}
+      <br><small style="color:var(--muted)">If the instructor hasn't created the table yet, run supabase/portfolio_links.sql in the Supabase SQL Editor, then refresh.</small></p>`;
+    return;
+  }
+
+  const byEmail = {};
+  links.forEach(l => { byEmail[l.user_email] = l; });
+
+  const TYPE_LABEL = { drive: "📁 Drive", github: "🐙 GitHub", website: "🌐 Website" };
+  const TYPE_COLOR = { drive: "#0d9488", github: "#1f2937", website: "#0b7285" };
+
+  // Header row + summary counts
+  const counts = { drive: 0, github: 0, website: 0 };
+  Object.values(byEmail).forEach(l => { counts[l.portfolio_type] = (counts[l.portfolio_type]||0)+1; });
+  const totalChosen = Object.keys(byEmail).length;
+
+  const rows = Object.keys(NAME_MAP)
+    .filter(e => e.endsWith("@silicon.ac.in"))
+    .map(email => {
+      const name = NAME_MAP[email];
+      const l = byEmail[email];
+      const type = (l && l.portfolio_type) || "drive";
+      const url = (l && l.url) || "";
+      const driveUrl = (window.PORTFOLIO_FOLDERS && window.PORTFOLIO_FOLDERS[email]) || "";
+      const typeColor = TYPE_COLOR[type] || "#0d9488";
+      const pfx = type === "website" ? "" : type === "github" ? "" : "📁 ";
+      let linkCell;
+      if (type === "drive") {
+        linkCell = driveUrl
+          ? `<a href="${driveUrl}" target="_blank" rel="noopener" style="color:#1e3a5f">📁 Open folder</a>`
+          : `<span style="color:var(--muted)">Folder TBD</span>`;
+      } else {
+        linkCell = url
+          ? `<a href="${url}" target="_blank" rel="noopener" style="color:#0b7285">${shortDisplay(url)}</a>`
+          : `<span style="color:#b45309;font-weight:600">⚠️ No link yet</span>`;
+      }
+      return `<tr style="border-top:1px solid #eef2f7">
+        <td style="padding:0.3rem 0.5rem;font-weight:600">${name}<br/><span style="color:var(--muted);font-size:0.68rem">${email}</span></td>
+        <td style="padding:0.3rem 0.5rem"><span style="display:inline-block;background:rgba(30,58,95,.08);color:${typeColor};border-radius:8px;padding:1px 8px;font-size:0.7rem;font-weight:600">${TYPE_LABEL[type]||type}</span></td>
+        <td style="padding:0.3rem 0.5rem;font-size:0.72rem">${linkCell}</td>
+        <td style="padding:0.3rem 0.5rem;font-size:0.68rem;color:var(--muted)">${l ? (l.updated_at ? l.updated_at.replace("T"," ").slice(5,16) : "—") : "—"}</td>
+      </tr>`;
+    }).join("");
+
+  const sumHtml = counts.drive + counts.github + counts.website > 0
+    ? ` · ${counts.drive} Drive · ${counts.github} GitHub · ${counts.website} Website`
+    : "";
+
+  container.innerHTML = `<div style="padding:0.4rem 0.6rem;font-size:0.8rem;background:var(--bg,#f8fafc);border-bottom:1px solid #e2e8f0;font-weight:600">${totalChosen} / ${Object.keys(NAME_MAP).filter(e=>e.endsWith("@silicon.ac.in")).length} students have set a portfolio destination${sumHtml}</div>
+    <div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:0.75rem;min-width:620px"><thead><tr style="text-align:left;background:rgba(13,148,136,0.12)">
+      <th style='padding:0.35rem 0.5rem'>Student</th><th style='padding:0.35rem 0.5rem'>Destination</th><th style='padding:0.35rem 0.5rem'>Link</th><th style='padding:0.35rem 0.5rem'>Updated</th></tr></thead><tbody>`
+    + rows
+    + `</tbody></table></div>
+    <p style="margin:0.5rem 0.6rem;font-size:0.72rem;color:var(--muted)">Each student picks one destination in the app: Drive folder (their existing personal folder), GitHub, or Website. GitHub/Website links are self-captured and editable anytime. Drive uses the folder mapped per email.</p>`;
+}
+
+function shortDisplay(url) {
+  try { return url.replace(/^https?:\/\//, "").replace(/\/$/, ""); } catch (e) { return url; }
+}
+
 function getScenarios() {
   // Week 1 = hardcoded default scenarios
   if (!state.activeWeek || state.activeWeek === 1) {
@@ -1839,6 +1911,8 @@ function refreshUI() {
   renderJournal();
   renderAnalytics();
   renderAdminStudentResults();
+  if (window.refreshPortfolio) window.refreshPortfolio();
+  renderAdminPortfolios();
   setControlStates();
 
   const isAdmin = isAdminUser();

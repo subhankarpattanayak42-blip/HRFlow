@@ -45,6 +45,11 @@
     portfolios: "https://drive.google.com/drive/folders/1KrrMdJzAKYyRGJWTyEFdnITyfC6HGJl4"  // 02-Portfolios root
   };
 
+  /* Expose to admin code (script.js) so the admin portfolio view can resolve
+     each student's existing Drive folder for the 'drive' destination. */
+  window.PORTFOLIO_FOLDERS = PORTFOLIO_FOLDERS;
+  window.PORTFOLIO_LINKS = LINKS;
+
   /* ── Session slides on Google Drive ──────────────────────── */
   const SESSION_SLIDES = {
     0: { name: "📖 Course Intro", url: "https://docs.google.com/presentation/d/11CJwmvOzSTxzj1t5rKM8Ebp5mS64xTyR" },
@@ -194,21 +199,31 @@
 
     /* Build submission link */
     let submitHtml = "";
+    const studentEmail = s && s.currentUser ? s.currentUser.email : null;
+    const isAdmin = !!(s && s.currentUser && s.currentUser.role === "admin");
     if (userTeam) {
       const tf = TEAM_FOLDERS[userTeam.name === "Team-1" ? 1 : userTeam.name === "Team-2" ? 2 : 3];
-      const studentEmail = s.currentUser.email;
-      const portfolioUrl = PORTFOLIO_FOLDERS[studentEmail] || LINKS.portfolios;
       const teamLabel = tf ? tf.name : userTeam.name;
-      const displayName = s.currentUser.displayName || studentEmail.split("@")[0];
+      const displayName = (s.currentUser && s.currentUser.displayName) || (studentEmail || "").split("@")[0];
       submitHtml = `
         <div class="deliv-team-badge">👥 Your Team: ${teamLabel}</div>
         <div class="deliv-actions">
           <a class="deliv-btn" href="${tf.url}" target="_blank" rel="noopener">📁 Submit ${teamLabel} Sprint</a>
           <a class="deliv-btn deliv-btn-ghost" href="${LINKS.tracker}" target="_blank" rel="noopener">📊 Master Tracker Sheet</a>
-          <a class="deliv-btn deliv-btn-ghost" href="${portfolioUrl}" target="_blank" rel="noopener">📂 My Portfolio (${displayName})</a>
           <a class="deliv-btn deliv-btn-outline" href="https://interactive-polling-1bxf.bolt.host/join/EXRYDY" target="_blank" rel="noopener">📬 Poll & Ask</a>
         </div>
-        <p class="deliv-note">🔒 Team sprint folders are visible only to your team members. Portfolio folders are individual — only you and the instructor can see yours. Have a question the FAQ didn't answer? Use <strong>Poll & Ask</strong>.</p>`;
+        <p class="deliv-note">🔒 Team sprint folders are visible only to your team members. Have a question the FAQ didn't answer? Use <strong>Poll & Ask</strong>.</p>
+        ${studentEmail && !isAdmin ? portfolioWidgetSkeleton() : ""}`;
+    } else if (studentEmail && !isAdmin) {
+      // Logged-in student with no team — portfolio is individual, still available.
+      submitHtml = `
+        <div class="deliv-actions">
+          <a class="deliv-btn" href="${LINKS.driveMaster}" target="_blank" rel="noopener">📁 Google Drive (Master)</a>
+          <a class="deliv-btn deliv-btn-ghost" href="${LINKS.tracker}" target="_blank" rel="noopener">📊 Master Tracker Sheet</a>
+          <a class="deliv-btn deliv-btn-outline" href="https://interactive-polling-1bxf.bolt.host/join/EXRYDY" target="_blank" rel="noopener">📬 Poll & Ask</a>
+        </div>
+        <p class="deliv-note">💡 No team selected yet — but your individual portfolio is ready below. Have a question? Use <strong>Poll & Ask</strong>.</p>
+        ${portfolioWidgetSkeleton()}`;
     } else {
       submitHtml = `
         <div class="deliv-actions">
@@ -249,10 +264,199 @@
     `;
   }
 
+  /* ── Individual Portfolio widget ────────────────────────────────
+     Student picks ONE destination: Drive folder (existing) | GitHub | Website.
+     GitHub/Website → capture + save a URL to the portfolio_links table (editable anytime).
+     Drive → just opens their existing personal folder (no URL needed). */
+
+  const PORTFOLIO_TYPES = [
+    { key: "drive",  icon: "📁", label: "Drive folder",  hint: "Use my existing personal folder" },
+    { key: "github", icon: "🐙", label: "GitHub",        hint: "I have a repo link for my portfolio" },
+    { key: "website",icon: "🌐", label: "Website",       hint: "I have a hosted portfolio / site link" },
+  ];
+
+  function portfolioWidgetSkeleton() {
+    return `
+      <div class="deliv-portfolio" id="deliv-portfolio">
+        <div class="deliv-portfolio-head">
+          <span class="deliv-portfolio-title">📂 My Individual Portfolio</span>
+          <span id="pf-status" class="deliv-portfolio-status"></span>
+        </div>
+        <div class="deliv-portfolio-grid" id="pf-type-choices"></div>
+        <div class="deliv-portfolio-form" id="pf-form"></div>
+        <p class="deliv-portfolio-note">Pick where you'll submit your individual portfolio. If you choose <strong>GitHub</strong> or <strong>Website</strong>, paste the link below — it's saved to your record and visible to the instructor. You can change this any time.</p>
+      </div>`;
+  }
+
+  // Determine this student's current saved choice + the drive fallback URL.
+  function portfolioPref() {
+    const s = window.HRFLOW_STATE;
+    const email = s && s.currentUser ? s.currentUser.email : null;
+    return {
+      email,
+      driveUrl: (email && PORTFOLIO_FOLDERS[email]) || LINKS.portfolios,
+    };
+  }
+
+  function portfolioSupabase() {
+    const s = window.HRFLOW_STATE;
+    return (s && s.supabase) ? s.supabase : null;
+  }
+
+  async function loadPortfolioRow() {
+    const sup = portfolioSupabase();
+    const { email } = portfolioPref();
+    if (!sup || !email) return null;
+    try {
+      const { data } = await sup.from("portfolio_links").select("*").eq("user_email", email).maybeSingle();
+      return data || null;
+    } catch (e) { return null; }
+  }
+
+  function renderPortfolioWidget(saved) {
+    const { email, driveUrl } = portfolioPref();
+    const choicesBox = document.getElementById("pf-type-choices");
+    const formBox = document.getElementById("pf-form");
+    const status = document.getElementById("pf-status");
+    if (!choicesBox) return;
+
+    const chosen = (saved && saved.portfolio_type) || "drive";
+
+    choicesBox.innerHTML = PORTFOLIO_TYPES.map(t =>
+      `<button type="button" class="deliv-portfolio-choice${t.key === chosen ? " active" : ""}" data-type="${t.key}" title="${t.hint}">
+         <span class="deliv-portfolio-choice-icon">${t.icon}</span>
+         <span class="deliv-portfolio-choice-label">${t.label}</span>
+       </button>`).join("");
+
+    arraySelector(".deliv-portfolio-choice").forEach(btn => {
+      btn.addEventListener("click", () => selectPortfolioType(btn.dataset.type));
+    });
+
+    renderPortfolioForm(chosen, saved, driveUrl);
+
+    if (status) {
+      status.innerHTML = chosen === "drive"
+        ? `Using my personal Drive folder`
+        : `Saved: <a href="${escapeHtml((saved && saved.url) || "#")}" target="_blank" rel="noopener" class="deliv-portfolio-link">${(saved && saved.url) ? escapeHtml(shortUrl(saved.url)) : "no link yet"}</a>`;
+      status.style.display = "";
+    }
+  }
+
+  function renderPortfolioForm(chosen, saved, driveUrl) {
+    const formBox = document.getElementById("pf-form");
+    if (!formBox) return;
+
+    if (chosen === "drive") {
+      formBox.innerHTML = `
+        <div class="deliv-portfolio-drive">
+          <span class="deliv-portfolio-drive-icon">📁</span>
+          <span>Your personal folder is ready —</span>
+          <a class="deliv-btn deliv-btn-ghost" href="${escapeHtml(driveUrl)}" target="_blank" rel="noopener">📂 Open my portfolio folder</a>
+        </div>`;
+      return;
+    }
+
+    const label = chosen === "github" ? "GitHub repository link" : "Website link";
+    const placeholderText = chosen === "github"
+      ? "https://github.com/you/your-portfolio-repo"
+      : "https://yoursite.example.com";
+    const currentUrl = (saved && saved.portfolio_type === chosen && saved.url) ? saved.url : "";
+    formBox.innerHTML = `
+      <div class="deliv-portfolio-urlrow">
+        <input id="pf-url" type="url" class="deliv-portfolio-input"
+          placeholder="${placeholderText}" value="${escapeHtml(currentUrl)}" />
+        <button id="pf-save" type="button" class="primary" style="font-size:0.8rem">💾 Save Link</button>
+      </div>
+      <p id="pf-save-msg" class="small muted" style="font-size:0.75rem"></p>`;
+
+    const input = document.getElementById("pf-url");
+    const saveBtn = document.getElementById("pf-save");
+    const msg = document.getElementById("pf-save-msg");
+    if (!input || !saveBtn) return;
+
+    const doSave = async () => {
+      const url = (input.value || "").trim();
+      if (!/^https?:\/\/.+\..+/.test(url)) {
+        msg.textContent = "Please enter a full link starting with https://";
+        return;
+      }
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving…";
+      const sup = portfolioSupabase();
+      const { email } = portfolioPref();
+      const payload = {
+        user_email: email,
+        portfolio_type: chosen,
+        url,
+        updated_at: new Date().toISOString(),
+      };
+      try {
+        const { error } = await sup.from("portfolio_links").upsert(payload, { onConflict: "user_email" });
+        if (error) throw error;
+        msg.textContent = `✓ Saved — ${chosen === "github" ? "GitHub" : "Website"} link updated.`;
+        msg.style.color = "#059669";
+        msg.style.display = "";
+        if (window.refreshDeliverables) window.refreshDeliverables(); // refresh status line
+      } catch (e) {
+        msg.textContent = `Save failed: ${(e.message || e).toString().slice(0, 140)}`;
+        msg.style.color = "#b91c1c";
+        msg.style.display = "";
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "💾 Save Link";
+      }
+    };
+
+    saveBtn.addEventListener("click", doSave);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") doSave(); });
+  }
+
+  function selectPortfolioType(type) {
+    arraySelector(".deliv-portfolio-choice").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.type === type);
+    });
+    // Save the type choice immediately (drive needs no url; github/website get the form).
+    const sup = portfolioSupabase();
+    const { email } = portfolioPref();
+    if (!sup || !email) return;
+    sup.from("portfolio_links").upsert(
+      { user_email: email, portfolio_type: type, updated_at: new Date().toISOString() },
+      { onConflict: "user_email" }).then(({ error }) => {
+        const status = document.getElementById("pf-status");
+        if (status) status.textContent = type === "drive"
+          ? "Using my personal Drive folder"
+          : (error ? "Type saved (link pending)" : "Choice saved — now add your link ↓");
+      });
+    renderPortfolioForm(type, null, portfolioPref().driveUrl);
+  }
+
+  function shortUrl(u) {
+    try { return u.replace(/^https?:\/\//, "").replace(/\/$/, ""); } catch (e) { return u; }
+  }
+
+  function escapeHtml(s) {
+    if (!s) return "";
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function arraySelector(sel) {
+    return Array.prototype.slice.call(document.querySelectorAll(sel));
+  }
+
+  async function hydratePortfolioWidget() {
+    const widget = document.getElementById("deliv-portfolio");
+    const sup = portfolioSupabase();
+    const { email } = portfolioPref();
+    if (!widget || !sup || !email) return;
+    const saved = await loadPortfolioRow();
+    renderPortfolioWidget(saved || {});
+  }
+
   /* ── Init ─────────────────────────────────────────────────── */
   function init() {
     renderDeliverables();
     window.refreshDeliverables = renderDeliverables;
+    window.refreshPortfolio = hydratePortfolioWidget;
 
     // Poll for state to become available
     let tries = 0;
@@ -260,6 +464,7 @@
       if (window.HRFLOW_STATE) {
         clearInterval(poll);
         renderDeliverables();
+        hydratePortfolioWidget();
       } else if (++tries > 40) {
         clearInterval(poll);
       }
