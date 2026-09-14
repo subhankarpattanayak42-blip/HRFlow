@@ -396,7 +396,9 @@
         msg.textContent = `✓ Saved — ${chosen === "github" ? "GitHub" : "Website"} link updated.`;
         msg.style.color = "#059669";
         msg.style.display = "";
-        if (window.refreshDeliverables) window.refreshDeliverables(); // refresh status line
+        // Re-hydrate the widget so the choice buttons + saved link redraw immediately
+        // (refreshDeliverables alone only rebuilds the empty skeleton, hiding the buttons).
+        if (window.refreshPortfolio) window.refreshPortfolio();
       } catch (e) {
         msg.textContent = `Save failed: ${(e.message || e).toString().slice(0, 140)}`;
         msg.style.color = "#b91c1c";
