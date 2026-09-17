@@ -164,8 +164,8 @@
      AVAILABLE_UNTIL to auto-hide it after the day is over.
      Format: ISO 8601 with +05:30 offset. Leave AVAILABLE_UNTIL null('') for
      "hidden only before, open forever after". */
-  const LOCKED_UNTIL = "2026-09-27T00:00:00+05:30"; // 🕛 set to exam start IST
-  const AVAILABLE_UNTIL = ""; // e.g. "2026-09-27T23:59:00+05:30" to auto-close at end of day
+  const LOCKED_UNTIL = "2026-09-27T16:15:00+05:30"; // 🕛 exam opens 4:15 PM IST, 27 Sep
+  const AVAILABLE_UNTIL = "2026-09-27T23:59:00+05:30"; // auto re-lock end of exam day
 
   const nowMs = Date.now();
   const lockMs = Date.parse(LOCKED_UNTIL);
@@ -180,8 +180,8 @@
     if (whole) {
       whole.innerHTML = `<div class="card" style="margin-top:2rem;text-align:center">
         <h2 style="text-align:center">🔒 Not available yet</h2>
-        <p style="margin:1rem 0;line-height:1.6">The mid-term case study opens on <b>Saturday, 27 September</b>.<br>
-        Please check your email on the day for the exact start time and link.<br><br>
+        <p style="margin:1rem 0;line-height:1.6">The mid-term case study opens on <b>Sunday, 27 September at 4:15&nbsp;PM IST</b>.<br>
+        Please check your email for the submission link — it will open at start time.<br><br>
         <b>Bring your laptop</b> — you'll write and submit your answer as a document.</p>
         <p style="margin:.8rem 0 0;color:var(--muted);font-size:.85em">MG3003 · Silicon University</p>
       </div>`;
