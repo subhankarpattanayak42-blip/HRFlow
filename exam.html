@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MG3003 · Mid-Term Case Study</title>
+<style>
+  :root {
+    --navy: #0b1f3a; --navy2: #123259; --gold: #e8b94a; --cream: #f7f3ea;
+    --ink: #2b2b2b; --muted: #7a7568; --red: #c0392b; --green: #1e8449;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif; background: var(--cream);
+    color: var(--ink); line-height: 1.55; padding: 0 0 3rem;
+  }
+  .topbar {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+    color: #fff; padding: 1.1rem 2rem;
+  }
+  .topbar .brand { font-weight: 800; letter-spacing: .3px; }
+  .topbar .sub { font-size: .85rem; opacity: .9; }
+  .topbar .timer {
+    float: right; background: var(--gold); color: var(--navy); font-weight: 700;
+    padding: .5rem 1rem; border-radius: 999px; font-variant-numeric: tabular-nums;
+  }
+  .topbar .logged {
+    float: right; font-size: .8rem; margin-left: 1rem; opacity: .95;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  .card {
+    background: #fff; border: 1px solid #e6dfd2; border-radius: 12px;
+    padding: 1.6rem 2rem; margin-top: 1.2rem; box-shadow: 0 1px 4px rgba(11,31,58,.08);
+  }
+  .card h2 {
+    color: var(--navy); font-size: 1.15rem; margin-bottom: .35rem;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .card h2::before {
+    content: ""; width: 8px; height: 8px; background: var(--gold); border-radius: 2px;
+  }
+  .instructions li { margin: .4rem 0; }
+  code {
+    background: #eef1f6; padding: .1rem .4rem; border-radius: 4px;
+    font-size: .85em;
+  }
+  .case { white-space: pre-wrap; font-size: .98rem; }
+  .drop {
+    border: 2px dashed var(--navy2); border-radius: 12px; padding: 2.4rem;
+    text-align: center; color: var(--muted); cursor: pointer; margin: 1rem 0;
+    transition: border-color .15s, background .15s;
+  }
+  .drop:has(.file) { border-color: var(--gold); background: #fbf7ea; }
+  .drop .fname { font-weight: 600; color: var(--ink); }
+  button.primary {
+    background: var(--navy); color: #fff; border: none; padding: .85rem 2rem;
+    border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    width: 100%; margin-top: 1rem;
+  }
+  button.primary:disabled { background: #9aa7b5; cursor: not-allowed; }
+  .status { white-space: pre-line; font-size: .95rem; }
+  .status.ok { color: var(--green); }
+  .status.err { color: var(--red); }
+  .foot {
+    text-align: center; color: var(--muted); font-size: .78rem; margin-top: 2rem;
+  }
+  .expired-banner {
+    background: var(--red); color: #fff; padding: .9rem 1.4rem; border-radius: 8px;
+    font-weight: 600; display: none;
+  }
+  .banner-warn { background: var(--gold); color: var(--navy); padding: .8rem 1.2rem; border-radius: 8px; font-weight: 600; }
+  input[type=file] { display: none; }
+  .meta { font-size: .82rem; color: var(--muted); margin: .3rem 0 1rem; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">MG3003 · Mid-Term Case Study</span>
+  <span class="timer" id="timer">60:00</span>
+  <span class="logged" id="who">—</span>
+  <div class="sub">Enterprise HRIS Architecture &amp; Implementation · Silicon University · 1 hour</div>
+</div>
+
+<div class="wrap">
+
+  <div class="card" style="border-left:6px solid var(--gold);">
+    <b>Read this first 📋</b> — You have <b>60 minutes</b>. Work in a Word document
+    (or prepare a PDF). When done, upload the file below. Your submission is saved to a
+    private course collection — you will only see a confirmation, not a drive link.
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       EDIT ME: paste the actual case text into the <div id="caseBody"> below.
+       Replace everything between the markers. Keep it as-is or restyle freely.
+       ════════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <h2>The Scenario · GlobalTech Inc.</h2>
+    <div class="case" id="caseBody">GlobalTech Inc., a 9,000-employee technology company, has grown for 12 years on a patchwork of spreadsheets and disconnected HR tools. Payroll runs out of a legacy system that team leads manually hand-enter every fortnight. Recruitment happens via three separate email inboxes. Performance reviews are annual Word documents that HR prints and files.
+
+The company has just hired you as an HRIS consultant. The CHRO wants a single, integrated HRIS and has asked you to recommend how to get there.
+
+Your task: Write a short consulting brief (Word document or PDF) that answers ALL of the following:
+
+1. What core HR modules should an HRIS for GlobalTech include, and why does each matter to a company this size?
+
+2. How would the lives of (a) an HR admin, (b) a team lead, and (c) an employee change if the HRIS replaced the current spreadsheets?
+
+3. Which 3 risks or challenges (e.g. data migration, change management, data privacy) should the implementation plan handle, and how would you address each?
+
+4. What would you put in a 6-month implementation roadmap? (phases, order, and why that order.)
+
+Structure your brief clearly (headings/sections), stay concise, and explain like you would to a colleague who is not from HR. Estimated length: 600–900 words.</div>
+    <p class="meta">Answer all 4 parts. Clarity and structure count as much as content.</p>
+
+    <div class="banner-warn" id="warn">Timer running — submit before it reaches zero. Your answers are saved as soon as you upload.</div>
+    <div class="banner-warn" id="notLogged" style="display:none">🔒 Not signed in. Open the HR Flow app first and log in with your <b>@silicon.ac.in</b> account, then return here to submit. Your identity is verified from your login.</div>
+    <div class="expired-banner" id="expired">⏰ Time's up! Upload your file now — submissions lock shortly.</div>
+  </div>
+
+  <div class="card">
+    <h2>Your Answer</h2>
+    <ol class="instructions">
+      <li>Write your answer in <b>Microsoft Word</b> (or any tool that exports Word/PDF).</li>
+      <li>Save it as a <code>.docx</code> or <code>.pdf</code> file.</li>
+      <li>Upload it here using the box below, then press <b>Submit</b>.</li>
+      <li>You'll see a confirmation when it's safely received. One submission per student.</li>
+    </ol>
+
+    <div class="drop" id="drop">
+      <span class="ph">📎 Choose your <b>.docx</b> or <b>.pdf</b> file</span>
+      <span class="fname" id="fname" style="display:none"></span>
+      <input type="file" id="file" accept=".docx,.pdf" />
+    </div>
+
+    <button class="primary" id="submit" disabled>Upload &amp; Submit</button>
+    <p class="status" id="status"></p>
+  </div>
+
+  <div class="foot">MG3003 · Silicon University · Built by TechSambad</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://avzchxohvknqmenrmibz.supabase.co";
+  const SUPABASE_ANON = "sb_publishable_wlBgsi63ky37oF8Jq4h-_w_WJyNXPC8";
+
+  const DURATION = 60 * 60; // seconds — change for a different exam length
+  const dead = new Date(Date.now() + DURATION * 1000);
+  let student = { email: "", name: "" };
+  let session = { jwt: "" };
+
+  const $ = (s) => document.querySelector(s);
+
+  /* ── Identity: MUST be an authenticated HR Flow session. The login JWT is
+     sent to the server, which verifies it — the browser is never trusted to
+     supply identity. No manual-email fallback (that would be spoofable). ── */
+  async function loadIdentity() {
+    try {
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      const { data } = await sb.auth.getSession();
+      if (data.session && data.session.user) {
+        const u = data.session.user;
+        session.jwt = data.session.access_token;
+        student.email = u.email || "";
+        student.name = (u.user_metadata && u.user_metadata.display_name) || u.email.split("@")[0];
+        $("#who").textContent = "Signed in as " + student.email;
+        $("#notLogged").style.display = "none";
+      }
+    } catch (e) { /* offline */ }
+    if (!session.jwt) {
+      $("#notLogged").style.display = "block";
+      $("#drop").style.pointerEvents = "none";
+      $("#drop").style.opacity = "0.5";
+      $("#submit").disabled = true;
+    }
+  }
+
+  /* ── Countdown timer ── */
+  function tick() {
+    const left = Math.max(0, dead - Date.now());
+    const m = String(Math.floor(left / 60000)).padStart(2, "0");
+    const s = String(Math.floor((left % 60000) / 1000)).padStart(2, "0");
+    $("#timer").textContent = m + ":" + s;
+    if (left <= 0) {
+      $("#warn").style.display = "none";
+      $("#expired").style.display = "block";
+      clearInterval(timerInt);
+    } else if (left < 5 * 60000) {
+      $("#warn").textContent = "⚠ Less than 5 minutes left — wrap up and submit.";
+      $("#warn").style.background = "#f0c14b";
+    }
+  }
+
+  /* ── File picker ── */
+  const drop = $("#drop"), file = $("#file");
+  drop.addEventListener("click", () => file.click());
+  file.addEventListener("change", () => {
+    const f = file.files && file.files[0] ? file.files[0] : null;
+    if (f) {
+      const ext = f.name.split(".").pop().toLowerCase();
+      if (!["docx", "pdf"].includes(ext)) {
+        $("#status").textContent = "❌ Only .docx or .pdf files are accepted.";
+        return;
+      }
+      $("#fname").style.display = "inline";
+      $("#fname").textContent = "📄 " + f.name;
+      $("#submit").disabled = false;
+    } else $("#submit").disabled = true;
+  });
+
+  /* ── Submit ── */
+  $("#submit").addEventListener("click", async () => {
+    const f = file.files[0];
+    if (!f) return;
+    const btn = $("#submit");
+    btn.disabled = true;
+    $("#status").className = "status";
+    $("#status").textContent = "Uploading…";
+    const fd = new FormData();
+    fd.append("file", f);
+    try {
+      const r = await fetch("/api/exam-upload", {
+        method: "POST", body: fd,
+        headers: { "Authorization": "Bearer " + session.jwt },
+      });
+      const j = await r.json();
+      if (r.ok && j.ok) {
+        $("#status").className = "status ok";
+        $("#status").textContent = "✅ Submission received successfully.\nReceived file: " + j.filename +
+          "\n\nThank you. Your answer is safely stored. You may close this page.";
+        $("#warn").style.display = "none";
+        $("#submit").textContent = "Submitted";
+      } else {
+        $("#status").className = "status err";
+        $("#status").textContent = "❌ " + (j.error || "Upload failed. Please try again.");
+        btn.disabled = false;
+      }
+    } catch (e) {
+      $("#status").className = "status err";
+      $("#status").textContent = "❌ Could not reach the server. Check your connection and try again.";
+      btn.disabled = false;
+    }
+  });
+
+  let timerInt = setInterval(tick, 500);
+  loadIdentity();
+  tick();
+</script>
+</body>
+</html>
