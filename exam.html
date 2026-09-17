@@ -158,6 +158,38 @@
   const SUPABASE_URL = "https://avzchxohvknqmenrmibz.supabase.co";
   const SUPABASE_ANON = "sb_publishable_wlBgsi63ky37oF8Jq4h-_w_WJyNXPC8";
 
+  /* ──────────────── EXAM WINDOW GATE ────────────────
+     Before LOCKED_UNTIL the page shows a holding screen (no timer, no cases,
+     no upload). Set LOCKED_UNTIL to the exam start (IST) and, optionally,
+     AVAILABLE_UNTIL to auto-hide it after the day is over.
+     Format: ISO 8601 with +05:30 offset. Leave AVAILABLE_UNTIL null('') for
+     "hidden only before, open forever after". */
+  const LOCKED_UNTIL = "2026-09-27T00:00:00+05:30"; // 🕛 set to exam start IST
+  const AVAILABLE_UNTIL = ""; // e.g. "2026-09-27T23:59:00+05:30" to auto-close at end of day
+
+  const nowMs = Date.now();
+  const lockMs = Date.parse(LOCKED_UNTIL);
+  const availMs = AVAILABLE_UNTIL ? Date.parse(AVAILABLE_UNTIL) : null;
+  const beforeExam = Number.isNaN(lockMs) ? false : (nowMs < lockMs);
+  const afterExam = availMs ? (nowMs > availMs) : false;
+
+  if (beforeExam || afterExam) {
+    // Holding page — hide chrome, stop everything.
+    document.title = "MG3003 · Mid-Term Exam — Not available yet";
+    const whole = document.querySelector(".wrap");
+    if (whole) {
+      whole.innerHTML = `<div class="card" style="margin-top:2rem;text-align:center">
+        <h2 style="text-align:center">🔒 Not available yet</h2>
+        <p style="margin:1rem 0;line-height:1.6">The mid-term case study opens on <b>Saturday, 27 September</b>.<br>
+        Please check your email on the day for the exact start time and link.<br><br>
+        <b>Bring your laptop</b> — you'll write and submit your answer as a document.</p>
+        <p style="margin:.8rem 0 0;color:var(--muted);font-size:.85em">MG3003 · Silicon University</p>
+      </div>`;
+    }
+    document.querySelector("#timer").textContent = "--:--";
+    document.querySelector("#who").textContent = "";
+  } else {
+
   let student = { email: "", name: "" };
   let session = { jwt: "" };
 
@@ -405,6 +437,7 @@ recorded on the server.
   let timerInt = setInterval(tick, 500);
   loadIdentity();
   tick();
+  } /* end else (exam window open) */
 </script>
 </body>
 </html>
