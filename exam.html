@@ -88,6 +88,8 @@
     <b>Read this first 📋</b> — You have <b>60 minutes</b>. Work in a Word document
     (or prepare a PDF). When done, upload the file below. Your submission is saved to a
     private course collection — you will only see a confirmation, not a drive link.
+    Your timer is tracked on the server, so a brief browser hiccup won't cost you time —
+    you can safely reopen the page and your clock resumes where it was.
   </div>
 
   <!-- ════════════════════════════════════════════════════════════════════
@@ -114,6 +116,7 @@ Structure your brief clearly (headings/sections), stay concise, and explain like
     <p class="meta">Answer all 4 parts. Clarity and structure count as much as content.</p>
 
     <div class="banner-warn" id="warn">Timer running — submit before it reaches zero. Your answers are saved as soon as you upload.</div>
+    <div class="banner-warn" id="clockWarn" style="display:none">⚠️ Couldn't reach the exam timer server. Your time may still be tracked on the server — submit as normal; the server enforces the deadline.</div>
     <div class="banner-warn" id="notLogged" style="display:none">🔒 Not signed in. Open the HR Flow app first and log in with your <b>@silicon.ac.in</b> account, then return here to submit. Your identity is verified from your login.</div>
     <div class="expired-banner" id="expired">⏰ Time's up! Upload your file now — submissions lock shortly.</div>
   </div>
@@ -145,10 +148,16 @@ Structure your brief clearly (headings/sections), stay concise, and explain like
   const SUPABASE_URL = "https://avzchxohvknqmenrmibz.supabase.co";
   const SUPABASE_ANON = "sb_publishable_wlBgsi63ky37oF8Jq4h-_w_WJyNXPC8";
 
-  const DURATION = 60 * 60; // seconds — change for a different exam length
-  const dead = new Date(Date.now() + DURATION * 1000);
   let student = { email: "", name: "" };
   let session = { jwt: "" };
+
+  /* Deadline comes from the SERVER (/api/exam-state → exam_attempts table),
+     not the browser. If it can't be loaded we still enable the timer, but the
+     server is the authority for whether a submission is accepted. */
+  let deadlineTs = null;
+  let remainingMs = null;
+  let submitted = false;
+  let clockReady = false;
 
   const $ = (s) => document.querySelector(s);
 
@@ -166,6 +175,7 @@ Structure your brief clearly (headings/sections), stay concise, and explain like
         student.name = (u.user_metadata && u.user_metadata.display_name) || u.email.split("@")[0];
         $("#who").textContent = "Signed in as " + student.email;
         $("#notLogged").style.display = "none";
+        await loadServerClock();
       }
     } catch (e) { /* offline */ }
     if (!session.jwt) {
@@ -176,21 +186,67 @@ Structure your brief clearly (headings/sections), stay concise, and explain like
     }
   }
 
+  /* ── Authoritative server clock: pull remaining time from the exam API. ── */
+  async function loadServerClock() {
+    try {
+      const r = await fetch("/api/exam-state", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + session.jwt },
+      });
+      const j = await r.json();
+      if (j.ok) {
+        deadlineTs = j.deadlineTs;
+        remainingMs = j.remainingMs;
+        submitted = j.submitted;
+        clockReady = true;
+        if (j.expired) {
+          $("#warn").style.display = "none";
+          $("#expired").style.display = "block";
+          lockDown();
+        } else if (submitted) {
+          $("#warn").style.display = "none";
+          $("#status").textContent = "✅ Your answer is already submitted. You may close this page.";
+        }
+      }
+    } catch (e) { /* keep clockReady false → fall back to client fallback below */ }
+    if (!clockReady) {
+      // Server clock unreachable: use a client-side deadline as a safety net.
+      deadlineTs = Date.now() + 60 * 60 * 1000;
+      $("#clockWarn").style.display = "block"; // "time may be tracked on the server"
+    }
+  }
+
   /* ── Countdown timer ── */
   function tick() {
-    const left = Math.max(0, dead - Date.now());
+    if (!deadlineTs) return;
+    const left = Math.max(0, deadlineTs - Date.now());
     const m = String(Math.floor(left / 60000)).padStart(2, "0");
     const s = String(Math.floor((left % 60000) / 1000)).padStart(2, "0");
     $("#timer").textContent = m + ":" + s;
     if (left <= 0) {
       $("#warn").style.display = "none";
       $("#expired").style.display = "block";
+      lockDown();
       clearInterval(timerInt);
     } else if (left < 5 * 60000) {
       $("#warn").textContent = "⚠ Less than 5 minutes left — wrap up and submit.";
       $("#warn").style.background = "#f0c14b";
     }
   }
+
+  function lockDown() {
+    $("#drop").style.pointerEvents = "none";
+    $("#drop").style.opacity = "0.5";
+    $("#submit").disabled = true;
+    $("#submit").textContent = "Time expired";
+  }
+
+  /* ── Warn before leaving (accidental close) — the server keeps the clock. ── */
+  window.addEventListener("beforeunload", (e) => {
+    if (submitted) return;
+    e.preventDefault();
+    e.returnValue = "";
+  });
 
   /* ── File picker ── */
   const drop = $("#drop"), file = $("#file");
@@ -226,6 +282,7 @@ Structure your brief clearly (headings/sections), stay concise, and explain like
       });
       const j = await r.json();
       if (r.ok && j.ok) {
+        submitted = true;
         $("#status").className = "status ok";
         $("#status").textContent = "✅ Submission received successfully.\nReceived file: " + j.filename +
           "\n\nThank you. Your answer is safely stored. You may close this page.";

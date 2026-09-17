@@ -46,8 +46,27 @@ student can't spoof another's submission. The resulting Drive filename is:
 |------|------|
 | `exam.html` | The exam page (served as `https://hr-flow-liart.vercel.app/exam`) |
 | `api/exam-upload.js` | Vercel serverless function that saves uploads to Drive |
+| `api/exam-state.js` | Serverless **authoritative clock** (returns remaining time) |
+| `api/_exam.js` | Shared: JWT verification + exam-clock logic |
+| `supabase/exam_attempts.sql` | **REQUIRED SQL** — run in Supabase SQL Editor once |
 | `scripts/exam_drive_create.py` | (one-time) created the private Drive folder |
 | `scripts/test_exam_upload.js` | (dev) end-to-end proof against the real folder |
+
+## ⚠️ Do this FIRST — create the exam-clock table (once)
+
+The server-enforced timer needs a table. **Run `supabase/exam_attempts.sql` in the
+Supabase SQL Editor** (Supabase → Dashboard → SQL Editor → paste → Run). The service
+role key can't create tables via REST (`PGRST205`), so this manual step is required.
+Until it's run, `/api/exam-state` returns "Exam clock unavailable" and the page shows
+a fallback (client timer) with a warning banner — the server-verified deadline is
+only active after the SQL. Verified: `PGRST205 Could not find the table` was the
+exact error before running; the code is correct.
+
+After running the SQL, verify:
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -X POST https://hr-flow-liart.vercel.app/api/exam-state
+# with an Authorization: Bearer <student jwt> header → 200 { ok, remainingMs, deadlineTs }
+```
 
 ## Folder (already created)
 

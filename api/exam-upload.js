@@ -2,21 +2,16 @@
    MG3003 — Mid-Term Case Study Submission API (Vercel Serverless)
    Receives a .docx/.pdf upload from the exam page and saves it to a
    PRIVATE Google Drive folder. The folder ID lives ONLY in server env
-   vars — it is NEVER sent to the browser. The student sees a plain
-   success/failure response, never any Drive path or link.
+   vars — it is NEVER sent to the browser.
 
-   Auth: OAuth refresh token (the instructor's existing token has drive
-   scope + refresh_token). Refreshed manually via oauth2.googleapis.com
-   — googleapis' auto-refresh proved unreliable, so we don't use it.
-
-   Required env (Vercel → Project → Settings → Environment Variables):
-     EXAMS_DRIVE_FOLDER_ID  = private submission folder id
-     GOOGLE_CLIENT_ID       = from ~/.hermes/google_token.json
-     GOOGLE_CLIENT_SECRET   = from ~/.hermes/google_token.json
-     GOOGLE_REFRESH_TOKEN   = from ~/.hermes/google_token.json
+   Identity: verified server-side from the student's Supabase JWT
+   (see api/_exam.js). Deadline: enforced HERE against the authoritative
+   exam_attempts clock — a student cannot submit after it by tampering
+   with the page.
    ═══════════════════════════════════════════════════════════════ */
 
 const busboy = require("busboy");
+const { verifyIdentity, getAttempt, DEFAULT_EXAM } = require("./_exam");
 
 const ALLOWED_EXT = ["docx", "pdf"];
 const MAX_BYTES = 25 * 1024 * 1024; // 25 MB hard cap
@@ -26,7 +21,7 @@ function safeName(name) {
 }
 
 /* Refresh the instructor's OAuth access token (same flow verified in
-   scripts/test_exam_upload.js). */
+   scripts/test_exam_upload.js — googleapis' auto-refresh proved unreliable). */
 async function refreshAccessToken(env) {
   const body = new URLSearchParams({
     grant_type: "refresh_token",
@@ -47,7 +42,7 @@ async function refreshAccessToken(env) {
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-student-email, x-student-name");
+  res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
 
@@ -57,49 +52,16 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: "Upload service not configured" });
   }
 
-  /* ── Identity: VERIFIED server-side from the student's Supabase login token.
-     The browser's plain-text email/name headers are treated as untrusted display
-     hints only — the authoritative identity comes from the signed JWT. ── */
-  const authHeader = String(req.headers["authorization"] || "");
-  const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
-  if (!jwt) return res.status(401).json({ error: "Please log in to HR Flow first, then retry." });
+  /* ── 1. Identity: verified server-side from the Supabase JWT ── */
+  const who = await verifyIdentity(env, req);
+  if (!who.ok) return res.status(who.status).json({ error: who.message });
 
-  const supabase = require("@supabase/supabase-js").createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
-  let sessionUser = null;
-  try {
-    const { data, error } = await supabase.auth.getUser(jwt);
-    if (error || !data.user) throw new Error(error?.message || "unverified");
-    sessionUser = data.user;
-  } catch (e) {
-    console.error("supabase verify error", e.message);
-    return res.status(401).json({ error: "Log-in check failed. Please re-login to HR Flow and retry." });
-  }
+  /* ── 2. Deadline: authoritative server clock — reject if out of time ── */
+  const state = await getAttempt(env, who.authed, who.email, DEFAULT_EXAM);
+  if (!state.ok) return res.status(state.status).json({ error: state.message });
+  if (state.expired) return res.status(403).json({ error: "⏰ Time's up — this exam has ended. No late submissions." });
 
-  /* RLS blocks anonymous `profiles` reads — we must query as the student, so
-     re-instantiate the client with their JWT as the bearer header (verified
-     working: anon→0 rows, authed→real display_name). */
-  const authedSupabase = require("@supabase/supabase-js").createClient(
-    env.SUPABASE_URL, env.SUPABASE_ANON_KEY,
-    { global: { headers: { Authorization: `Bearer ${jwt}` } } },
-  );
-  const verifiedEmail = (sessionUser.email || "").trim().toLowerCase();
-  /* Real display name from the profiles table (as the app does); falls back to
-     the email local-part if missing. */
-  let verifiedName = (sessionUser.user_metadata?.display_name || "").toString().trim();
-  if (!verifiedName) {
-    try {
-      const { data: p } = await authedSupabase.from("profiles").select("display_name").eq("id", sessionUser.id).single();
-      if (p?.display_name) verifiedName = String(p.display_name).trim();
-    } catch (e) { /* keep fallback */ }
-  }
-  verifiedName = verifiedName.replace(/[^\w \-]/g, "").slice(0, 60);
-  if (!verifiedName) verifiedName = verifiedEmail.split("@")[0];
-  const roll = verifiedEmail.split("@")[0]; // e.g. cse.24bcsg59 — the student's roll id
-  if (!verifiedEmail.endsWith("@silicon.ac.in") && verifiedEmail !== "student@tech.com") {
-    return res.status(403).json({ error: "Only MG3003 student accounts can submit." });
-  }
-
-  /* ── Parse the multipart body via busboy ── */
+  /* ── 3. Parse the multipart body via busboy ── */
   const bb = busboy({ headers: req.headers, limits: { fileSize: MAX_BYTES, files: 1 } });
   let fileBuf = null;
   let fileName = "";
@@ -128,14 +90,13 @@ module.exports = async function handler(req, res) {
      submission is uniquely attributable and sortable, e.g.:
      "cse.24bcsg59 - Anikesh Ransingh - MidTerm-Answers.docx" */
   const stem = fileName.replace(/\.(docx|pdf)$/i, "");
-  const title = `${roll} - ${verifiedName} - ${stem}.${ext}`;
+  const title = `${who.roll} - ${who.name} - ${stem}.${ext}`;
 
   try {
     const access = await refreshAccessToken(env); // raises on failure
 
     // Single-call multipart/related upload: metadata (name + parents) and the
-    // file bytes are sent together, so the file is created directly inside the
-    // private folder with its display name — no separate move step needed.
+    // file bytes are sent together → created directly inside the private folder.
     const boundary = "mg3003exam" + Date.now() + String(Math.random()).slice(2, 10);
     const CRLF = "\r\n";
     const meta = Buffer.from(JSON.stringify({ name: title, parents: [env.EXAMS_DRIVE_FOLDER_ID] }));
@@ -159,6 +120,12 @@ module.exports = async function handler(req, res) {
     if (!upRes.ok || !upJson.id || !(upJson.parents || []).includes(env.EXAMS_DRIVE_FOLDER_ID)) {
       throw new Error("drive upload failed: " + JSON.stringify(upJson).slice(0, 200));
     }
+
+    // 4. Mark this student's attempt as submitted (audit trail).
+    try {
+      await who.authed.from("exam_attempts").update({ submitted: true })
+        .eq("user_email", who.email).eq("exam_code", DEFAULT_EXAM);
+    } catch (e) { console.error("mark-submitted failed", e.message); /* non-fatal */ }
 
     // Return ONLY confirmation + safe echo. No link, no path, no folder id.
     return res.status(200).json({ ok: true, filename: title, size: fileBuf.length });
