@@ -15,12 +15,16 @@ const { createClient } = require("@supabase/supabase-js");
 
 const DEFAULT_EXAM = "midterm-1";
 
+/* The Supabase URL + anon key are PUBLIC (they ship in the frontend HTML), so
+   we fall back to them here — the Vercel serverless env may not carry them
+   (this project hardcodes them in index.html rather than env). */
+const FALLBACK_URL = "https://avzchxohvknqmenrmibz.supabase.co";
+const FALLBACK_ANON = "sb_publishable_wlBgsi63ky37oF8Jq4h-_w_WJyNXPC8";
+
 function clients(env, jwt) {
-  const anon = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
-  const authed = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
-    global: { headers: { Authorization: `Bearer ${jwt}` } },
-  });
-  return { anon, authed };
+  const url = env.SUPABASE_URL || FALLBACK_URL;
+  const anon = env.SUPABASE_ANON_KEY || FALLBACK_ANON;
+  return { anon: createClient(url, anon), authed: createClient(url, anon, { global: { headers: { Authorization: `Bearer ${jwt}` } } }) };
 }
 
 /* Returns { ok, status, email, name, userId } or { ok:false, status, ... }.

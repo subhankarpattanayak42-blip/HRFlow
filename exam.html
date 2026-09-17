@@ -71,6 +71,16 @@
   .banner-warn { background: var(--gold); color: var(--navy); padding: .8rem 1.2rem; border-radius: 8px; font-weight: 600; }
   input[type=file] { display: none; }
   .meta { font-size: .82rem; color: var(--muted); margin: .3rem 0 1rem; }
+  .case-pick { display: flex; gap: .6rem; flex-wrap: wrap; margin: .6rem 0 1rem; }
+  .case-btn {
+    flex: 1 1 200px; background: #fff; border: 1px solid var(--navy2);
+    color: var(--navy); padding: .9rem .5rem; border-radius: 10px; cursor: pointer;
+    font-weight: 600; text-align: center; line-height: 1.25;
+  }
+  .case-btn small { display: block; color: var(--muted); font-size: .72rem; line-height: 1.3; }
+  .case-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .case-btn.active small { color: var(--gold); }
+  .case-btn:hover { border-color: var(--gold); }
 </style>
 </head>
 <body>
@@ -93,27 +103,27 @@
   </div>
 
   <!-- ════════════════════════════════════════════════════════════════════
-       EDIT ME: paste the actual case text into the <div id="caseBody"> below.
-       Replace everything between the markers. Keep it as-is or restyle freely.
+       MID-TERM CASE STUDY — THREE SCENARIOS, CHOOSE ONE.
+       Each maps to GlobalTech deliverables taught in Sessions 3, 4 and 5.
+       Replace any text below with the real paper if it differs. The student
+       picks ONE case, writes the answer in Word/PDF, and uploads it.
        ════════════════════════════════════════════════════════════════════ -->
   <div class="card">
-    <h2>The Scenario · GlobalTech Inc.</h2>
-    <div class="case" id="caseBody">GlobalTech Inc., a 9,000-employee technology company, has grown for 12 years on a patchwork of spreadsheets and disconnected HR tools. Payroll runs out of a legacy system that team leads manually hand-enter every fortnight. Recruitment happens via three separate email inboxes. Performance reviews are annual Word documents that HR prints and files.
+    <h2>Cases — read all three, choose ONE, and submit</h2>
+    <p style="margin:.4rem 0">You are a GlobalTech Inc. consultant. <b>Pick exactly ONE</b> of the three
+    cases below (A, B or C) and produce the deliverable it asks for, as a Word document
+    or PDF. Label your chosen case at the top of the document (e.g. <b>“Case B”</b>).
+    <b>The whole paper counts</b> — clarity, structure and completeness.</p>
 
-The company has just hired you as an HRIS consultant. The CHRO wants a single, integrated HRIS and has asked you to recommend how to get there.
+    <div class="case-pick" id="casePick">
+      <button type="button" class="case-btn" data-case="A">Case A<br><small>Sessions 3 · Talent Acquisition</small></button>
+      <button type="button" class="case-btn" data-case="B">Case B<br><small>Session 4 · Onboarding &amp; Compliance</small></button>
+      <button type="button" class="case-btn" data-case="C">Case C<br><small>Session 5 · Time &amp; Attendance</small></button>
+    </div>
 
-Your task: Write a short consulting brief (Word document or PDF) that answers ALL of the following:
-
-1. What core HR modules should an HRIS for GlobalTech include, and why does each matter to a company this size?
-
-2. How would the lives of (a) an HR admin, (b) a team lead, and (c) an employee change if the HRIS replaced the current spreadsheets?
-
-3. Which 3 risks or challenges (e.g. data migration, change management, data privacy) should the implementation plan handle, and how would you address each?
-
-4. What would you put in a 6-month implementation roadmap? (phases, order, and why that order.)
-
-Structure your brief clearly (headings/sections), stay concise, and explain like you would to a colleague who is not from HR. Estimated length: 600–900 words.</div>
-    <p class="meta">Answer all 4 parts. Clarity and structure count as much as content.</p>
+    <div class="case" id="caseBody" style="padding:.5rem 0 0"></div>
+    <p class="meta" id="caseHint"></p>
+  </div>
 
     <div class="banner-warn" id="warn">Timer running — submit before it reaches zero. Your answers are saved as soon as you upload.</div>
     <div class="banner-warn" id="clockWarn" style="display:none">⚠️ Couldn't reach the exam timer server. Your time may still be tracked on the server — submit as normal; the server enforces the deadline.</div>
@@ -160,6 +170,77 @@ Structure your brief clearly (headings/sections), stay concise, and explain like
   let clockReady = false;
 
   const $ = (s) => document.querySelector(s);
+
+  /* ── Three case studies (Session 3 / 4 / 5 deliverables). Student picks one. ── */
+  const CASES = {
+    A: {
+      title: "Case A · Session 3 — Talent Acquisition: the hiring pipeline",
+      hint: "Label your document “Case A”. A good answer has a flow, an owner and gate at every stage, and a data map that never re-types important numbers. Estimated length: 600–900 words.",
+      body: `GlobalTech just won a huge contract and needs 200 engineers in 3 months, across the US, UK and Singapore. Today, time-to-hire is 47 days; the target is under 21 days. Hiring today is “email + spreadsheets” — applications pile up in three separate inboxes, work gets lost, and no one owns a single record of any candidate.
+
+You are the HRIS consultant. Design the hiring pipeline and the tracking system (an ATS — think “CRM for candidates”) that makes hiring fast and fair.
+
+Write a short consulting brief that includes:
+
+1. THE PIPELINE — draw the hiring flow start to finish: Requisition → Job Posted → Applications → Screening → Interview → Offer → Accepted → Employee Created. For EVERY stage name who owns it (recruiter, hiring manager, HR) and what gate lets it move forward (approval, score threshold). Map the approval chain first (hiring manager → HR → finance) — approvals are where teams get most stuck.
+
+2. THE INTEGRATION WEB — show how the ATS talks to the outside world and back into Core HR: job postings OUT to LinkedIn + job boards (via API/webhook), applications + background checks IN, and the one big handoff where an accepted candidate becomes a clean Employee record in Core HR.
+
+3. CANDIDATE BECOMES EMPLOYEE — a field map (candidate field → employee field → what happens: copy / clean / generate new). Example: Candidate.Email → Work Email (NEW) · Candidate.Comp → Compensation (from the approved offer, never re-typed) · (none) → Employee ID (system-generated). Then add a 5–7 item compliance checklist (consent to store data, background check only after a written offer, no protected data collected, retention, access control, audited AI screening, audit log).
+
+Structure it clearly with headings. Explain like you would to a colleague who is not from HR.`,
+    },
+    B: {
+      title: "Case B · Session 4 — Onboarding & Compliance",
+      hint: "Label your document “Case B”. A good answer covers the Day 1–30 path, a country-wise compliance table, and an audit trail that shows proof. Estimated length: 600–900 words.",
+      body: `GlobalTech is bringing on its 200 new engineers across multiple countries. Every new hire needs a laptop, an account, a badge, training and compliance documents on DAY 1 — and every country has different rules. Germany needs works councils, India requires PF/ESI, Brazil has the 13th salary. Today onboarding is a paper checklist that HR fills by hand.
+
+You are the HRIS consultant. Design onboarding so a new hire is productive from day one and the company stays legal everywhere.
+
+Write a short consulting brief that includes:
+
+1. ONBOARDING WORKFLOW — design the Day 1–30 path for a new hire (Day 1: laptop, account, email, badge, training, compliance docs · Days 2–30: role training, first review, revoke old access). Show where it BRANCHES by country (what an India hire needs vs a Brazil hire vs a Germany hire).
+
+2. COMPLIANCE MATRIX — a table: Country → Regulation → What’s required → Deadline → Risk level. Cover at least 5 countries/regulations (e.g. India PF/ESI, Brazil 13th salary, Germany works councils, GDPR data, US I-9). Flag which rows are high risk if missed.
+
+3. AUDIT TRAIL — design how the system logs every change so you can prove compliance: for each signature/approval, what gets recorded (who, when, what changed, before/after values) — like a database audit log. Give one concrete example of proving “the new hire’s I-9 was signed on Day 1”.
+
+Structure it clearly with headings. Explain like you would to a colleague who is not from HR.`,
+    },
+    C: {
+      title: "Case C · Session 5 — Time & Attendance",
+      hint: "Label your document “Case C”. A good answer has real timestamps, a rule for every decision the law cares about, and only approved + validated time reaching payroll. Estimated length: 600–900 words.",
+      body: `GlobalTech’s people work remotely in many countries. The company must record when people ACTUALLY work so everyone is paid correctly, gets the breaks the law requires, and overtime is caught fairly. Today it’s messy — some clock in with a phone app, some email their hours, some forget entirely.
+
+You are the HRIS consultant. Design the time-and-attendance system that captures time accurately and applies each country’s rules automatically.
+
+Write a short consulting brief that includes:
+
+1. TIME COLLECTION — show the ways a worker can clock in/out (phone app for remote, computer for office, badge/card for sites, fingerprint for factory) and the flow: clock in → system snapshot (real timestamps, dedupe, catch gaps) → manager approves → approved timecard → payroll. Add one rule your design follows (e.g. “more than 8 hours in a day = overtime”).
+
+2. BUSINESS RULES ENGINE — a table of rules the system applies automatically, each a condition + action. Include at least 10: daily overtime, break after 5h, weekly cap, country-specific breaks, leave accrual (annual/sick), carry-over cap, public holidays, unapproved-timecard cutoff. Starter kit: annual leave accrues monthly · sick leave granted upfront · carry-over capped at 5 days.
+
+3. TIME-TO-PAYROLL + ACCRUAL — draw the flow: clock in → build timecard → apply rules → manager approves → validate → payroll feed (approved → posted · error → exception queue, never silently dropped). Then show the absence-accrual table per leave type (annual: accrue monthly · sick: upfront · parental: statutory · holiday: auto).
+
+Structure it clearly with headings. Explain like you would to a colleague who is not from HR.`,
+    },
+  };
+
+  function selectCase(key) {
+    const c = CASES[key];
+    if (!c) return;
+    for (const b of document.querySelectorAll(".case-btn")) {
+      b.classList.toggle("active", b.dataset.case === key);
+    }
+    $("#caseBody").innerHTML =
+      `<h3 style="color:var(--navy)">${c.title}</h3><div style="white-space:pre-wrap;line-height:1.55">${c.body}</div>`;
+    $("#caseBody").dataset.case = key;
+    $("#caseHint").textContent = c.hint;
+  }
+
+  document.querySelectorAll(".case-btn").forEach((b) => {
+    b.addEventListener("click", () => selectCase(b.dataset.case));
+  });
 
   /* ── Identity: MUST be an authenticated HR Flow session. The login JWT is
      sent to the server, which verifies it — the browser is never trusted to
