@@ -285,9 +285,9 @@ Structure it clearly with headings. Explain like you would to a colleague who is
           $("#expired").style.display = "block";
           lockDown();
         } else if (submitted) {
-          $("#warn").style.display = "none";
-          $("#status").textContent = "✅ Your answer is already submitted. You may close this page.";
-        }
+                  // Already submitted — stop the clock and show the completed state.
+                  finishExam();
+                }
       }
     } catch (e) { /* keep clockReady false → fall back to client fallback below */ }
     if (!clockReady) {
@@ -320,6 +320,31 @@ Structure it clearly with headings. Explain like you would to a colleague who is
     $("#drop").style.opacity = "0.5";
     $("#submit").disabled = true;
     $("#submit").textContent = "Time expired";
+  }
+
+  /* ── Exam complete: stop the timer, show a finished state, then try to
+     close the tab. Browsers only honor a scripted window.close() when the tab
+     was opened by script; if not, show a clear "you may close now" screen. ── */
+  function finishExam() {
+    clearInterval(timerInt);
+    $("#timer").textContent = "00:00";
+    $("#timer").style.background = "#1e8449"; // green = done
+    $("#warn").style.display = "none";
+    $("#expired").style.display = "none";
+    // Final screen: replace the main content with a clean "completed" card.
+    const done = document.createElement("div");
+    done.className = "card";
+    done.innerHTML = `<h2>👏 Exam complete — thank you</h2>
+        <div class="case" style="line-height:1.6">
+Your answer has been submitted and stored. You may now close this page
+(or it will close itself in a moment). Your time and submission are safely
+recorded on the server.
+        </div>`;
+    const wrap = $(".wrap");
+    while (wrap.firstChild && wrap.firstChild !== done) wrap.removeChild(wrap.firstChild);
+    wrap.appendChild(done);
+    // Try to close the tab (works if it was opened by a link/script).
+    setTimeout(() => { try { window.close(); } catch (e) { /* not allowed — fine */ } }, 400);
   }
 
   /* ── Warn before leaving (accidental close) — the server keeps the clock. ── */
@@ -364,11 +389,7 @@ Structure it clearly with headings. Explain like you would to a colleague who is
       const j = await r.json();
       if (r.ok && j.ok) {
         submitted = true;
-        $("#status").className = "status ok";
-        $("#status").textContent = "✅ Submission received successfully.\nReceived file: " + j.filename +
-          "\n\nThank you. Your answer is safely stored. You may close this page.";
-        $("#warn").style.display = "none";
-        $("#submit").textContent = "Submitted";
+        finishExam(); // stops the timer, swaps to a "complete" screen, tries to close
       } else {
         $("#status").className = "status err";
         $("#status").textContent = "❌ " + (j.error || "Upload failed. Please try again.");
