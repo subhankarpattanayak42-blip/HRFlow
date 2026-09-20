@@ -28,10 +28,10 @@ COURSE OVERVIEW
 
 ASSESSMENT (University: 30% Internal + 20% Mid-term + 50% End-term)
 - MID-TERM (20%): Sprint 1-5 Team Score (10%) + Written Case Study Exam (10%)
-- END-TERM (50%): Sprint 6-10 Team Score (10%) + Written Case Study Exam (25%) + Individual Portfolio (10%) + Capstone Presentation (5%)
+- END-TERM (50%): Sprint 6-10 Team Score (35%) + Individual Portfolio (10%) + Capstone Presentation (5%)
 - INTERNAL (30%): Weekly MCQ Quiz (10%) + Peer Evaluation (10%) + Learning Journal (10%)
-- Sprint total: 20% overall (10% Sprints 1-5, 10% Sprints 6-10)
-- Exams total 35% (10% midterm + 25% endterm)
+- Sprint total: 45% overall (10% Sprints 1-5, 35% Sprints 6-10)
+- Exams total 10% (mid-term only — end-term written exam dropped, weight moved to Sprints 6-10)
 
 SPRINTS (10 weekly team deliverables)
 - Each week your team produces a consulting deliverable for GlobalTech Inc.
