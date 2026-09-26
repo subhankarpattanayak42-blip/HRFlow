@@ -102,6 +102,23 @@
     You can safely reopen the page and submit later.
   </div>
 
+  <div class="card" id="loginCard" style="display:none;border-left:6px solid var(--navy);">
+    <h2>Log in</h2>
+    <p style="margin:.4rem 0">Sign in with your <b>@silicon.ac.in</b> account (same password as the HR Flow app), then the upload box unlocks.</p>
+    <div style="display:grid;gap:.6rem;margin-top:.8rem;max-width:420px">
+      <label style="font-size:.85rem">Email
+        <input id="loginEmail" type="email" placeholder="you@silicon.ac.in" autocomplete="username"
+          style="display:block;width:100%;margin-top:.2rem;padding:.6rem .7rem;border:1px solid #cfc9b8;border-radius:8px;font-size:1rem" />
+      </label>
+      <label style="font-size:.85rem">Password
+        <input id="loginPass" type="password" placeholder="HR Flow password" autocomplete="current-password"
+          style="display:block;width:100%;margin-top:.2rem;padding:.6rem .7rem;border:1px solid #cfc9b8;border-radius:8px;font-size:1rem" />
+      </label>
+      <button class="primary" id="loginBtn" style="margin-top:.2rem">Log in</button>
+      <p class="status err" id="loginErr" style="display:none"></p>
+    </div>
+  </div>
+
   <!-- ════════════════════════════════════════════════════════════════════
        MID-TERM CASE STUDY — THREE SCENARIOS, CHOOSE ONE.
        Each maps to GlobalTech deliverables taught in Sessions 3, 4 and 5.
@@ -281,27 +298,70 @@ Structure it clearly with headings. Explain like you would to a colleague who is
 
   /* ── Identity: MUST be an authenticated HR Flow session. The login JWT is
      sent to the server, which verifies it — the browser is never trusted to
-     supply identity. No manual-email fallback (that would be spoofable). ── */
+     supply identity.
+     If no session exists, this page offers its OWN login form (same Supabase
+     project + same accounts as the main app, so the JWT it gets is identical
+     and works on both pages). ── */
   async function loadIdentity() {
+    let sb = null;
     try {
-      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
       const { data } = await sb.auth.getSession();
       if (data.session && data.session.user) {
         const u = data.session.user;
         session.jwt = data.session.access_token;
         student.email = u.email || "";
-        student.name = (u.user_metadata && u.user_metadata.display_name) || u.email.split("@")[0];
+        student.name = (u.user_metadata && u.user_metadata.display_name) || (student.email || "").split("@")[0];
         $("#who").textContent = "Signed in as " + student.email;
         $("#notLogged").style.display = "none";
         await loadServerClock();
+        return;
       }
     } catch (e) { /* offline */ }
-    if (!session.jwt) {
-      $("#notLogged").style.display = "block";
-      $("#drop").style.pointerEvents = "none";
-      $("#drop").style.opacity = "0.5";
-      $("#submit").disabled = true;
-    }
+    // No session → show the in-page login form instead of a dead end.
+    showLoginForm(sb);
+  }
+
+  function showLoginForm(sb) {
+    $("#notLogged").style.display = "none";
+    $("#loginCard").style.display = "block";
+    $("#drop").style.pointerEvents = "none";
+    $("#drop").style.opacity = "0.5";
+    $("#submit").disabled = true;
+    const btn = $("#loginBtn");
+    const go = async () => {
+      const email = ($("#loginEmail").value || "").trim().toLowerCase();
+      const pass = $("#loginPass").value || "";
+      const err = $("#loginErr");
+      err.style.display = "none";
+      if (!email || !pass) {
+        err.textContent = "❌ Enter your @silicon.ac.in email and password.";
+        err.style.display = "block";
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Logging in…";
+      try {
+        if (!sb) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+        if (error || !data.session) throw new Error((error && error.message) || "login failed");
+        session.jwt = data.session.access_token;
+        student.email = (data.session.user && data.session.user.email) || email;
+        student.name = ((data.session.user || {}).user_metadata || {}).display_name || student.email.split("@")[0];
+        $("#who").textContent = "Signed in as " + student.email;
+        $("#loginCard").style.display = "none";
+        $("#drop").style.pointerEvents = "";
+        $("#drop").style.opacity = "";
+        await loadServerClock();
+      } catch (e) {
+        err.textContent = "❌ Login failed — check your email/password (same as the HR Flow app) and try again.";
+        err.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Log in";
+      }
+    };
+    btn.addEventListener("click", go);
+    $("#loginPass").addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   }
 
   /* ── Server status check: already submitted? past the midnight cutoff?
