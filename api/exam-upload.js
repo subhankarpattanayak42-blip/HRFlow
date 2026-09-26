@@ -5,9 +5,8 @@
    vars — it is NEVER sent to the browser.
 
    Identity: verified server-side from the student's Supabase JWT
-   (see api/_exam.js). Deadline: enforced HERE against the authoritative
-   exam_attempts clock — a student cannot submit after it by tampering
-   with the page.
+   (see api/_exam.js). Deadline: enforced HERE against the fixed
+   midnight-Sun cutoff — uploads after that are rejected (403).
    ═══════════════════════════════════════════════════════════════ */
 
 const busboy = require("busboy");
@@ -59,7 +58,7 @@ module.exports = async function handler(req, res) {
   /* ── 2. Deadline: authoritative server clock — reject if out of time ── */
   const state = await getAttempt(env, who.authed, who.email, DEFAULT_EXAM);
   if (!state.ok) return res.status(state.status).json({ error: state.message });
-  if (state.expired) return res.status(403).json({ error: "⏰ Time's up — this exam has ended. No late submissions." });
+  if (state.expired) return res.status(403).json({ error: "🔒 Submissions are closed — the midnight Sunday deadline has passed. Contact your instructor." });
 
   /* ── 3. Parse the multipart body via busboy ── */
   const bb = busboy({ headers: req.headers, limits: { fileSize: MAX_BYTES, files: 1 } });

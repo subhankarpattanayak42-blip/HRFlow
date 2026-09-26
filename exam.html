@@ -87,19 +87,19 @@
 
 <div class="topbar">
   <span class="brand">MG3003 · Mid-Term Case Study</span>
-  <span class="timer" id="timer">60:00</span>
+  <span class="timer" id="timer">No time limit</span>
   <span class="logged" id="who">—</span>
-  <div class="sub">Enterprise HRIS Architecture &amp; Implementation · Silicon University · 1 hour</div>
+  <div class="sub">Enterprise HRIS Architecture &amp; Implementation · Silicon University · Take-home · closes midnight Sun 27 Sep</div>
 </div>
 
 <div class="wrap">
 
   <div class="card" style="border-left:6px solid var(--gold);">
-    <b>Read this first 📋</b> — You have <b>60 minutes</b>. Work in a Word document
-    (or prepare a PDF). When done, upload the file below. Your submission is saved to a
+    <b>Read this first 📋</b> — There is <b>no time limit</b>. Work in a Word document
+    (or prepare a PDF) at your own pace and upload it below any time before
+    <b>midnight, Sunday 27 September</b>. Your submission is saved to a
     private course collection — you will only see a confirmation, not a drive link.
-    Your timer is tracked on the server, so a brief browser hiccup won't cost you time —
-    you can safely reopen the page and your clock resumes where it was.
+    You can safely reopen the page and submit later.
   </div>
 
   <!-- ════════════════════════════════════════════════════════════════════
@@ -125,10 +125,10 @@
     <p class="meta" id="caseHint"></p>
   </div>
 
-    <div class="banner-warn" id="warn">Timer running — submit before it reaches zero. Your answers are saved as soon as you upload.</div>
-    <div class="banner-warn" id="clockWarn" style="display:none">⚠️ Couldn't reach the exam timer server. Your time may still be tracked on the server — submit as normal; the server enforces the deadline.</div>
+    <div class="banner-warn" id="warn">No time limit — work at your own pace and submit any time before <b>midnight, Sunday 27 September</b>. Your answer is saved as soon as you upload.</div>
+    <div class="banner-warn" id="clockWarn" style="display:none">⚠️ Couldn't reach the server for a status check — submit as normal; your file saves on upload.</div>
     <div class="banner-warn" id="notLogged" style="display:none">🔒 Not signed in. Open the HR Flow app first and log in with your <b>@silicon.ac.in</b> account, then return here to submit. Your identity is verified from your login.</div>
-    <div class="expired-banner" id="expired">⏰ Time's up! Upload your file now — submissions lock shortly.</div>
+    <div class="expired-banner" id="expired">🔒 Submissions are closed — the midnight Sunday deadline has passed. Contact your instructor if you need help.</div>
   </div>
 
   <div class="card">
@@ -159,13 +159,11 @@
   const SUPABASE_ANON = "sb_publishable_wlBgsi63ky37oF8Jq4h-_w_WJyNXPC8";
 
   /* ──────────────── EXAM WINDOW GATE ────────────────
-     Before LOCKED_UNTIL the page shows a holding screen (no timer, no cases,
-     no upload). Set LOCKED_UNTIL to the exam start (IST) and, optionally,
-     AVAILABLE_UNTIL to auto-hide it after the day is over.
-     Format: ISO 8601 with +05:30 offset. Leave AVAILABLE_UNTIL null('') for
-     "hidden only before, open forever after". */
-  const LOCKED_UNTIL = "2026-09-27T16:15:00+05:30"; // 🕛 exam opens 4:15 PM IST, 27 Sep
-  const AVAILABLE_UNTIL = "2026-09-27T23:59:00+05:30"; // auto re-lock end of exam day
+     OPEN NOW (cyclone concession, 26 Sep): LOCKED_UNTIL empty = no gated start.
+     AVAILABLE_UNTIL auto-hides the page after midnight Sun 27 Sep IST.
+     Format: ISO 8601 with +05:30 offset. */
+  const LOCKED_UNTIL = ""; // open immediately
+  const AVAILABLE_UNTIL = "2026-09-27T23:59:00+05:30"; // hard close midnight end of Sunday 27 Sep
 
   const nowMs = Date.now();
   const lockMs = Date.parse(LOCKED_UNTIL);
@@ -175,14 +173,21 @@
 
   if (beforeExam || afterExam) {
     // Holding page — hide chrome, stop everything.
-    document.title = "MG3003 · Mid-Term Exam — Not available yet";
+    const closed = afterExam; // past midnight Sun 27 Sep: submissions closed for good
+    document.title = closed ? "MG3003 · Mid-Term Exam — Submissions closed" : "MG3003 · Mid-Term Exam — Not available yet";
     const whole = document.querySelector(".wrap");
     if (whole) {
-      whole.innerHTML = `<div class="card" style="margin-top:2rem;text-align:center">
+      whole.innerHTML = closed
+        ? `<div class="card" style="margin-top:2rem;text-align:center">
+        <h2 style="text-align:center">🔒 Submissions closed</h2>
+        <p style="margin:1rem 0;line-height:1.6">The mid-term case study closed at <b>midnight, Sunday 27 September</b>.<br>
+        If you could not submit due to the cyclone disruption, please contact your instructor.</p>
+        <p style="margin:.8rem 0 0;color:var(--muted);font-size:.85em">MG3003 · Silicon University</p>
+      </div>`
+        : `<div class="card" style="margin-top:2rem;text-align:center">
         <h2 style="text-align:center">🔒 Not available yet</h2>
-        <p style="margin:1rem 0;line-height:1.6">The mid-term case study opens on <b>Sunday, 27 September at 4:15&nbsp;PM IST</b>.<br>
-        Please check your email for the submission link — it will open at start time.<br><br>
-        <b>Bring your laptop</b> — you'll write and submit your answer as a document.</p>
+        <p style="margin:1rem 0;line-height:1.6">The mid-term case study is not open right now.<br>
+        Please check your email for the submission link and deadline.</p>
         <p style="margin:.8rem 0 0;color:var(--muted);font-size:.85em">MG3003 · Silicon University</p>
       </div>`;
     }
@@ -299,7 +304,8 @@ Structure it clearly with headings. Explain like you would to a colleague who is
     }
   }
 
-  /* ── Authoritative server clock: pull remaining time from the exam API. ── */
+  /* ── Server status check: already submitted? past the midnight cutoff?
+     Take-home mode — NO countdown; the timer pill stays "No time limit". ── */
   async function loadServerClock() {
     try {
       const r = await fetch("/api/exam-state", {
@@ -308,8 +314,6 @@ Structure it clearly with headings. Explain like you would to a colleague who is
       });
       const j = await r.json();
       if (j.ok) {
-        deadlineTs = j.deadlineTs;
-        remainingMs = j.remainingMs;
         submitted = j.submitted;
         clockReady = true;
         if (j.expired) {
@@ -317,15 +321,14 @@ Structure it clearly with headings. Explain like you would to a colleague who is
           $("#expired").style.display = "block";
           lockDown();
         } else if (submitted) {
-                  // Already submitted — stop the clock and show the completed state.
-                  finishExam();
-                }
+          // Already submitted — show the completed state.
+          finishExam();
+        }
       }
-    } catch (e) { /* keep clockReady false → fall back to client fallback below */ }
+    } catch (e) { /* offline — status unknown, warn below */ }
     if (!clockReady) {
-      // Server clock unreachable: use a client-side deadline as a safety net.
-      deadlineTs = Date.now() + 60 * 60 * 1000;
-      $("#clockWarn").style.display = "block"; // "time may be tracked on the server"
+      // Server unreachable: carry on normally; the file saves on upload.
+      $("#clockWarn").style.display = "block"; // "submit as normal; your file saves on upload"
     }
   }
 
@@ -351,7 +354,7 @@ Structure it clearly with headings. Explain like you would to a colleague who is
     $("#drop").style.pointerEvents = "none";
     $("#drop").style.opacity = "0.5";
     $("#submit").disabled = true;
-    $("#submit").textContent = "Time expired";
+    $("#submit").textContent = "Submissions closed";
   }
 
   /* ── Exam complete: stop the timer, show a finished state, then try to
@@ -359,7 +362,7 @@ Structure it clearly with headings. Explain like you would to a colleague who is
      was opened by script; if not, show a clear "you may close now" screen. ── */
   function finishExam() {
     clearInterval(timerInt);
-    $("#timer").textContent = "00:00";
+    $("#timer").textContent = "Submitted ✓";
     $("#timer").style.background = "#1e8449"; // green = done
     $("#warn").style.display = "none";
     $("#expired").style.display = "none";

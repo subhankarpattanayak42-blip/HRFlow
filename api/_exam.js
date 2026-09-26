@@ -64,9 +64,12 @@ async function verifyIdentity(env, req) {
 /* Get (or create) the student's attempt for `examCode`. Returns:
    { ok, status, attempt, remainingMs, deadlineMs, expired }.
    Auto-creates on first load using the student's own authed client (RLS allows
-   insert of own row). */
+   insert of own row).
+   TAKE-HOME MODE (cyclone concession, 26 Sep 2026): ONE fixed cutoff —
+   midnight end of Sunday 27 Sep IST. No per-student countdown; started_at is
+   kept only as an audit trail. */
+const CUTOFF_IST = "2026-09-27T23:59:00+05:30"; // hard close, server-enforced
 async function getAttempt(env, authed, email, examCode = DEFAULT_EXAM) {
-  const durationSec = parseInt(env.EXAMS_DURATION_SECONDS || "3600", 10);
   let attempt = null;
   try {
     const { data: rows, error } = await authed
@@ -109,7 +112,8 @@ async function getAttempt(env, authed, email, examCode = DEFAULT_EXAM) {
   if (Number.isNaN(startedAt)) {
     return { ok: false, status: 503, message: "Exam clock is out of sync. Tell the invigilator." };
   }
-  const deadline = startedAt + durationSec * 1000;
+  // Fixed cutoff: midnight Sun 27 Sep IST. Env override EXAMS_CUTOFF_IST wins.
+  const deadline = Date.parse(env.EXAMS_CUTOFF_IST || CUTOFF_IST);
   const now = Date.now();
   const remainingMs = Math.max(0, deadline - now);
   const expired = now >= deadline;

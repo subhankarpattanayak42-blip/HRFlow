@@ -1,7 +1,7 @@
 /* MG3003 — exam clock API (Vercel Serverless)
-   Returns the AUTHORITATIVE remaining time for the signed-in student.
-   The page polls this; the browser never computes its own deadline, so a
-   student closing/reopening the page cannot re-farm time. */
+   Returns submission status for the signed-in student: submitted?
+   past the fixed midnight-Sun cutoff? (expired?). Take-home mode —
+   no per-student countdown. */
 const { verifyIdentity, getAttempt, DEFAULT_EXAM } = require("./_exam");
 
 module.exports = async function handler(req, res) {
