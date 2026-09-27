@@ -381,8 +381,8 @@ Structure it clearly with headings. Explain like you would to a colleague who is
           $("#expired").style.display = "block";
           lockDown();
         } else if (submitted) {
-          // Already submitted — show the completed state.
-          finishExam();
+          // Already submitted — show the persistent receipt.
+          finishExam("");
         }
       }
     } catch (e) { /* offline — status unknown, warn below */ }
@@ -417,29 +417,50 @@ Structure it clearly with headings. Explain like you would to a colleague who is
     $("#submit").textContent = "Submissions closed";
   }
 
-  /* ── Exam complete: stop the timer, show a finished state, then try to
-     close the tab. Browsers only honor a scripted window.close() when the tab
-     was opened by script; if not, show a clear "you may close now" screen. ── */
-  function finishExam() {
+  /* ── Exam complete: stable receipt card. The page NEVER auto-closes and
+     NEVER wipes itself — the student keeps a screenshottable proof showing
+     filename + IST timestamp. Reopening the page re-shows the same receipt
+     (server `submitted` flag), so a recheck reassures instead of alarming. ── */
+  function istNow() {
+    try {
+      return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata",
+        day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
+    } catch (e) { return new Date().toLocaleString(); }
+  }
+  function finishExam(filename) {
     clearInterval(timerInt);
-    $("#timer").textContent = "Submitted ✓";
+    $("#timer").textContent = "Submitted \u2713";
     $("#timer").style.background = "#1e8449"; // green = done
     $("#warn").style.display = "none";
     $("#expired").style.display = "none";
-    // Final screen: replace the main content with a clean "completed" card.
-    const done = document.createElement("div");
-    done.className = "card";
-    done.innerHTML = `<h2>👏 Exam complete — thank you</h2>
+    $("#clockWarn").style.display = "none";
+    // Freeze the upload controls so a second tap can't double-submit.
+    lockDown();
+    $("#submit").textContent = "Already submitted \u2713";
+    const when = istNow();
+    const fileLine = filename
+      ? `<div style="margin:.5rem 0">\uD83D\uDCC4 <b>${filename}</b></div>`
+      : `<div style="margin:.5rem 0">Our server already has your file on record.</div>`;
+    // Stable receipt at the TOP of the page — page content stays intact.
+    if (!document.querySelector("#receipt")) {
+      const done = document.createElement("div");
+      done.className = "card";
+      done.id = "receipt";
+      done.style.borderLeft = "6px solid var(--green)";
+      done.innerHTML = `<h2>\u2705 Submitted \u2014 you are recorded</h2>
         <div class="case" style="line-height:1.6">
-Your answer has been submitted and stored. You may now close this page
-(or it will close itself in a moment). Your time and submission are safely
-recorded on the server.
+${fileLine}<div>\uD83D\uDD52 Received: <b>${when} IST</b></div>
+<div style="margin-top:.5rem">Your answer is safely stored. <b>Do NOT re-submit.</b> You may close this page, or reopen it any time — this receipt will still be here.</div>
         </div>`;
-    const wrap = $(".wrap");
-    while (wrap.firstChild && wrap.firstChild !== done) wrap.removeChild(wrap.firstChild);
-    wrap.appendChild(done);
-    // Try to close the tab (works if it was opened by a link/script).
-    setTimeout(() => { try { window.close(); } catch (e) { /* not allowed — fine */ } }, 400);
+      const wrap = $(".wrap");
+      wrap.insertBefore(done, wrap.firstChild);
+      done.scrollIntoView();
+    } else if (filename) {
+      const b = document.querySelector("#receipt b");
+      if (b) b.textContent = filename;
+    }
+    const st = $("#status");
+    if (st) { st.className = "status ok"; st.textContent = "\u2705 Submitted \u2014 receipt shown above."; }
   }
 
   /* ── Warn before leaving (accidental close) — the server keeps the clock. ── */
@@ -484,7 +505,7 @@ recorded on the server.
       const j = await r.json();
       if (r.ok && j.ok) {
         submitted = true;
-        finishExam(); // stops the timer, swaps to a "complete" screen, tries to close
+        finishExam(j.filename || ""); // stable receipt: filename + IST time, no auto-close
       } else {
         $("#status").className = "status err";
         $("#status").textContent = "❌ " + (j.error || "Upload failed. Please try again.");
